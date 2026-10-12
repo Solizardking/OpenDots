@@ -9,6 +9,19 @@ services:
       OWNER_TOKEN: ${OWNER_TOKEN:?Set a 24+ character OWNER_TOKEN in .env}
       APP_ORIGIN: ${APP_ORIGIN:-http://localhost:4310}
       OWNER_ID: ${OWNER_ID:-opendots-owner}
+      DATABASE_URL: ${DATABASE_URL:-}
+      POSTGRES_URL_NON_POOLING: ${POSTGRES_URL_NON_POOLING:-}
+      POSTGRES_URL: ${POSTGRES_URL:-}
+      USER_DATA_PATH: /data/users
+      OWS_VAULT_PATH: /data/ows
+      MEM0_API_KEY: ${MEM0_API_KEY:-}
+      MEM0_BASE_URL: ${MEM0_BASE_URL:-https://api.mem0.ai}
+      MEM0_ORG_ID: ${MEM0_ORG_ID:-}
+      MEM0_PROJECT_ID: ${MEM0_PROJECT_ID:-}
+      PRIVY_APP_ID: ${PRIVY_APP_ID:-}
+      PRIVY_CLIENT_ID: ${PRIVY_CLIENT_ID:-}
+      PRIVY_APP_SECRET: ${PRIVY_APP_SECRET:-}
+      PRIVY_AUTH_ORIGIN: ${PRIVY_AUTH_ORIGIN:-https://auth.privy.io}
       INTELLIGENCE_API_KEY: ${INTELLIGENCE_API_KEY:-}
       CPK_INTELLIGENCE_API_KEY: ${CPK_INTELLIGENCE_API_KEY:-}
       CPK_TELEMETRY_ID: ${CPK_TELEMETRY_ID:-}
@@ -25,6 +38,13 @@ services:
       SLACK_TEAM_ID: ${SLACK_TEAM_ID:-}
       SLACK_USER_IDS: ${SLACK_USER_IDS:-}
       SLACK_DOT_ID: ${SLACK_DOT_ID:-}
+      MODEL_PROVIDER: ${MODEL_PROVIDER:-openrouter}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      OPENROUTER_MODEL: ${OPENROUTER_MODEL:-anthropic/claude-haiku-5.5}
+      OPENROUTER_CLAUDE_MODEL: ${OPENROUTER_CLAUDE_MODEL:-anthropic/claude-haiku-5.5}
+      XAI_API_KEY: ${XAI_API_KEY:-}
+      XAI_MODEL: ${XAI_MODEL:-grok-4.7}
+      XAI_IMAGE_MODEL: ${XAI_IMAGE_MODEL:-grok-imagine-image-2.0}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://api.openai.com/v1}
       OPENAI_MODEL: ${OPENAI_MODEL:-}

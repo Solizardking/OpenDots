@@ -6,7 +6,11 @@ dist
 !.env.example
 data
 artifacts
+agent
 RESEARCH.md
 docs
+!docs/
+docs/*
+!docs/PUBLIC-GUIDE.md
 *.sqlite*
 *.db*

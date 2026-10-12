@@ -1,0 +1,130 @@
+.agent-page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 24px 24px 48px;
+  color: var(--sd-ink);
+}
+.agent-page header,
+.agent-brand,
+.agent-actions,
+.agent-grant {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.agent-page header,
+.agent-grant {
+  justify-content: space-between;
+}
+.agent-brand img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+.agent-page a {
+  color: inherit;
+}
+.agent-intro {
+  margin: 48px 0 28px;
+}
+.agent-intro h1 {
+  font-size: clamp(30px, 6vw, 48px);
+  margin: 12px 0;
+}
+.agent-page p {
+  line-height: 1.6;
+}
+.agent-box {
+  border: 1px solid var(--sd-line);
+  background: var(--sd-surface);
+  border-radius: 20px;
+  padding: 26px;
+  margin: 20px 0;
+}
+.agent-box h2 {
+  margin: 0 0 16px;
+}
+.agent-page label {
+  display: block;
+  margin: 16px 0;
+}
+.agent-page input:not([type='radio']),
+.agent-page select {
+  width: 100%;
+  min-width: 0;
+  margin-top: 8px;
+  padding: 12px;
+  background: var(--sd-canvas);
+  color: inherit;
+  border: 1px solid var(--sd-line);
+  border-radius: 10px;
+}
+.agent-page button {
+  border-radius: 10px;
+  padding: 11px 16px;
+  background: #9945ff;
+  color: white;
+  border: 1px solid #9945ff;
+  cursor: pointer;
+}
+.agent-page button.secondary {
+  background: transparent;
+  color: inherit;
+  border-color: var(--sd-line);
+}
+.agent-page button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.agent-actions {
+  flex-wrap: wrap;
+}
+.agent-identity,
+.agent-grant code,
+.agent-offer small {
+  overflow-wrap: anywhere;
+}
+.agent-grant {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--sd-line);
+}
+.agent-grant small,
+.agent-offer small {
+  display: block;
+  margin-top: 6px;
+}
+.agent-offer {
+  display: flex !important;
+  gap: 12px;
+  align-items: flex-start;
+}
+.agent-success {
+  color: var(--sd-green-ink);
+}
+.agent-error {
+  color: #bf2c49;
+}
+.agent-result {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 320px;
+  overflow: auto;
+  padding: 18px;
+  font-size: 13px;
+}
+.agent-page footer {
+  margin-top: 28px;
+  font-size: 13px;
+}
+@media (max-width: 600px) {
+  .agent-page {
+    padding: 18px 14px 36px;
+  }
+  .agent-box {
+    padding: 20px 16px;
+  }
+  .agent-grant {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

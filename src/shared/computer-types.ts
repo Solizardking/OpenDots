@@ -23,6 +23,8 @@ export interface ComputerControl {
   request?: { id: string; status: string };
 }
 export interface ComputerStatus {
+  provider?: 'e2b' | 'openbot';
+  sandboxId?: string;
   configured: boolean;
   state: 'not_configured' | 'stopped' | 'running' | 'unavailable';
   permissions: ComputerPermissions;

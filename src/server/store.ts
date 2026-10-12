@@ -56,6 +56,9 @@ export class Store {
   close() {
     this.db.close();
   }
+  get database(): DatabaseSync {
+    return this.db;
+  }
   private transaction<T>(fn: () => T): T {
     this.db.exec('BEGIN IMMEDIATE');
     try {

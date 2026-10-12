@@ -1,0 +1,141 @@
+.openmarket-panel {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  --om-line: var(--border, #ffffff20);
+  --om-muted: var(--muted, #a7b0bd);
+}
+.openmarket-panel * {
+  box-sizing: border-box;
+}
+.openmarket-panel h2 {
+  font-size: 20px;
+  margin: 12px 0;
+}
+.openmarket-panel h3 {
+  font-size: 15px;
+}
+.openmarket-panel p,
+.openmarket-panel small {
+  color: var(--om-muted);
+}
+.openmarket-panel button {
+  padding: 9px 12px;
+  border: 1px solid var(--om-line);
+  border-radius: 8px;
+  cursor: pointer;
+  color: inherit;
+  background: var(--surface, #20212b);
+}
+.openmarket-panel button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.openmarket-panel input,
+.openmarket-panel select {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  padding: 9px;
+  border: 1px solid var(--om-line);
+  border-radius: 7px;
+  background: var(--surface, #20212b);
+  color: inherit;
+  font: inherit;
+}
+.openmarket-panel label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 10px 0;
+  font-size: 13px;
+}
+.openmarket-panel small {
+  font-size: 12px;
+}
+.openmarket-panel summary {
+  cursor: pointer;
+  padding: 6px 0;
+}
+.openmarket-panel .om-box {
+  margin: 12px 0;
+  padding: 12px;
+  border: 1px solid var(--om-line);
+  border-radius: 10px;
+}
+.openmarket-panel .om-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+.openmarket-panel .om-row label {
+  flex: 1 1 140px;
+}
+.openmarket-panel .om-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 12px;
+  margin: 10px 0;
+}
+.openmarket-panel .om-primary {
+  background: #14f195;
+  color: #111;
+  border-color: #14f195;
+}
+.openmarket-panel .om-error {
+  color: #ffb3b3;
+  padding: 12px;
+  border: 1px solid #ed929860;
+  border-radius: 8px;
+}
+.openmarket-panel .om-scalar-chart,
+.openmarket-panel .sg-om-chart {
+  margin: 16px 0;
+}
+.openmarket-panel svg {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+}
+.openmarket-panel .om-table-scroll {
+  max-width: 100%;
+  max-height: 350px;
+  overflow: auto;
+  margin: 12px 0;
+}
+.openmarket-panel table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.openmarket-panel th,
+.openmarket-panel td {
+  padding: 9px;
+  text-align: left;
+  border-bottom: 1px solid var(--om-line);
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.openmarket-panel th {
+  position: sticky;
+  top: 0;
+  background: var(--surface, #20212b);
+}
+.openmarket-panel .sg-om-heading,
+.openmarket-panel .sg-om-ohlc,
+.openmarket-panel .sg-om-source {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 9px 0;
+}
+@media (max-width: 600px) {
+  .openmarket-panel .om-detail-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .openmarket-panel .om-box {
+    padding: 10px;
+  }
+}

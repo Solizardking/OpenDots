@@ -1,0 +1,845 @@
+/* Supplied Solana assets. These explicit palettes bypass automatic inversion. */
+/* theme: fixed .solana-brand-palette */
+@font-face {
+  font-family: 'ABC Diatype';
+  src: url('/brand/fonts/diatype-regular.otf') format('opentype');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'ABC Diatype';
+  src: url('/brand/fonts/diatype-medium.otf') format('opentype');
+  font-weight: 500 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'ABC Diatype';
+  src: url('/brand/fonts/diatype-bold.otf') format('opentype');
+  font-weight: 700 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'ABC Diatype Semi-Mono';
+  src: url('/brand/fonts/diatype-semi-mono.otf') format('opentype');
+  font-weight: 400 700;
+  font-display: swap;
+}
+:root.solana-brand[data-theme] {
+  --solana-purple: #9945ff;
+  --solana-green: #14f195;
+  --sd-canvas: #f8f9fb;
+  --sd-surface: #ffffff;
+  --sd-chrome: #f1f2f6;
+  --sd-ink: #17151d;
+  --sd-muted: #666271;
+  --sd-line: #e2e0e9;
+  --sd-tint: #efe7fc;
+  --sd-accent: #6b27c5;
+  --sd-green-ink: #08784b;
+  --sd-shadow: #1910250b;
+  --ink: var(--sd-ink);
+  --muted: var(--sd-muted);
+  --line: var(--sd-line);
+  --blue: var(--sd-accent);
+  --blue-dark: #5820a3;
+  --lavender: var(--sd-tint);
+  --document-ink: var(--sd-ink);
+  --document-muted: var(--sd-muted);
+  --document-line: var(--sd-line);
+  font-family:
+    'ABC Diatype',
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  color: var(--sd-ink);
+  background: var(--sd-canvas);
+  color-scheme: light;
+}
+:root.solana-brand[data-theme='dark'] {
+  --sd-canvas: #101014;
+  --sd-surface: #17171e;
+  --sd-chrome: #131319;
+  --sd-ink: #f0eff5;
+  --sd-muted: #aaa5b8;
+  --sd-line: #303039;
+  --sd-tint: #292038;
+  --sd-accent: #c09aff;
+  --sd-green-ink: #14f195;
+  --sd-shadow: #00000030;
+  --blue-dark: #d4b5ff;
+  color-scheme: dark;
+}
+:root.solana-brand[data-theme] body {
+  background: var(--sd-canvas);
+}
+:root.solana-brand[data-theme] code,
+:root.solana-brand[data-theme] pre,
+:root.solana-brand[data-theme] kbd,
+:root.solana-brand[data-theme] .call-timer,
+:root.solana-brand[data-theme] .wallet-address,
+:root.solana-brand[data-theme] .auth-eyebrow {
+  font-family: 'ABC Diatype Semi-Mono', ui-monospace, monospace;
+}
+:where(:root.solana-brand[data-theme]) button,
+:where(:root.solana-brand[data-theme]) input,
+:where(:root.solana-brand[data-theme]) textarea,
+:where(:root.solana-brand[data-theme]) select {
+  color: var(--sd-ink);
+}
+:where(:root.solana-brand[data-theme]) button {
+  border-color: var(--sd-line);
+  background: var(--sd-surface);
+}
+:where(:root.solana-brand[data-theme]) button:hover:not(:disabled) {
+  background: var(--sd-tint);
+}
+:where(:root.solana-brand[data-theme]) input,
+:where(:root.solana-brand[data-theme]) textarea,
+:where(:root.solana-brand[data-theme]) select {
+  border-color: var(--sd-line);
+  background: var(--sd-surface);
+}
+:where(:root.solana-brand[data-theme]) input::placeholder,
+:where(:root.solana-brand[data-theme]) textarea::placeholder {
+  color: var(--sd-muted);
+  opacity: 1;
+}
+:where(:root.solana-brand[data-theme]) input[type='checkbox'],
+:where(:root.solana-brand[data-theme]) input[type='radio'] {
+  accent-color: var(--sd-accent);
+}
+:where(:root.solana-brand[data-theme]) button:focus-visible,
+:root.solana-brand[data-theme] a:focus-visible,
+:where(:root.solana-brand[data-theme]) input:focus-visible,
+:where(:root.solana-brand[data-theme]) textarea:focus-visible,
+:where(:root.solana-brand[data-theme]) select:focus-visible {
+  outline-color: var(--sd-accent);
+}
+:root.solana-brand[data-theme] .template-app,
+:root.solana-brand[data-theme] .template-app.app .workspace,
+:root.solana-brand[data-theme] .spaces-surface,
+:root.solana-brand[data-theme] .document-session,
+:root.solana-brand[data-theme] .document-column,
+:root.solana-brand[data-theme] .document-topbar,
+:root.solana-brand[data-theme] .document-chat-panel {
+  background: var(--sd-canvas);
+  color: var(--sd-ink);
+}
+:root.solana-brand[data-theme] .template-app.app .sidebar,
+:root.solana-brand[data-theme] .template-app .topbar,
+:root.solana-brand[data-theme] .icon-rail,
+:root.solana-brand[data-theme] .template-app .chat-workspace > .result-pane,
+:root.solana-brand[data-theme] .template-app .pane-header,
+:root.solana-brand[data-theme] .document-outline,
+:root.solana-brand[data-theme] .page-tree {
+  background: var(--sd-chrome);
+  border-color: var(--sd-line);
+}
+:root.solana-brand[data-theme] .template-app .wordmark {
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: -0.65px;
+  color: var(--sd-ink);
+  padding: 0 6px;
+}
+:root.solana-brand[data-theme] .wordmark strong {
+  font-weight: 700;
+}
+:root.solana-brand[data-theme] .wordmark .solana-mark {
+  width: 26px;
+  height: 24px;
+  object-fit: contain;
+}
+:root.solana-brand[data-theme] .icon-rail .rail-brand {
+  padding: 0;
+  letter-spacing: 0;
+}
+:root.solana-brand[data-theme] .rail-brand img {
+  width: 23px;
+  height: 22px;
+}
+:root.solana-brand[data-theme] .template-app .new-chat.nav-item {
+  border: 1px solid var(--sd-line);
+  color: var(--sd-ink);
+  background: var(--sd-surface);
+  margin-bottom: 24px;
+}
+:root.solana-brand[data-theme] .template-app .new-chat.nav-item svg {
+  color: var(--sd-green-ink);
+}
+:root.solana-brand[data-theme] .template-app .nav-item,
+:root.solana-brand[data-theme] .template-app .dot-nav,
+:root.solana-brand[data-theme] .template-app .thread-row,
+:root.solana-brand[data-theme] .template-app .sidebar-bottom .nav-item,
+:root.solana-brand[data-theme] .template-app .space-title,
+:root.solana-brand[data-theme] .template-app .space-open {
+  color: var(--sd-muted);
+}
+:root.solana-brand[data-theme] .template-app .nav-item:hover:not(:disabled),
+:root.solana-brand[data-theme] .template-app .dot-nav:hover:not(:disabled),
+:root.solana-brand[data-theme] .template-app .thread-row:hover:not(:disabled) {
+  background: var(--sd-tint);
+  color: var(--sd-ink);
+}
+:root.solana-brand[data-theme] .template-app .nav-item.active,
+:root.solana-brand[data-theme] .template-app .dot-nav.active,
+:root.solana-brand[data-theme] .template-app .thread-row.selected,
+:root.solana-brand[data-theme] .page-tree-item.active {
+  background: var(--sd-tint);
+  color: var(--sd-accent);
+}
+:root.solana-brand[data-theme] .template-app .nav-label,
+:root.solana-brand[data-theme] .template-app .spaces-heading,
+:root.solana-brand[data-theme] .template-app .thread-list .nav-label {
+  color: var(--sd-muted);
+  font-family: 'ABC Diatype Semi-Mono', monospace;
+  letter-spacing: 0.1em;
+  font-size: 10px;
+}
+:root.solana-brand[data-theme] .template-app .sidebar-empty,
+:root.solana-brand[data-theme] .template-app .sidebar-error,
+:root.solana-brand[data-theme] .template-app .sidebar small,
+:root.solana-brand[data-theme] .template-app .thread-row small,
+:root.solana-brand[data-theme] .template-app .version,
+:root.solana-brand[data-theme] .template-app .breadcrumbs,
+:root.solana-brand[data-theme] .template-app .breadcrumbs > span,
+:root.solana-brand[data-theme] .template-app .pause-button,
+:root.solana-brand[data-theme] .template-app .pause-button > span {
+  color: var(--sd-muted);
+}
+:root.solana-brand[data-theme] .template-app .breadcrumbs strong,
+:root.solana-brand[data-theme] .template-app .empty-chat-persona h2,
+:root.solana-brand[data-theme] .library-heading h1,
+:root.solana-brand[data-theme] .document-title,
+:root.solana-brand[data-theme] .page-heading h1 {
+  color: var(--sd-ink);
+}
+:root.solana-brand[data-theme] .template-app .version {
+  display: flex;
+  font-family: 'ABC Diatype Semi-Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.12em;
+}
+:root.solana-brand[data-theme] .template-app .version::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--solana-green);
+  margin: 4px 6px 0 0;
+}
+:root.solana-brand[data-theme] .template-app .empty-chat-persona {
+  position: relative;
+  padding-top: 24px;
+}
+:root.solana-brand[data-theme] .template-app .empty-chat-persona::before {
+  content: '';
+  position: absolute;
+  width: min(380px, 100%);
+  height: 160px;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background: url('/brand/solana-gradient.png') center/cover;
+  opacity: 0.07;
+  filter: blur(40px);
+  pointer-events: none;
+}
+:root.solana-brand[data-theme] .template-app .empty-chat-persona > * {
+  position: relative;
+}
+:root.solana-brand[data-theme] .template-app .empty-chat-persona h2 {
+  font-size: 25px;
+  letter-spacing: -0.8px;
+}
+:root.solana-brand[data-theme] .template-app .empty-chat-persona p,
+:root.solana-brand[data-theme] .template-app .chat-persona span,
+:root.solana-brand[data-theme] .template-app .chat-welcome p,
+:root.solana-brand[data-theme] .chat-compose-note,
+:root.solana-brand[data-theme] .muted,
+:root.solana-brand[data-theme] .library-heading p,
+:root.solana-brand[data-theme] .library-page-card p,
+:root.solana-brand[data-theme] .library-page-meta,
+:root.solana-brand[data-theme] .document-save-status,
+:root.solana-brand[data-theme] .document-back,
+:root.solana-brand[data-theme] .editor-hint,
+:root.solana-brand[data-theme] .document-outline strong {
+  color: var(--sd-muted);
+}
+:root.solana-brand[data-theme] .template-app .composer,
+:root.solana-brand[data-theme] .template-app .chat-composer,
+:root.solana-brand[data-theme] .document-chat-dock,
+:root.solana-brand[data-theme] .library-search,
+:root.solana-brand[data-theme] .library-page-card,
+:root.solana-brand[data-theme] .document-chat-setup,
+:root.solana-brand[data-theme] .modal,
+:root.solana-brand[data-theme] .memory-card,
+:root.solana-brand[data-theme] .task-detail-card,
+:root.solana-brand[data-theme] .page-review-card,
+:root.solana-brand[data-theme] .connection-action-card {
+  background: var(--sd-surface);
+  border-color: var(--sd-line);
+  box-shadow: 0 8px 32px var(--sd-shadow);
+  color: var(--sd-ink);
+}
+:root.solana-brand[data-theme] .template-app .composer textarea,
+:root.solana-brand[data-theme] .template-app .chat-composer textarea {
+  background: transparent;
+  color: var(--sd-ink);
+}
+:root.solana-brand[data-theme] .template-app .starter-suggestions button {
+  background: var(--sd-surface);
+  border-color: var(--sd-line);
+  color: var(--sd-muted);
+}
+:root.solana-brand[data-theme] .template-app .send-button,
+:root.solana-brand[data-theme] .primary,
+:root.solana-brand[data-theme] .document-primary,
+:root.solana-brand[data-theme] .page-review-card footer .review-primary,
+:root.solana-brand[data-theme] .document-chat-dock-bottom > button {
+  background: var(--solana-green);
+  color: #071a12;
+  border-color: var(--solana-green);
+  font-weight: 600;
+}
+:root.solana-brand[data-theme] .template-app .send-button:hover:not(:disabled),
+:root.solana-brand[data-theme] .primary:hover:not(:disabled),
+:root.solana-brand[data-theme] .document-primary:hover:not(:disabled),
+:root.solana-brand[data-theme]
+  .page-review-card
+  footer
+  .review-primary:hover:not(:disabled),
+:root.solana-brand[data-theme]
+  .document-chat-dock-bottom
+  > button:hover:not(:disabled) {
+  background: #36ffad;
+  color: #071a12;
+}
+:root.solana-brand[data-theme] .template-app .setup-card,
+:root.solana-brand[data-theme] .computer-setup,
+:root.solana-brand[data-theme] .call-receipt,
+:root.solana-brand[data-theme] .document-save-notice,
+:root.solana-brand[data-theme] .document-notice {
+  background: var(--sd-tint);
+  border-color: var(--sd-line);
+  color: var(--sd-ink);
+}
+:root.solana-brand[data-theme] .template-app .setup-card a,
+:root.solana-brand[data-theme] .computer-setup a,
+:root.solana-brand[data-theme] .chat-bubble a,
+:root.solana-brand[data-theme] .document-prose a,
+:root.solana-brand[data-theme] .document-outline button[aria-current='page'] {
+  color: var(--sd-accent);
+}
+:root.solana-brand[data-theme] .setup-icon {
+  background: var(--sd-surface);
+  color: var(--sd-accent);
+}
+:root.solana-brand[data-theme] .template-app .chat-bubble.assistant {
+  color: var(--sd-ink);
+}
+:root.solana-brand[data-theme] .template-app .chat-bubble.user {
+  background: var(--sd-tint);
+  color: var(--sd-ink);
+  border: 1px solid var(--sd-line);
+}
+:root.solana-brand[data-theme] .chat-bubble.user a {
+  color: var(--sd-accent);
+}
+:root.solana-brand[data-theme] .template-app .pane-tabs button,
+:root.solana-brand[data-theme] .computer-status,
+:root.solana-brand[data-theme] .computer-dot-picker,
+:root.solana-brand[data-theme] .computer-audit span,
+:root.solana-brand[data-theme] .computer-settings {
+  color: var(--sd-muted);
+}
+:root.solana-brand[data-theme] .template-app .pane-tabs .selected,
+:root.solana-brand[data-theme] .library-view-toggle button[aria-pressed='true'],
+:root.solana-brand[data-theme] .format-toolbar button[aria-pressed='true'] {
+  background: var(--sd-tint);
+  color: var(--sd-accent);
+}
+:root.solana-brand[data-theme]
+  .computer-tool-tabs
+  button[aria-selected='true'] {
+  border-bottom-color: var(--solana-green);
+  color: var(--sd-green-ink);
+}
+:root.solana-brand[data-theme] .computer-tool-tabs,
+:root.solana-brand[data-theme] .computer-settings,
+:root.solana-brand[data-theme] .computer-human,
+:root.solana-brand[data-theme] .computer-audit li,
+:root.solana-brand[data-theme] .library-section-label,
+:root.solana-brand[data-theme] .document-topbar,
+:root.solana-brand[data-theme] .format-toolbar,
+:root.solana-brand[data-theme] .document-outline {
+  border-color: var(--sd-line);
+}
+:root.solana-brand[data-theme] .computer-browser > .computer-row,
+:root.solana-brand[data-theme] .computer-current-url,
+:root.solana-brand[data-theme] .computer-control-pill,
+:root.solana-brand[data-theme] .computer-section pre,
+:root.solana-brand[data-theme] .chat-bubble pre,
+:root.solana-brand[data-theme] .document-prose pre,
+:root.solana-brand[data-theme] .document-prose code,
+:root.solana-brand[data-theme] .page-review-body {
+  background: var(--sd-chrome);
+  color: var(--sd-ink);
+  border-color: var(--sd-line);
+}
+:root.solana-brand[data-theme] .computer-browser > .computer-row input,
+:root.solana-brand[data-theme] .computer-screen-empty,
+:root.solana-brand[data-theme] .computer-panel .computer-screen,
+:root.solana-brand[data-theme] .library-view-toggle,
+:root.solana-brand[data-theme] .document-dropdown,
+:root.solana-brand[data-theme] .slash-menu {
+  background: var(--sd-surface);
+  border-color: var(--sd-line);
+  color: var(--sd-muted);
+}
+:root.solana-brand[data-theme] .computer-control-pill button {
+  background: var(--solana-green);
+  color: #071a12;
+}
+:root.solana-brand[data-theme] .library-eyebrow,
+:root.solana-brand[data-theme] .library-section-label h2,
+:root.solana-brand[data-theme] .library-page-card h3,
+:root.solana-brand[data-theme] .document-prose,
+:root.solana-brand[data-theme] .document-outline li > button,
+:root.solana-brand[data-theme] .document-menu button,
+:root.solana-brand[data-theme] .format-toolbar button,
+:root.solana-brand[data-theme] .slash-menu strong {
+  color: var(--sd-ink);
+}
+:root.solana-brand[data-theme] .library-page-icon {
+  background: var(--sd-tint);
+  color: var(--sd-accent);
+}
+:root.solana-brand[data-theme] .library-page-card:hover:not(:disabled),
+:root.solana-brand[data-theme] .document-dropdown button:hover,
+:root.solana-brand[data-theme] .slash-menu button.selected {
+  background: var(--sd-tint);
+  border-color: var(--sd-accent);
+}
+:root.solana-brand[data-theme] .document-source,
+:root.solana-brand[data-theme] .page-content-editor {
+  background: var(--sd-surface);
+  color: var(--sd-ink);
+  border-color: var(--sd-line);
+}
+:root.solana-brand[data-theme] .document-icon,
+:root.solana-brand[data-theme] .document-back,
+:root.solana-brand[data-theme] .library-card-arrow {
+  color: var(--sd-muted);
+}
+:root.solana-brand[data-theme] .document-prose blockquote {
+  border-color: var(--solana-purple);
+  color: var(--sd-muted);
+}
+:root.solana-brand[data-theme] .document-prose th,
+:root.solana-brand[data-theme] .document-prose .selectedCell::after {
+  background: var(--sd-tint);
+}
+:root.solana-brand[data-theme] .online-dot,
+:root.solana-brand[data-theme] .ready-pill > span {
+  background: var(--solana-green);
+}
+:root.solana-brand[data-theme] .mode-badge.live {
+  color: var(--sd-green-ink);
+  background: var(--sd-tint);
+}
+:root.solana-brand[data-theme] .call-view {
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    #4c237c 0%,
+    #172e28 55%,
+    #101714 100%
+  );
+  border: 1px solid #494051;
+}
+:root.solana-brand[data-theme] .call-live-dot {
+  background: var(--solana-green);
+}
+:root.solana-brand[data-theme] .call-caption small,
+:root.solana-brand[data-theme] .call-caption .call-user-caption {
+  color: #a4f5d0;
+}
+:root.solana-brand[data-theme] .mascot.solana-dot {
+  position: relative;
+}
+:root.solana-brand[data-theme] .mascot.solana-dot::after {
+  content: '';
+  position: absolute;
+  width: 23%;
+  height: 23%;
+  right: 7%;
+  bottom: 8%;
+  border-radius: 50%;
+  background: #101014 url('/brand/solana-logomark.svg') center/58% no-repeat;
+  border: 1px solid #9945ff60;
+  pointer-events: none;
+}
+:root.solana-brand[data-theme] .solana-dot[data-character='blue'] > img {
+  filter: hue-rotate(70deg);
+}
+:root.solana-brand[data-theme] .solana-dot[data-character='orange'] > img {
+  filter: hue-rotate(100deg);
+}
+:root.solana-brand[data-theme] .auth-page {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: var(--sd-canvas);
+}
+:root.solana-brand[data-theme] .auth-story {
+  position: relative;
+  background: #0c0d10;
+  color: #fff;
+  padding: clamp(32px, 5vw, 80px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+:root.solana-brand[data-theme] .auth-story::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('/brand/solana-gradient.png') 50% 65% / cover;
+  opacity: 0.24;
+}
+:root.solana-brand[data-theme] .auth-story > * {
+  position: relative;
+}
+:root.solana-brand[data-theme] .auth-wordmark {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-size: 24px;
+  letter-spacing: -0.8px;
+}
+:root.solana-brand[data-theme] .auth-wordmark img {
+  width: 34px;
+  height: 32px;
+}
+:root.solana-brand[data-theme] .auth-story-copy {
+  max-width: 510px;
+  padding: 70px 0;
+}
+:root.solana-brand[data-theme] .auth-eyebrow {
+  display: block;
+  color: #14f195;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  margin-bottom: 26px;
+}
+:root.solana-brand[data-theme] .auth-story h1 {
+  font-size: clamp(42px, 4.7vw, 72px);
+  font-weight: 500;
+  letter-spacing: -0.065em;
+  line-height: 1.06;
+  margin: 0 0 24px;
+}
+:root.solana-brand[data-theme] .auth-story h1 em {
+  font-style: normal;
+  color: #14f195;
+}
+:root.solana-brand[data-theme] .auth-story-copy p {
+  color: #d6d1e2;
+  font-size: 16px;
+  line-height: 1.7;
+  max-width: 400px;
+}
+:root.solana-brand[data-theme] .auth-capabilities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 28px;
+}
+:root.solana-brand[data-theme] .auth-capabilities span {
+  font-family: 'ABC Diatype Semi-Mono', monospace;
+  font-size: 11px;
+  padding: 8px 12px;
+  border: 1px solid #ffffff25;
+  border-radius: 30px;
+  color: #efecf7;
+}
+:root.solana-brand[data-theme] .auth-story footer {
+  font-family: 'ABC Diatype Semi-Mono', monospace;
+  color: #bab2cd;
+  font-size: 11px;
+}
+:root.solana-brand[data-theme] .auth-panel {
+  padding: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+:root.solana-brand[data-theme] .auth-card {
+  max-width: 390px;
+  width: 100%;
+}
+:root.solana-brand[data-theme] .auth-card > .solana-mark {
+  width: 42px;
+  height: 38px;
+  margin-bottom: 30px;
+}
+:root.solana-brand[data-theme] .auth-card h2 {
+  font-size: 34px;
+  line-height: 1.15;
+  margin-bottom: 14px;
+  letter-spacing: -1.2px;
+}
+:root.solana-brand[data-theme] .auth-card > p {
+  color: var(--sd-muted);
+  margin-bottom: 26px;
+  font-size: 14px;
+}
+:root.solana-brand[data-theme] .auth-card .auth-primary,
+:root.solana-brand[data-theme] .auth-card .wallet-adapter-button-trigger {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  min-height: 50px;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  background: var(--solana-green);
+  color: #071a12;
+  border: 0;
+}
+:root.solana-brand[data-theme] .auth-card .auth-primary:hover:not(:disabled),
+:root.solana-brand[data-theme] .auth-card .wallet-adapter-button-trigger:hover {
+  background: #36ffad;
+}
+:root.solana-brand[data-theme] .auth-card .auth-note {
+  font-size: 12px;
+  margin-top: 20px;
+  color: var(--sd-muted);
+}
+:root.solana-brand[data-theme] .auth-card details {
+  border-top: 1px solid var(--sd-line);
+  margin-top: 26px;
+  padding-top: 20px;
+  font-size: 12px;
+  color: var(--sd-muted);
+}
+:root.solana-brand[data-theme] .auth-card details summary {
+  cursor: pointer;
+}
+:root.solana-brand[data-theme] .auth-card details p {
+  margin: 12px 0;
+}
+:root.solana-brand[data-theme] .auth-card details button,
+:root.solana-brand[data-theme] .auth-card details input {
+  margin-top: 10px;
+}
+:root.solana-brand[data-theme]
+  .auth-card
+  details
+  .wallet-adapter-button-trigger {
+  background: var(--sd-tint);
+  color: var(--sd-accent);
+  margin-top: 12px;
+}
+:root.solana-brand[data-theme] .auth-error {
+  color: #b02748;
+  background: #ffedf2;
+  padding: 12px;
+  border-radius: 9px;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+:root.solana-brand[data-theme='dark'] .auth-error {
+  background: #361c28;
+  color: #ffadbf;
+}
+:root.solana-brand[data-theme] .account-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+:root.solana-brand[data-theme] .auth-social {
+  display: grid;
+  gap: 8px;
+  margin-top: 18px;
+}
+:root.solana-brand[data-theme] .auth-social button {
+  min-height: 42px;
+  border: 1px solid var(--sd-line);
+  border-radius: 10px;
+  background: var(--sd-tint);
+  color: var(--sd-ink);
+  font: inherit;
+  padding: 10px 12px;
+}
+:root.solana-brand[data-theme] .auth-social button:disabled {
+  opacity: 0.55;
+}
+:root.solana-brand[data-theme] .auth-account {
+  position: fixed;
+  z-index: 100;
+  right: 16px;
+  top: 64px;
+  width: min(380px, calc(100vw - 32px));
+  padding: 24px;
+  border: 1px solid var(--sd-line);
+  border-radius: 14px;
+  background: var(--sd-surface);
+  color: var(--sd-ink);
+  box-shadow: 0 16px 48px #0003;
+}
+:root.solana-brand[data-theme] .auth-account p {
+  font-size: 13px;
+  color: var(--sd-muted);
+  margin: 12px 0;
+}
+:root.solana-brand[data-theme] .account-control .wallet-address {
+  font-size: 11px;
+  color: var(--sd-muted);
+}
+:root.solana-brand[data-theme] .account-control .wallet-adapter-button {
+  font-family: inherit;
+  background: var(--sd-tint);
+  color: var(--sd-accent);
+  height: 32px;
+  line-height: 32px;
+  padding: 0 10px;
+  font-size: 11px;
+  border-radius: 8px;
+}
+:root.solana-brand[data-theme] .account-control .wallet-adapter-button img {
+  width: 16px;
+  height: 16px;
+}
+:root.solana-brand[data-theme] .wallet-adapter-modal-wrapper {
+  font-family: 'ABC Diatype', sans-serif;
+  background: #17171e;
+  border: 1px solid #303039;
+  box-shadow: 0 24px 80px #00000050;
+}
+:root.solana-brand[data-theme]
+  .wallet-adapter-modal-list
+  .wallet-adapter-button {
+  font-family: inherit;
+  color: #f0eff5;
+}
+:root.solana-brand[data-theme] .wallet-adapter-dropdown-list {
+  background: #17171e;
+  color: #f0eff5;
+}
+:root.solana-brand[data-theme] .wallet-adapter-dropdown-list-item:hover {
+  background: #292038;
+}
+@media (max-width: 900px) {
+  :root.solana-brand[data-theme] .auth-page {
+    grid-template-columns: 0.9fr 1fr;
+  }
+  :root.solana-brand[data-theme] .auth-story {
+    padding: 32px;
+  }
+  :root.solana-brand[data-theme] .auth-panel {
+    padding: 32px;
+  }
+  :root.solana-brand[data-theme] .auth-story h1 {
+    font-size: 45px;
+  }
+  :root.solana-brand[data-theme] .account-control .wallet-address {
+    display: none;
+  }
+}
+@media (max-width: 700px) {
+  :root.solana-brand[data-theme] .auth-page {
+    grid-template-columns: 1fr;
+  }
+  :root.solana-brand[data-theme] .auth-story {
+    min-height: 270px;
+    padding: 26px;
+  }
+  :root.solana-brand[data-theme] .auth-wordmark {
+    font-size: 20px;
+  }
+  :root.solana-brand[data-theme] .auth-story-copy {
+    padding: 32px 0 0;
+  }
+  :root.solana-brand[data-theme] .auth-story h1 {
+    font-size: 40px;
+    margin-bottom: 0;
+  }
+  :root.solana-brand[data-theme] .auth-story-copy p,
+  :root.solana-brand[data-theme] .auth-capabilities,
+  :root.solana-brand[data-theme] .auth-story footer,
+  :root.solana-brand[data-theme] .auth-story .auth-eyebrow {
+    display: none;
+  }
+  :root.solana-brand[data-theme] .auth-panel {
+    padding: 36px 26px 48px;
+    align-items: flex-start;
+  }
+  :root.solana-brand[data-theme] .auth-card > .solana-mark {
+    display: none;
+  }
+  :root.solana-brand[data-theme] .auth-card h2 {
+    font-size: 28px;
+  }
+  :root.solana-brand[data-theme] .template-app .topbar {
+    gap: 8px;
+  }
+  :root.solana-brand[data-theme] .template-app .breadcrumbs {
+    flex: 1;
+    min-width: 0;
+  }
+  :root.solana-brand[data-theme] .template-app .breadcrumbs strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  :root.solana-brand[data-theme] .template-app .top-actions {
+    flex-shrink: 0;
+    gap: 5px;
+  }
+  :root.solana-brand[data-theme] .account-control {
+    gap: 4px;
+  }
+  :root.solana-brand[data-theme] .account-control > button {
+    flex-shrink: 0;
+  }
+  :root.solana-brand[data-theme] .account-control .wallet-adapter-dropdown {
+    width: clamp(44px, calc(100vw - 302px), 110px);
+  }
+  :root.solana-brand[data-theme]
+    .account-control
+    .wallet-adapter-dropdown-list {
+    left: 0;
+    right: auto;
+  }
+  :root.solana-brand[data-theme] .account-control .wallet-adapter-button {
+    width: 100%;
+    font-size: 10px;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  :root.solana-brand[data-theme]
+    .account-control
+    .wallet-adapter-button-start-icon {
+    flex-shrink: 0;
+    margin-right: 4px;
+  }
+  :root.solana-brand[data-theme] .template-app .pause-button span {
+    display: none;
+  }
+}
+:root.solana-brand[data-theme] #privy-dialog,
+:root.solana-brand[data-theme] #privy-dialog * {
+  font-family: 'ABC Diatype', sans-serif;
+}
+:root.solana-brand[data-theme] #privy-dialog button {
+  background: transparent;
+  color: #f0eff5;
+}
+:root.solana-brand[data-theme] #privy-dialog button:hover {
+  background: #292038;
+}
+/* theme: end */

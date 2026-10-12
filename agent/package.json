@@ -1,0 +1,29 @@
+{
+  "name": "chatgptee-agent",
+  "version": "0.1.1",
+  "description": "ChatGPTEE Privy device authorization and bounded x402 payments",
+  "type": "module",
+  "bin": {
+    "chatgptee-agent": "./cli.mjs"
+  },
+  "files": [
+    "cli.mjs",
+    "session.mjs",
+    "README.md",
+    "npm-shrinkwrap.json"
+  ],
+  "engines": {
+    "node": ">=24"
+  },
+  "dependencies": {
+    "@privy-io/node": "0.35.0",
+    "@napi-rs/keyring": "2.1.1",
+    "@hpke/core": "^1.7.5",
+    "@hpke/chacha20poly1305": "^1.7.1",
+    "@x402/fetch": "2.28.0",
+    "@x402/evm": "2.28.0",
+    "@x402/svm": "2.28.0",
+    "@solana/kit": "^5.1.0",
+    "viem": "^2.44.2"
+  }
+}

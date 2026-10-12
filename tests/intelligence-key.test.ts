@@ -41,7 +41,7 @@ it('accepts the CLI project key and still accepts the template name', () => {
   expect(intelligenceApiKeyFromEnv({})).toBeUndefined();
 });
 
-it('reports either accepted name from the same label used by setup status and the copilotkit error', async () => {
+it('accepts either cloud key and exposes the local runtime when neither is configured', async () => {
   const key = intelligenceApiKeyFromEnv({
     CPK_INTELLIGENCE_API_KEY: 'cpk-from-cli',
   });
@@ -51,9 +51,10 @@ it('reports either accepted name from the same label used by setup status and th
   });
   expect(INTELLIGENCE_KEY_MISSING_LABEL).toContain('CPK_INTELLIGENCE_API_KEY');
   expect(INTELLIGENCE_KEY_MISSING_LABEL).toContain('INTELLIGENCE_API_KEY');
-  expect(setupStatus(configured).missing).toContain(
-    INTELLIGENCE_KEY_MISSING_LABEL,
-  );
+  expect(setupStatus(configured)).toMatchObject({
+    intelligence: false,
+    missing: [],
+  });
 
   const store = new Store(':memory:');
   const workspace = new WorkspaceStore(':memory:', 'owner');
@@ -62,11 +63,9 @@ it('reports either accepted name from the same label used by setup status and th
     const response = await platform.handle(
       new Request('http://127.0.0.1/api/copilotkit/info'),
     );
-    expect(response.status).toBe(503);
-    expect(await response.json()).toEqual({
-      error: `Setup required: ${INTELLIGENCE_KEY_MISSING_LABEL}.`,
-    });
-    expect(platform.setup().missing).toContain(INTELLIGENCE_KEY_MISSING_LABEL);
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({ mode: 'sse' });
+    expect(platform.setup().missing).toEqual([]);
   } finally {
     store.close();
     workspace.close();

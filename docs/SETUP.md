@@ -1,6 +1,6 @@
 # Running the template
 
-OpenDots runs a React app and a Node server. The server stores pages, Space and Dot configuration, and thread bindings in SQLite and connects to your configured conversation, model, and messaging services.
+ChatGPTEE runs a React app and a Node server. The server stores pages, Space and Dot configuration, and thread bindings in SQLite and connects to your configured conversation, model, and messaging services.
 
 ## Local development
 
@@ -9,12 +9,13 @@ Use Node.js 24 and npm.
 ```sh
 npm ci
 cp .env.example .env
+# Configure DATABASE_URL and your authentication/model settings before starting.
 npm run dev
 ```
 
-Open http://127.0.0.1:5173. The API runs on port 4310. Without service credentials, the app shows its setup state; it does not generate simulated replies.
+Open http://localhost:3460. The API runs on port 4310. A PostgreSQL URL is required for user authentication. Set `DATABASE_URL`, or the Supabase `POSTGRES_URL_NON_POOLING` alias. See [authentication and deployment](AUTHENTICATION.md) for Supabase and Privy settings. Without model credentials, a signed-in account shows its setup state; it does not generate simulated replies.
 
-During `npm run dev`, both http://localhost:5173 and http://127.0.0.1:5173 are allowed browser origins. The UI sends API requests through Vite's `/api` proxy. To use a different proxy or custom domain, set `APP_ORIGIN` to one exact origin or a comma-separated list, for example `APP_ORIGIN=http://localhost:5173,http://127.0.0.1:5173`. An explicit value replaces the development defaults. Origins must match the scheme, hostname, and port exactly; omit paths and trailing slashes. Whitespace around list entries is trimmed and empty entries are ignored. Outside development, leaving `APP_ORIGIN` unset requires the browser origin to match the request URL's origin. This setting preserves cross-site request blocking; it does not enable direct cross-origin browser access to the API.
+During `npm run dev`, both http://localhost:3460 and http://127.0.0.1:3460 are allowed browser origins. The UI sends API requests through Vite's `/api` proxy. To use a different proxy or custom domain, set `APP_ORIGIN` to one exact origin or a comma-separated list, for example `APP_ORIGIN=http://localhost:3460,http://127.0.0.1:3460`. An explicit value replaces the development defaults. Origins must match the scheme, hostname, and port exactly; omit paths and trailing slashes. Whitespace around list entries is trimmed and empty entries are ignored. Outside development, leaving `APP_ORIGIN` unset requires the browser origin to match the request URL's origin. This setting preserves cross-site request blocking; it does not enable direct cross-origin browser access to the API.
 
 For a built local app:
 
@@ -27,11 +28,13 @@ Open http://127.0.0.1:4310. Keep the server running for background work.
 
 ## Conversation services
 
-OpenDots requires CopilotKit Intelligence for conversations. Choose local evaluation below, a licensed [self-hosted deployment](https://docs.copilotkit.ai/intelligence/self-hosting), or hosted Intelligence. Pages and workspace metadata remain in SQLite; conversation history is stored separately. See [Data and privacy](../README.md#data-and-privacy).
+Set `OPENROUTER_API_KEY` and restart to start conversations with the default `anthropic/claude-haiku-5.5` model. Keep `MODEL_PROVIDER=openrouter` and `OPENROUTER_MODEL=anthropic/claude-haiku-5.5`. Without an Intelligence project key, messages, tool calls, state, and the latest run events persist locally in `DATABASE_PATH`. The existing chat, page review, history reload, scheduled compute, and voice compute use this local conversation runtime.
+
+CopilotKit Intelligence is optional for cloud conversation storage, Automatic Learning, and managed Slack channels. Choose local evaluation below, a licensed [self-hosted deployment](https://docs.copilotkit.ai/intelligence/self-hosting), or hosted Intelligence. Configuring an Intelligence key selects that storage mode; existing local history is not migrated. See [Data and privacy](../README.md#data-and-privacy).
 
 ### Hosted Intelligence
 
-To get a hosted project key, run these commands in the OpenDots folder after `cp .env.example .env`:
+To get a hosted project key, run these commands in the `OpenDots` folder after `cp .env.example .env`:
 
 ```sh
 npx copilotkit@latest login
@@ -40,13 +43,13 @@ npx copilotkit@latest project select
 
 `login` opens the browser to sign in or create an account. `project select` lets you select or create a project, and writes a project-scoped key to `.env` as `CPK_INTELLIGENCE_API_KEY`. Keep the generated `CPK_TELEMETRY_ID` together with the project key when deploying, including Docker. It connects SDK telemetry to the selected Intelligence account; see [signup and usage tracking](TELEMETRY.md). It removes an `INTELLIGENCE_API_KEY` line, so that the file holds one credential. Use the same project for Slack and Automatic Learning below.
 
-Do not run `copilotkit onboard` in this folder. Onboarding is for apps that do not have CopilotKit yet. OpenDots already has its integration.
+Do not run `copilotkit onboard` in this folder. Onboarding is for apps that do not have CopilotKit yet. ChatGPTEE already has its integration.
 
 ### Local Intelligence evaluation
 
-The [local evaluation preview](https://docs.copilotkit.ai/intelligence/self-hosting-local) runs Intelligence in Docker Desktop on macOS. Allocate at least 4 CPUs, 12 GiB RAM, and 40 GiB free storage. OpenDots needs Node.js 24. A CopilotKit account is required; the free Developer plan qualifies for a renewable 30-day evaluation license. This is not a production installation.
+The [local evaluation preview](https://docs.copilotkit.ai/intelligence/self-hosting-local) runs Intelligence in Docker Desktop on macOS. Allocate at least 4 CPUs, 12 GiB RAM, and 40 GiB free storage. ChatGPTEE needs Node.js 24. A CopilotKit account is required; the free Developer plan qualifies for a renewable 30-day evaluation license. This is not a production installation.
 
-Run from the OpenDots folder after `cp .env.example .env`, with Docker Desktop running:
+Run from the `OpenDots` folder after `cp .env.example .env`, with Docker Desktop running:
 
 ```sh
 npx copilotkit@latest login
@@ -55,35 +58,41 @@ npx copilotkit@latest local connect
 npx copilotkit@latest local connect --approve-connection
 ```
 
-`local connect` previews the changes; the approved command writes the local API URL, gateway WebSocket URL, and project key to `.env`. OpenDots accepts these directly. Do not run `project select` afterward: it selects a hosted project. Add `OPENAI_API_KEY` and `OPENAI_MODEL` for the app, then restart `npm run dev`. Setup's Learning model is separate from the app's model.
+`local connect` previews the changes; the approved command writes the local API URL, gateway WebSocket URL, and project key to `.env`. ChatGPTEE accepts these directly. Do not run `project select` afterward: it selects a hosted project. Add `OPENROUTER_API_KEY` for the app (Claude Haiku 5.5 is the default), then restart `npm run dev`. Setup's Learning model is separate from the app's model.
 
 Send a message and verify it appears in the local dashboard (`npx copilotkit@latest local login`). Use `local status` to inspect service health. Threads, Automatic Learning, and Channels are included; User Memory and Product Analytics are not. Channels require a public HTTPS address reachable by Slack or Teams.
 
 To restore the previous app connection, run `npx copilotkit@latest local cancel` and restart the app. This keeps the stack and its data. Use `local stop` to stop the stack, or `local renew` to renew its evaluation license. Existing hosted conversations are not copied into the local project.
 
-For this preview, run OpenDots directly on your Mac with `npm run dev`; Intelligence runs in Docker. The CLI's `localhost` URLs do not work from an OpenDots container. A containerized app needs an API address reachable from its container and a gateway address reachable from both the server and the browser, because the runtime advertises that gateway to browser clients. Changing the gateway to a Docker-only hostname is not sufficient.
+For this preview, run ChatGPTEE directly on your Mac with `npm run dev`; Intelligence runs in Docker. The CLI's `localhost` URLs do not work from a ChatGPTEE container. A containerized app needs an API address reachable from its container and a gateway address reachable from both the server and the browser, because the runtime advertises that gateway to browser clients. Changing the gateway to a Docker-only hostname is not sufficient.
 
 ### Connection settings
 
 Edit `.env` on the server and restart after changes:
 
-| Variable                                             | Purpose                                                                |
-| ---------------------------------------------------- | ---------------------------------------------------------------------- |
-| `INTELLIGENCE_API_KEY`                               | Project credential for conversation persistence                        |
-| `INTELLIGENCE_API_URL`                               | API endpoint override for your Intelligence deployment                 |
-| `INTELLIGENCE_GATEWAY_WS_URL`, `INTELLIGENCE_WS_URL` | Gateway WebSocket override (CLI name preferred; legacy name supported) |
-| `OPENAI_API_KEY`, `OPENAI_MODEL`                     | Model credential and model identifier                                  |
-| `OPENAI_BASE_URL`                                    | Compatible model API endpoint                                          |
-| `OWNER_ID`                                           | Stable identity used for this deployment's conversations               |
-| `DATABASE_PATH`                                      | SQLite file containing pages, workspace and work metadata              |
-| `OWNER_TOKEN`                                        | Application access token; required for external bindings               |
-| `APP_ORIGIN`                                         | Comma-separated exact browser origins for a proxy or custom domain     |
+| Variable                                             | Purpose                                                                 |
+| ---------------------------------------------------- | ----------------------------------------------------------------------- |
+| `INTELLIGENCE_API_KEY`                               | Optional project credential for cloud conversations, Learning and Slack |
+| `INTELLIGENCE_API_URL`                               | API endpoint override for your Intelligence deployment                  |
+| `INTELLIGENCE_GATEWAY_WS_URL`, `INTELLIGENCE_WS_URL` | Gateway WebSocket override (CLI name preferred; legacy name supported)  |
+| `OPENROUTER_API_KEY`, `OPENROUTER_MODEL`             | Default model credential; `anthropic/claude-haiku-5.5` for every Dot    |
+| `OPENROUTER_CLAUDE_MODEL`                            | Separate Claude batch model; live chat uses `OPENROUTER_MODEL`          |
+| `XAI_API_KEY`, `XAI_MODEL`                           | Optional Grok chat alternative and separate X Search credential         |
+| `XAI_IMAGE_MODEL`                                    | Avatar generation and editing model; Grok Imagine 2.0                   |
+| `E2B_API_KEY`, `E2B_TEMPLATE`, `E2B_TIMEOUT_MS`      | Desktop credential, template, and automatic pause timeout               |
+| `OWS_VAULT_PATH`                                     | Encrypted wallet vault directory                                        |
+| `MODEL_PROVIDER`, `COMPUTER_PROVIDER`                | Provider selection; defaults are OpenRouter and E2B                     |
+| `OPENAI_API_KEY`, `OPENAI_MODEL`, `OPENAI_BASE_URL`  | Optional OpenAI-compatible model alternative                            |
+| `OWNER_ID`                                           | Stable identity used for this deployment's conversations                |
+| `DATABASE_PATH`                                      | SQLite file containing local chats, pages, workspace and work metadata  |
+| `OWNER_TOKEN`                                        | Application access token; required for external bindings                |
+| `APP_ORIGIN`                                         | Comma-separated exact browser origins for a proxy or custom domain      |
 
 `npx copilotkit project select` deletes an `INTELLIGENCE_API_KEY` line and writes the same credential as `CPK_INTELLIGENCE_API_KEY`. The server reads either name. A non-empty `CPK_INTELLIGENCE_API_KEY` takes precedence over `INTELLIGENCE_API_KEY`.
 
-A non-empty `INTELLIGENCE_GATEWAY_WS_URL` takes precedence over `INTELLIGENCE_WS_URL`. Without either WebSocket override, OpenDots uses the hosted gateway. Set both the API and gateway endpoints when connecting a self-hosted deployment.
+A non-empty `INTELLIGENCE_GATEWAY_WS_URL` takes precedence over `INTELLIGENCE_WS_URL`. Without either WebSocket override, ChatGPTEE uses the hosted gateway. Set both the API and gateway endpoints when connecting a self-hosted deployment.
 
-The model environment variable names follow the configured provider adapter. Provider credentials belong in `.env`, not client-side variables or source code. Conversation history lives in the configured Intelligence project; copying the SQLite file alone does not back up that history.
+Claude Haiku 5.5 through OpenRouter is the default model for all Dots. Set `OPENROUTER_API_KEY` for chat, an optional `XAI_API_KEY` for avatars and X Search, and `E2B_API_KEY` for the default computer provider. Set `MODEL_PROVIDER=xai` or `MODEL_PROVIDER=openai` to use an explicit alternative chat provider. See [Dot integrations](DOT-INTEGRATIONS.md) for avatars, OWS wallets, and E2B. Provider credentials belong in `.env`, not client-side variables or source code. Back up SQLite for local chats. When an Intelligence key is configured, back up its conversation history separately.
 
 ## Pages and page conversations
 
@@ -112,11 +121,11 @@ Use the same secret on the app and browser processes. Browser navigation is read
 
 ## Persistent Dot computers
 
-For a separate browser, persistent files, and optional shell for each specialist, follow [Computer setup](COMPUTERS.md). This uses pinned OpenBot computer/supervisor services and per-Dot permissions. Parallel research tools remain available alongside configured computer tools. With the browser provider selected, Dots use their computer tools in place of the read-only public-page tool; enable each Dot's required capabilities before use.
+Set `E2B_API_KEY` for each specialist's separate desktop, browser, persistent files, and optional shell. E2B is the default provider; follow [Dot integrations](DOT-INTEGRATIONS.md#e2b-desktop) for permissions, human takeover, and pause/resume. For the original OpenBot computer/supervisor services, set `COMPUTER_PROVIDER=openbot` and follow [Computer setup](COMPUTERS.md). Parallel research tools remain available alongside configured computer tools. Enable each Dot's required capabilities before use.
 
 ## Slack
 
-OpenDots uses `@copilotkit/channels` with a managed Slack connection, following the runtime and channel pattern in [OpenTag](https://github.com/CopilotKit/OpenTag). The application declares the channel and its specialist agent; Intelligence manages the Slack adapter and delivery. You do not need a separate Slack webhook server or Socket Mode connection in OpenDots.
+ChatGPTEE uses `@copilotkit/channels` with a managed Slack connection, following the runtime and channel pattern in [OpenTag](https://github.com/CopilotKit/OpenTag). The application declares the channel and its specialist agent; Intelligence manages the Slack adapter and delivery. You do not need a separate Slack webhook server or Socket Mode connection in OpenDots.
 
 The CLI project-selection commands below are for hosted Intelligence. For local evaluation, configure Channels in the local dashboard and follow the [local Channels requirements](https://docs.copilotkit.ai/intelligence/self-hosting-local#connect-slack-or-microsoft-teams), including a public HTTPS address. Do not replace the local project key with `project select`.
 
@@ -126,7 +135,7 @@ Select the same Intelligence project used by this application, then create a uni
 
 ```sh
 npx --yes copilotkit@latest project select
-npx --yes copilotkit@latest channels add --name opendots --display-name "OpenDots" --adapter slack --json
+npx --yes copilotkit@latest channels add --name opendots --display-name "ChatGPTEE" --adapter slack --json
 ```
 
 Follow the CLI's returned `nextAction` to create the Slack app from its generated manifest, supply credentials through the managed setup flow, and run its `resumeCommand`. A `blocked` response means a Slack-console step is still needed; a `failed` response must be resolved before continuing. Keep Socket Mode off. Install or reinstall the generated app in your workspace with its requested scopes. Use a distinct channel name for separate deployments so they do not compete for deliveries.
@@ -144,15 +153,15 @@ SLACK_USER_IDS=U_REPLACE_WITH_YOUR_USER_ID
 SLACK_DOT_ID=REPLACE_WITH_DOT_ID
 ```
 
-`SLACK_CHANNEL_NAME` must exactly match the managed channel name, not a Slack conversation name such as `#general`. OpenTag calls this setting `INTELLIGENCE_CHANNEL_NAME`; OpenDots uses `SLACK_CHANNEL_NAME`. `SLACK_TEAM_ID` and the comma-separated `SLACK_USER_IDS` restrict who may invoke the specialist. `SLACK_DOT_ID` selects an existing Dot; find IDs in the authenticated `/api/workspace` response. If omitted, it defaults to the initial Dot.
+`SLACK_CHANNEL_NAME` must exactly match the managed channel name, not a Slack conversation name such as `#general`. OpenTag calls this setting `INTELLIGENCE_CHANNEL_NAME`; ChatGPTEE uses `SLACK_CHANNEL_NAME`. `SLACK_TEAM_ID` and the comma-separated `SLACK_USER_IDS` restrict who may invoke the specialist. `SLACK_DOT_ID` selects an existing Dot; find IDs in the authenticated `/api/workspace` response. If omitted, it defaults to the initial Dot.
 
-Restart OpenDots after changing environment settings and inspect Slack status in Settings & setup. Channel activation must complete before trying a message. Mention the installed bot in a channel it can access; subsequent messages in that followed thread go to the same specialist. Unrelated threads, bot events, edits, deletions, and users outside the allowlist do not start agent runs. Editing a message to add a mention is not supported; send a new message instead.
+Restart ChatGPTEE after changing environment settings and inspect Slack status in Settings & setup. Channel activation must complete before trying a message. Mention the installed bot in a channel it can access; subsequent messages in that followed thread go to the same specialist. Unrelated threads, bot events, edits, deletions, and users outside the allowlist do not start agent runs. Editing a message to add a mention is not supported; send a new message instead.
 
-This template maps permitted Slack users to the single OpenDots owner. Replies are visible to the Slack conversation's audience, so choose the specialist's Space access and permitted tools accordingly. This is not a multi-user identity model.
+This template maps permitted Slack users to the single ChatGPTEE owner. Replies are visible to the Slack conversation's audience, so choose the specialist's Space access and permitted tools accordingly. This is not a multi-user identity model.
 
 ### Verify your deployment
 
-From an allowed user, mention the bot and verify a response in the same Slack thread. Reply in that thread and confirm continuity. Check that an unrelated thread and an unapproved user cannot invoke it. Pause the assistant in OpenDots and verify that a permitted request receives a paused notice. Check Settings & setup for channel connection failures.
+From an allowed user, mention the bot and verify a response in the same Slack thread. Reply in that thread and confirm continuity. Check that an unrelated thread and an unapproved user cannot invoke it. Pause the assistant in ChatGPTEE and verify that a permitted request receives a paused notice. Check Settings & setup for channel connection failures.
 
 Local tests exercise channel behavior with fixtures. A live Slack mention/reply remains unverified until you provision the managed connection and model credentials. [Channels SDK documentation](https://github.com/CopilotKit/channels-sdk) describes extending the adapter and channel behavior.
 
@@ -181,7 +190,7 @@ For remote hosting, configure an HTTPS reverse proxy and the matching `APP_ORIGI
 
 ## Automatic Learning
 
-OpenDots connects [CopilotKit Automatic Learning](https://docs.copilotkit.ai/learning)
+ChatGPTEE connects [CopilotKit Automatic Learning](https://docs.copilotkit.ai/learning)
 to individual Dots. It uses the server-side Intelligence credential
 (`CPK_INTELLIGENCE_API_KEY` or `INTELLIGENCE_API_KEY`) and optional
 `INTELLIGENCE_API_URL`; no additional model key or frontend key is needed.
@@ -189,7 +198,7 @@ to individual Dots. It uses the server-side Intelligence credential
 1. Open **Learning** in the same Intelligence project and create a container for
    one focused workflow, such as `research-workflow`. IDs use 1–64 lowercase
    letters, numbers, and single hyphens.
-2. In OpenDots, edit the Dot and enter that ID under **Automatic Learning**.
+2. In ChatGPTEE, edit the Dot and enter that ID under **Automatic Learning**.
    Saving the ID configures routing; it does not create or verify the remote container.
 3. Start new conversations and complete related workflows. Each conversation keeps
    the container assigned when it was created. Existing conversations, including
@@ -217,7 +226,7 @@ conversations; pause Learning in Intelligence to stop its analysis. Turning off
 delivery does not stop evidence collection. A delivery denial or an unavailable
 initial skill snapshot fails the turn rather than silently continuing without the
 configured skills. Restore delivery or uncheck **Use published skills** to continue
-without them. Skills require review and publication in Intelligence; OpenDots does
+without them. Skills require review and publication in Intelligence; ChatGPTEE does
 not automatically approve them.
 
 The integration uses an explicit container list, so ambient

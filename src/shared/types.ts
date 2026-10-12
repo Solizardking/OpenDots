@@ -77,6 +77,8 @@ export interface Space {
 }
 export interface Dot {
   id: string;
+  avatarId?: string | null;
+  walletId?: string | null;
   /** Default destination for saved pages, not ownership. */
   spaceId: string;
   spaceIds: string[];
@@ -110,15 +112,28 @@ export interface CallReceipt {
 export interface SetupStatus {
   intelligence: boolean;
   model: boolean;
+  modelName?: string;
+  avatarGeneration?: boolean;
   browser: boolean;
   voice: boolean;
   slack: string;
   missing: string[];
 }
 export interface WorkspaceState {
+  dotMemory?: DotMemoryStatus[];
   spaces: Space[];
   dots: Dot[];
   conversations: Conversation[];
   setup: SetupStatus;
   calls: CallReceipt[];
+}
+export interface DotMemoryStatus {
+  dotId: string;
+  configured: boolean;
+  enabled: boolean;
+  pending: number;
+  synced: number;
+  error: string | null;
+  lastRecallAt: number | null;
+  memories: { id: string; text: string }[];
 }

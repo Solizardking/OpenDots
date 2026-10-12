@@ -1,0 +1,110 @@
+.trading-brain {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+.trading-brain p,
+.trading-brain small {
+  line-height: 1.6;
+}
+.trading-brain label {
+  display: grid;
+  gap: 7px;
+  font-size: 13px;
+}
+.trading-brain form {
+  display: grid;
+  gap: 12px;
+}
+.trading-brain textarea,
+.trading-brain input {
+  width: 100%;
+  box-sizing: border-box;
+}
+.trading-limits {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.trading-feeds {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.trading-feeds article,
+.trading-decision,
+.trading-event {
+  padding: 14px;
+  border: 1px solid var(--border, #444);
+  border-radius: 10px;
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+.trading-feeds a {
+  overflow-wrap: anywhere;
+}
+.trading-actions,
+.trading-decision header {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.trading-brain pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 11px;
+  max-height: 320px;
+  overflow: auto;
+  background: var(--surface, #191919);
+  padding: 12px;
+  border-radius: 8px;
+}
+.trading-brain summary {
+  cursor: pointer;
+  padding: 8px 0;
+}
+.trading-brain code {
+  overflow-wrap: anywhere;
+  user-select: all;
+  font-size: 11px;
+}
+.trading-brain svg {
+  width: 100%;
+  display: block;
+}
+.trading-brain svg line {
+  stroke: #aaa;
+  stroke-opacity: 0.4;
+}
+.trading-brain svg circle {
+  fill: #aab87c;
+  stroke: #596432;
+}
+.trading-brain svg text {
+  fill: currentColor;
+  font-size: 10px;
+}
+.trading-brain svg g {
+  cursor: pointer;
+}
+.trading-brain svg g:focus circle {
+  stroke: #eee;
+  stroke-width: 3;
+}
+@media (max-width: 650px) {
+  .trading-feeds,
+  .trading-limits {
+    grid-template-columns: 1fr;
+  }
+  .trading-actions button {
+    flex: 1;
+  }
+  .trading-decision header {
+    display: grid;
+  }
+  .trading-brain svg text {
+    font-size: 11px;
+  }
+}

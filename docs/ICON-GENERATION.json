@@ -1,0 +1,7 @@
+{
+  "mode": "built-in image_gen tool",
+  "prompt": "Use case: stylized-concept. Asset type: official macOS application icon for Solana Dots. Input image 1 is a character identity reference: the friendly furry claw-shaped mascot with mint green to cyan to violet fur, large glossy brown eyes, small smile, and the Solana patch. Create a distinctive polished macOS icon based on this exact mascot. Center the mascot in a rounded square dark navy glass tile with soft depth and subtle luminous teal and purple edges, generous transparent padding outside the tile. Keep the face expressive and recognizable and the three-stripe Solana chest patch legible. Simplify the mascot's silhouette and fur detail enough that the face reads clearly at small Dock sizes. Premium friendly 3D app icon, straight on, crisp clean edges, balanced square composition, no letters, no words, no watermark, no additional subjects. Transparent background outside the rounded-square tile.",
+  "reference": "public/brand/solana-dots-mascot.png",
+  "output": "public/brand/solana-dots-icon.png",
+  "macIcon": "artifacts/solana-dots/SolanaDots.icns"
+}

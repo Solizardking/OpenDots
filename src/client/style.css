@@ -2861,10 +2861,39 @@ h3 {
   min-height: 100%;
 }
 .computer-panel {
+  min-width: 0;
   padding: 18px;
   color: #333b49;
   font-size: 13px;
   line-height: 1.5;
+}
+.computer-provider-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 8px 20px;
+}
+.computer-provider-tabs button {
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+.computer-provider-tabs button[aria-selected='true'] {
+  background: #204744;
+  color: #b9f5df;
+}
+.cloud-browser-view {
+  width: 100%;
+  height: 400px;
+  border: 1px solid #36524c;
+  border-radius: 10px;
+}
+.browser-use-panel label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.browser-use-panel input[type='checkbox'] {
+  width: auto;
+  flex: 0 0 auto;
 }
 .computer-dot-picker {
   display: flex;
@@ -3508,6 +3537,56 @@ h3 {
 }
 
 /* Plush Dot avatars share identity and state across every surface. */
+.avatar-preview {
+  display: flex;
+  justify-content: center;
+  padding: 12px;
+}
+.avatar-preview .mascot {
+  width: 128px;
+  height: 128px;
+}
+.avatar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+.avatar-actions button {
+  font-size: 12px;
+}
+.wallet-editor details {
+  margin: 14px 0;
+}
+.wallet-editor summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 12px;
+}
+.wallet-editor button {
+  margin: 8px 6px 4px 0;
+  font-size: 12px;
+}
+.wallet-accounts code {
+  display: block;
+  overflow-wrap: anywhere;
+  font-size: 11px;
+  user-select: all;
+}
+.wallet-accounts > div {
+  margin: 12px 0;
+}
+.wallet-accounts {
+  max-height: 210px;
+  overflow: auto;
+}
+.wallet-receipt {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 11px;
+  max-height: 160px;
+  overflow: auto;
+}
 .mascot {
   display: inline-flex;
   align-items: center;

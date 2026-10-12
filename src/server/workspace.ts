@@ -1,6 +1,9 @@
 import { ComputerStore } from './computer-store.js';
+import { BrowserUseStore } from './browser-use-store.js';
 import { ConnectionStore } from './connection-store.js';
 import { Pages } from './pages.js';
+import { LocalConversations } from './local-conversations.js';
+import { DotMemoryStore } from './dot-memory-store.js';
 import { DatabaseSync } from 'node:sqlite';
 import { mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
@@ -10,7 +13,10 @@ import type { CallReceipt, Conversation, Dot, Space } from '../shared/types.js';
 export class WorkspaceStore {
   private db: DatabaseSync;
   readonly pages: Pages;
+  readonly localConversations: LocalConversations;
+  readonly dotMemory: DotMemoryStore;
   readonly computers: ComputerStore;
+  readonly browserUse: BrowserUseStore;
   readonly connections: ConnectionStore;
   constructor(
     path: string,
@@ -25,8 +31,13 @@ export class WorkspaceStore {
       CREATE TABLE IF NOT EXISTS task_threads(taskId TEXT PRIMARY KEY, threadId TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS calls(id TEXT PRIMARY KEY, threadId TEXT NOT NULL, startedAt INTEGER NOT NULL, endedAt INTEGER, status TEXT NOT NULL, transcript TEXT NOT NULL, error TEXT);
       CREATE TABLE IF NOT EXISTS captures(threadId TEXT PRIMARY KEY, value TEXT NOT NULL);`);
+    this.db.exec(
+      'CREATE TABLE IF NOT EXISTS avatars(id TEXT PRIMARY KEY, dataUrl TEXT NOT NULL, prompt TEXT NOT NULL, createdAt INTEGER NOT NULL)',
+    );
     for (const [table, column, definition] of [
       ['dots', 'learningContainerId', 'TEXT'],
+      ['dots', 'avatarId', 'TEXT'],
+      ['dots', 'walletId', 'TEXT'],
       ['dots', 'skillDeliveryEnabled', 'INTEGER NOT NULL DEFAULT 0'],
       ['thread_bindings', 'learningContainerId', 'TEXT'],
     ]) {
@@ -52,6 +63,9 @@ export class WorkspaceStore {
         COMMIT;`);
     }
     this.computers = new ComputerStore(this.db);
+    this.localConversations = new LocalConversations(this.db);
+    this.dotMemory = new DotMemoryStore(this.db, this.ownerId);
+    this.browserUse = new BrowserUseStore(this.db);
     this.connections = new ConnectionStore(this.db);
     this.pages = new Pages(this.db, (id) =>
       this.spaces().some((space) => space.id === id),
@@ -126,9 +140,13 @@ export class WorkspaceStore {
     spaceIds: string[] = [spaceId],
     learningContainerId: string | null = null,
     skillDeliveryEnabled = false,
+    avatarId: string | null = null,
+    walletId: string | null = null,
   ): Dot {
     this.validateSpaceAccess(spaceId, spaceIds);
     validateLearningSettings(learningContainerId, skillDeliveryEnabled);
+    if (avatarId && !this.avatar(avatarId))
+      throw new Error('Avatar not found.');
     const dot: Dot = {
       id: randomUUID(),
       spaceId,
@@ -139,13 +157,15 @@ export class WorkspaceStore {
       memoryAllowed,
       learningContainerId,
       skillDeliveryEnabled,
+      avatarId,
+      walletId,
       createdAt: Date.now(),
     };
     this.db.exec('BEGIN');
     try {
       this.db
         .prepare(
-          'INSERT INTO dots (id, spaceId, name, instructions, researchAllowed, memoryAllowed, createdAt, learningContainerId, skillDeliveryEnabled) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+          'INSERT INTO dots (id, spaceId, name, instructions, researchAllowed, memoryAllowed, createdAt, learningContainerId, skillDeliveryEnabled, avatarId, walletId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
         )
         .run(
           dot.id,
@@ -157,6 +177,8 @@ export class WorkspaceStore {
           dot.createdAt,
           learningContainerId,
           +skillDeliveryEnabled,
+          avatarId,
+          walletId,
         );
       for (const id of dot.spaceIds)
         this.db.prepare('INSERT INTO dot_spaces VALUES (?, ?)').run(dot.id, id);
@@ -189,10 +211,14 @@ export class WorkspaceStore {
       spaceIds?: string[];
       learningContainerId?: string | null;
       skillDeliveryEnabled?: boolean;
+      avatarId?: string | null;
+      walletId?: string | null;
     },
   ): Dot {
     const current = this.dot(id);
     if (!current) throw new Error('Dot not found.');
+    if (patch.avatarId && !this.avatar(patch.avatarId))
+      throw new Error('Avatar not found.');
     const defaultSpace = patch.spaceId ?? current.spaceId;
     const spaceIds = patch.spaceIds ?? current.spaceIds;
     this.validateSpaceAccess(defaultSpace, spaceIds);
@@ -219,6 +245,17 @@ export class WorkspaceStore {
           id,
         );
       this.db
+        .prepare('UPDATE dots SET avatarId=?, walletId=? WHERE id=?')
+        .run(
+          patch.avatarId === undefined
+            ? (current.avatarId ?? null)
+            : patch.avatarId,
+          patch.walletId === undefined
+            ? (current.walletId ?? null)
+            : patch.walletId,
+          id,
+        );
+      this.db
         .prepare('UPDATE dots SET spaceId=? WHERE id=?')
         .run(defaultSpace, id);
       this.db.prepare('DELETE FROM dot_spaces WHERE dotId=?').run(id);
@@ -230,6 +267,18 @@ export class WorkspaceStore {
       throw error;
     }
     return this.dot(id)!;
+  }
+  saveAvatar(dataUrl: string, prompt: string) {
+    const avatar = { id: randomUUID(), dataUrl, prompt, createdAt: Date.now() };
+    this.db
+      .prepare('INSERT INTO avatars VALUES (?, ?, ?, ?)')
+      .run(avatar.id, dataUrl, prompt, avatar.createdAt);
+    return avatar;
+  }
+  avatar(id: string) {
+    return this.db.prepare('SELECT * FROM avatars WHERE id=?').get(id) as
+      | { id: string; dataUrl: string; prompt: string; createdAt: number }
+      | undefined;
   }
   conversations(): Conversation[] {
     return this.db

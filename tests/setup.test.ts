@@ -1,6 +1,5 @@
 import { expect, it } from 'vitest';
 import {
-  INTELLIGENCE_KEY_MISSING_LABEL,
   setupStatus,
   type PlatformConfig,
 } from '../src/server/platform-config.js';
@@ -30,7 +29,7 @@ it('never claims Slack online without a complete managed channel declaration', (
     ).slack,
   ).toBe('online');
 });
-it('requires Intelligence and model setup and disables voice when either is absent', () => {
+it('allows local conversations and voice compute without the optional Intelligence key', () => {
   expect(
     setupStatus({
       ...config,
@@ -39,9 +38,13 @@ it('requires Intelligence and model setup and disables voice when either is abse
       voiceModel: 'fixture',
     }),
   ).toMatchObject({
-    missing: [INTELLIGENCE_KEY_MISSING_LABEL],
-    voice: false,
+    intelligence: false,
+    missing: [],
+    voice: true,
   });
+  expect(
+    setupStatus({ ...config, apiKey: '', intelligenceKey: '' }).missing,
+  ).toContain('OPENAI_API_KEY');
 });
 it('reports activation failure until the SDK recovers online', () => {
   const declared = {

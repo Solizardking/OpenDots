@@ -8,6 +8,11 @@ export function resolveAppOrigins(
       .map((value) => value.trim())
       .filter(Boolean);
   return nodeEnv === 'development'
-    ? ['http://localhost:5173', 'http://127.0.0.1:5173']
+    ? [
+        'http://localhost:5173',
+        'http://127.0.0.1:5173',
+        'http://localhost:3460',
+        'http://127.0.0.1:3460',
+      ]
     : undefined;
 }

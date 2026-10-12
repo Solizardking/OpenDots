@@ -6,6 +6,8 @@ describe('application origin configuration', () => {
     expect(resolveAppOrigins(undefined, 'development')).toEqual([
       'http://localhost:5173',
       'http://127.0.0.1:5173',
+      'http://localhost:3460',
+      'http://127.0.0.1:3460',
     ]);
   });
 

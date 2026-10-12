@@ -1,4 +1,5 @@
 import { createHmac } from 'node:crypto';
+import { E2BComputer } from './e2b-computer.js';
 import { z } from 'zod';
 import {
   computerInputs,
@@ -24,14 +25,29 @@ const controlSchema = z.object({
   request: z.object({ id: z.string(), status: z.string() }).optional(),
 });
 export class ComputerService {
+  private e2b?: E2BComputer;
   constructor(
     private workspace: WorkspaceStore,
     private config: PlatformConfig,
     private paused: () => boolean,
     private transport: typeof fetch = fetch,
     private deadlineMs = 70000,
-  ) {}
+  ) {
+    if (
+      config.computerProvider === 'e2b' ||
+      (config.e2bApiKey && config.computerProvider !== 'openbot')
+    ) {
+      if (config.e2bApiKey)
+        this.e2b = E2BComputer.for(
+          workspace,
+          config.e2bApiKey,
+          config.e2bTemplate,
+          config.e2bTimeoutMs,
+        );
+    }
+  }
   get configured() {
+    if (this.config.computerProvider === 'e2b' || this.e2b) return !!this.e2b;
     return !!(
       this.config.computerSupervisorUrl?.trim() &&
       this.config.computerSupervisorToken?.trim() &&
@@ -189,11 +205,16 @@ export class ComputerService {
   async status(id: string): Promise<ComputerStatus> {
     this.requireDot(id);
     const base = {
+      provider:
+        this.e2b || this.config.computerProvider === 'e2b'
+          ? ('e2b' as const)
+          : ('openbot' as const),
       configured: this.configured,
       permissions: this.workspace.computers.permissions(id),
       audit: this.workspace.computers.audit(id),
     };
     if (!this.configured) return { ...base, state: 'not_configured' };
+    if (this.e2b) return { ...base, ...(await this.e2b.status(id)) };
     try {
       const state = await this.existing(id);
       if (!state || state.status !== 'running')
@@ -245,6 +266,10 @@ export class ComputerService {
   async start(id: string) {
     await this.audited(id, 'start', 'owner', async () => {
       this.allowed(id, undefined, 'owner');
+      if (this.e2b) {
+        await this.e2b.start(id);
+        return;
+      }
       this.endpoint(id, await this.supervisor(`/computers/${id}/ensure`, {}));
     });
     return this.status(id);
@@ -253,6 +278,10 @@ export class ComputerService {
     await this.audited(id, 'stop', 'owner', async () => {
       if (!this.configured)
         throw new Error('Computer service is not configured.');
+      if (this.e2b) {
+        await this.e2b.stop(id);
+        return;
+      }
       await this.supervisor(`/computers/${id}/stop`, {});
     });
     return this.status(id);
@@ -262,6 +291,10 @@ export class ComputerService {
       if (!this.configured)
         throw new Error('Computer service is not configured.');
       if (verb === 'take') this.allowed(id, 'browser', 'owner');
+      if (this.e2b) {
+        await this.e2b.control(id, verb);
+        return;
+      }
       const url = await this.running(id);
       if (verb === 'take') this.allowed(id, 'browser', 'owner');
       let control: ComputerControl = controlSchema.parse(
@@ -341,6 +374,17 @@ export class ComputerService {
         }
       }, 50);
       try {
+        if (this.e2b) {
+          const result = await this.e2b.action(
+            id,
+            action,
+            parsed,
+            actor,
+            activeSignal,
+          );
+          this.allowed(id, kind, actor);
+          return result;
+        }
         const url = await this.running(id, activeSignal);
         this.allowed(id, kind, actor);
         activeSignal.throwIfAborted();

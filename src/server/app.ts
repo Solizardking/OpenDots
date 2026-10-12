@@ -1,5 +1,12 @@
+import { tradingRoutes } from './trading-routes.js';
 import { computerRoutes } from './computer-routes.js';
+import { browserUseRoutes } from './browser-use-routes.js';
 import { connectionRoutes } from './connection-routes.js';
+import { walletRoutes } from './wallet-routes.js';
+import { pumpRoutes } from './pump-routes.js';
+import { dflowRoutes } from './dflow-routes.js';
+import { openMarketRoutes } from './openmarket-routes.js';
+import { jupiterRoutes } from './jupiter-routes.js';
 import { Hono } from 'hono';
 import { bodyLimit } from 'hono/body-limit';
 import { timingSafeEqual } from 'node:crypto';
@@ -10,6 +17,7 @@ import { configured, type Config } from './research.js';
 import type { Platform } from './platform.js';
 import { VoiceService } from './voice.js';
 import { workspaceRoutes } from './workspace-routes.js';
+import { createOpenRouterBatchRoutes } from './openrouter-batch.js';
 const interval = z.number().int().min(60).max(31_536_000).nullable();
 export interface AppOptions {
   store: Store;
@@ -28,12 +36,14 @@ export function createApp({
   platform,
 }: AppOptions) {
   const app = new Hono();
-  app.use(
-    '/api/*',
+  app.use('/api/*', (c, next) =>
     bodyLimit({
-      maxSize: 1_000_000,
+      maxSize:
+        c.req.path.replace(/\/$/, '') === '/api/openrouter/batches'
+          ? 3_500_000
+          : 1_000_000,
       onError: (c) => c.json({ error: 'Request is too large.' }, 413),
-    }),
+    })(c, next),
   );
   app.use('/api/*', async (c, next) => {
     c.header('Cache-Control', 'no-store');
@@ -79,7 +89,7 @@ export function createApp({
         !timingSafeEqual(expected, supplied)
       )
         return c.json(
-          { error: 'Enter your owner access token to unlock OpenDots.' },
+          { error: 'Enter your owner access token to unlock ChatGPTEE.' },
           401,
         );
     }
@@ -91,6 +101,26 @@ export function createApp({
     await next();
   });
   if (platform) app.route('/api', computerRoutes(platform.computers));
+  if (platform) app.route('/api', browserUseRoutes(platform.browserUse));
+  if (platform)
+    app.route(
+      '/api/openrouter/batches',
+      createOpenRouterBatchRoutes({
+        database: store.database,
+        apiKey: platform.config.openrouterApiKey,
+        model: platform.config.openrouterClaudeModel,
+        enabled: () =>
+          !store.settings().paused && store.settings().researchAllowed,
+      }),
+    );
+  if (platform)
+    app.route('/api', walletRoutes(platform.wallets, platform.workspace));
+  if (platform)
+    app.route('/api', tradingRoutes(platform.trading, platform.pump));
+  if (platform) app.route('/api', pumpRoutes(platform.pump));
+  if (platform) app.route('/api', jupiterRoutes(platform.jupiter));
+  app.route('/api', dflowRoutes());
+  app.route('/api', openMarketRoutes(platform?.config.openMarket));
   if (platform)
     app.route(
       '/api',
@@ -203,6 +233,7 @@ export function createApp({
     )
       runner.abortAll();
     if (settings.paused) voice?.abortAll();
+    if (settings.paused) await platform?.browserUse.stopAll();
     else void voice?.resumePending();
     return c.json(settings);
   });

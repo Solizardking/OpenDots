@@ -2,6 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import { X } from 'lucide-react';
 import type { Dot, Memory, State, WorkspaceState } from '../shared/types';
 import { ConnectionsSection } from './ConnectionsSection';
+import { AvatarEditor } from './AvatarEditor';
+import { WalletEditor } from './WalletEditor';
+import { DesktopSetup } from './DesktopSetup';
 import {
   setThemePreference,
   themePreference,
@@ -60,6 +63,14 @@ export function WorkspaceDialog({
     dialog.type === 'dot' ? (dialog.dot?.skillDeliveryEnabled ?? false) : false,
   );
   const [busy, setBusy] = useState(false);
+  const [avatarBusy, setAvatarBusy] = useState(false);
+  const [walletBusy, setWalletBusy] = useState(false);
+  const [avatarId, setAvatarId] = useState<string | null>(
+    dialog.type === 'dot' ? (dialog.dot?.avatarId ?? null) : null,
+  );
+  const [walletId, setWalletId] = useState<string | null>(
+    dialog.type === 'dot' ? (dialog.dot?.walletId ?? null) : null,
+  );
   const [error, setError] = useState('');
   const [theme, setTheme] = useState(themePreference);
   const container = useRef<HTMLElement>(null);
@@ -123,11 +134,12 @@ export function WorkspaceDialog({
         >
           <X size={18} />
         </button>
-        <span className="eyebrow">OPENDOTS TEMPLATE</span>
+        <span className="eyebrow">CHATGPTEE</span>
         <h2 id="dialog-title">{title}</h2>
         <form
           onSubmit={async (e) => {
             e.preventDefault();
+            if (avatarBusy || walletBusy) return;
             setBusy(true);
             setError('');
             let path = '',
@@ -149,6 +161,8 @@ export function WorkspaceDialog({
                 memoryAllowed: memory,
                 learningContainerId: learningContainer.trim() || null,
                 skillDeliveryEnabled: skillDelivery,
+                avatarId,
+                walletId,
               };
             }
             if (dialog.type === 'settings') {
@@ -190,6 +204,19 @@ export function WorkspaceDialog({
                 required
               />
             </>
+          )}
+          {dialog.type === 'dot' && (
+            <AvatarEditor
+              avatarId={avatarId}
+              onChange={setAvatarId}
+              onBusy={setAvatarBusy}
+              configured={!!workspace.setup.avatarGeneration}
+              name={name}
+              identity={dialog.dot?.id}
+            />
+          )}
+          {dialog.type === 'dot' && workspace.setup.modelName && (
+            <p className="muted">Model: {workspace.setup.modelName}</p>
           )}
           {dialog.type !== 'settings' && (
             <>
@@ -285,10 +312,11 @@ export function WorkspaceDialog({
                   onChange={(e) => setMemory(e.target.checked)}
                 />
                 <span>
-                  <strong>Use saved memories</strong>
+                  <strong>Remember and use memories</strong>
                   <small>
-                    Include your preferences in new turns. Changing permission
-                    stops active work.
+                    Include saved preferences and recall this Dot’s past work.
+                    When Mem0 is connected, completed turns are sent there for
+                    long-term memory. Changing permission stops active work.
                   </small>
                 </span>
               </label>
@@ -313,6 +341,8 @@ export function WorkspaceDialog({
                 }}
               />
               <p className="muted" id="learning-help">
+                {!workspace.setup.intelligence &&
+                  'Learning needs an optional CopilotKit Intelligence project connection. '}
                 Create this container in your Intelligence project first. New
                 conversations will contribute evidence to it. Leave blank to
                 keep new conversations out of Learning. Existing conversations
@@ -346,6 +376,14 @@ export function WorkspaceDialog({
           )}
           {dialog.type === 'dot' && dialog.dot && (
             <ConnectionsSection dotId={dialog.dot.id} />
+          )}
+          {dialog.type === 'dot' && (
+            <WalletEditor
+              walletId={walletId}
+              onChange={setWalletId}
+              dotName={name}
+              onBusy={setWalletBusy}
+            />
           )}
           {dialog.type === 'schedule' && (
             <>
@@ -396,6 +434,14 @@ export function WorkspaceDialog({
               </p>
             </fieldset>
           )}
+          {dialog.type === 'settings' && <DesktopSetup />}
+          {dialog.type === 'settings' && (
+            <p>
+              <a href="/authorize">
+                Manage Privy agent access and API payments
+              </a>
+            </p>
+          )}
           {dialog.type === 'settings' && (
             <div className="config-note">
               <strong>Service setup</strong>
@@ -414,6 +460,15 @@ export function WorkspaceDialog({
                 ) : (
                   'Text configuration is present. A successful conversation confirms connectivity.'
                 )}
+              </p>
+              <p>
+                Conversation storage:{' '}
+                {workspace.setup.intelligence
+                  ? 'CopilotKit Intelligence'
+                  : 'local SQLite'}
+                .
+                {!workspace.setup.intelligence &&
+                  ' CopilotKit Intelligence is optional for cloud learning and Slack channels.'}
               </p>
               <p>
                 Slack: {workspace.setup.slack.replaceAll('_', ' ')}. Voice:{' '}
@@ -452,7 +507,10 @@ export function WorkspaceDialog({
               {error}
             </p>
           )}
-          <button className="primary full" disabled={busy}>
+          <button
+            className="primary full"
+            disabled={busy || avatarBusy || walletBusy}
+          >
             {busy ? 'Saving…' : 'Save'}
           </button>
         </form>

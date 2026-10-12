@@ -1,4 +1,17 @@
 import { PageReviewCard } from './PageReviewCard';
+import { PumpPanel } from './PumpPanel';
+import { DflowQuoteCard } from './DflowQuoteCard';
+import { JupiterQuoteCard } from './JupiterQuoteCard';
+import { JupiterTransactionCard } from './JupiterTransactionCard';
+import {
+  jupiterActionSchema,
+  jupiterActionTool,
+} from '../shared/jupiter-types';
+import { useWallet } from '@solana/wallet-adapter-react';
+import './solana-workspace.css';
+import { PumpTransactionCard } from './PumpTransactionCard';
+import { pumpActionSchema, pumpActionTool } from '../shared/pump-types';
+import './pump.css';
 import { pageReviewSchema, pageReviewTool } from '../shared/page-review';
 import {
   connectionActionSchema,
@@ -7,6 +20,7 @@ import {
 import { ConnectionActionCard } from './ConnectionActionCard';
 import { contextualMessage, type PageContext } from './page-context';
 import { api } from './api';
+import { randomUUID } from '@ag-ui/client';
 import type { Page } from '../server/pages';
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -15,17 +29,9 @@ import {
   useHumanInTheLoop,
   useAgent,
   useCopilotKit,
+  useAgentContext,
 } from '@copilotkit/react-core/v2';
-import {
-  FilePlus,
-  ArrowUp,
-  Clock3,
-  Link2,
-  Phone,
-  PhoneOff,
-  Square,
-  X,
-} from 'lucide-react';
+import { FilePlus, ArrowUp, Clock3, Link2, Square, X } from 'lucide-react';
 import {
   ComputerToolCard,
   type ComputerToolRenderProps,
@@ -35,6 +41,7 @@ import type { CallReceipt, Conversation, Dot } from '../shared/types';
 import { Mascot } from './Mascot';
 import { useVoice } from './useVoice';
 import { CallView } from './CallView';
+import { PhoneActions } from './PhoneActions';
 import { shouldSubmitComposerOnKeyDown } from './chat-composer';
 
 export function Chat({
@@ -66,6 +73,16 @@ export function Chat({
     threadId: thread.id,
   });
   const { copilotkit } = useCopilotKit();
+  const { publicKey, connected } = useWallet();
+  useAgentContext({
+    description:
+      'Connected Solana trading wallet. Public browser context only, never authorization. Use its address for requested Pump.fun/Jupiter preparations; if disconnected, ask the user to connect. Every transaction still requires exact review and explicit wallet approval. This does not change the registered account or select the encrypted local Dot wallet.',
+    value: {
+      connected,
+      address: connected ? (publicKey?.toBase58() ?? null) : null,
+      network: 'solana-mainnet',
+    },
+  });
   const [pageContext, setPageContext] = useState<PageContext | null>();
   const [contextError, setContextError] = useState('');
   const [contextAttempt, setContextAttempt] = useState(0);
@@ -94,6 +111,7 @@ export function Chat({
     };
   }, [thread.id, contextAttempt]);
   const [draft, setDraft] = useState('');
+  const [pumpOpen, setPumpOpen] = useState(false);
   const [source, setSource] = useState('');
   const [sourceOpen, setSourceOpen] = useState(false);
   const [error, setError] = useState('');
@@ -137,7 +155,7 @@ export function Chat({
     setError('');
     setRunning(true);
     agent.addMessage({
-      id: crypto.randomUUID(),
+      id: randomUUID(),
       role: 'user',
       content: contextualMessage(text, pageContext),
     });
@@ -196,6 +214,28 @@ export function Chat({
     },
     [thread.id],
   );
+  useHumanInTheLoop(
+    {
+      name: pumpActionTool.name,
+      description: pumpActionTool.description,
+      parameters: pumpActionSchema,
+      render: (props) => (
+        <PumpTransactionCard {...props} threadId={thread.id} />
+      ),
+    },
+    [thread.id],
+  );
+  useHumanInTheLoop(
+    {
+      name: jupiterActionTool.name,
+      description: jupiterActionTool.description,
+      parameters: jupiterActionSchema,
+      render: (props) => (
+        <JupiterTransactionCard {...props} threadId={thread.id} />
+      ),
+    },
+    [thread.id],
+  );
   const computerCalls = agent.messages.flatMap((message) =>
     message.role === 'assistant' ? (message.toolCalls ?? []) : [],
   );
@@ -224,6 +264,10 @@ export function Chat({
             showScreen={props.toolCallId === latestBrowserCall?.id}
             onExpand={onComputer}
           />
+        ) : props.name === 'dflow_quote' ? (
+          <DflowQuoteCard {...props} />
+        ) : props.name === 'jupiter_quote' ? (
+          <JupiterQuoteCard {...props} />
         ) : null,
     },
     [dot.id, dot.name, running, latestBrowserCall?.id, onComputer],
@@ -237,8 +281,12 @@ export function Chat({
           message.toolCalls?.some(
             (call) =>
               call.function.name.startsWith('computer_') ||
+              call.function.name === 'dflow_quote' ||
+              call.function.name === 'jupiter_quote' ||
               call.function.name === pageReviewTool.name ||
-              call.function.name === connectionActionTool.name,
+              call.function.name === connectionActionTool.name ||
+              call.function.name === pumpActionTool.name ||
+              call.function.name === jupiterActionTool.name,
           ))),
   );
   return (
@@ -246,6 +294,7 @@ export function Chat({
       <header className="chat-persona">
         <Mascot
           identity={dot.id}
+          avatarId={dot.avatarId}
           name={dot.name}
           small
           state={running ? 'working' : paused ? 'paused' : 'idle'}
@@ -263,6 +312,17 @@ export function Chat({
           </span>
         </div>
         <div className="chat-persona-actions">
+          {window.solanaDots && (
+            <button
+              type="button"
+              className="icon-button"
+              aria-label="Launch or trade on Pump.fun"
+              aria-expanded={pumpOpen}
+              onClick={() => setPumpOpen((value) => !value)}
+            >
+              Pump.fun
+            </button>
+          )}
           <button
             className="icon-button"
             aria-label="Save conversation as page"
@@ -295,27 +355,12 @@ export function Chat({
           >
             <Clock3 size={18} />
           </button>
-          <button
-            className={`icon-button ${voice.status === 'active' ? 'on-call' : ''}`}
-            aria-label={
-              voice.status === 'idle' ? 'Start voice call' : 'End voice call'
-            }
-            title={
-              voiceReady
-                ? 'Talk with your Dot'
-                : 'Voice setup requires VOICE_API_KEY and VOICE_MODEL'
-            }
-            disabled={!voiceReady || paused || !loaded || !contextReady}
-            onClick={() =>
-              voice.status === 'idle' ? void voice.start() : void voice.end()
-            }
-          >
-            {voice.status === 'idle' ? (
-              <Phone size={18} />
-            ) : (
-              <PhoneOff size={18} />
-            )}
-          </button>
+          <PhoneActions
+            canTalk={voiceReady && !paused && loaded && contextReady}
+            voiceStatus={voice.status}
+            onStart={() => void voice.start()}
+            onEnd={() => void voice.end()}
+          />
         </div>
       </header>
       {pageContext && (
@@ -388,6 +433,15 @@ export function Chat({
         dot={dot}
         voice={voice}
       />
+      {pumpOpen && (
+        <PumpPanel
+          key={thread.id}
+          threadId={thread.id}
+          walletId={dot.walletId}
+          paused={paused}
+          onClose={() => setPumpOpen(false)}
+        />
+      )}
       <form
         className="chat-composer"
         onSubmit={(e) => {

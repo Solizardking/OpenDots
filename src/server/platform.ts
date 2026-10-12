@@ -1,5 +1,11 @@
+import { TradingService } from './trading-service.js';
 import { ComputerService } from './computer-service.js';
+import { BrowserUseService } from './browser-use-service.js';
+import { WalletService } from './wallet-service.js';
+import { PumpService } from './pump-service.js';
+import { JupiterService } from './jupiter-service.js';
 import { ConnectionService } from './connections.js';
+import { publicMcpTransport } from './public-mcp-transport.js';
 import { PageService } from './page-service.js';
 import { randomUUID } from 'node:crypto';
 import {
@@ -14,21 +20,26 @@ import { Store } from './store.js';
 import { WorkspaceStore } from './workspace.js';
 import { DotAgent } from './dot-agent.js';
 import { runThreadTurn } from './headless.js';
-import {
-  INTELLIGENCE_KEY_MISSING_LABEL,
-  setupStatus,
-  type PlatformConfig,
-} from './platform-config.js';
+import { setupStatus, type PlatformConfig } from './platform-config.js';
 import { validateRuntimeScope } from './runtime-scope.js';
 import { learningSelector } from './learning.js';
 import { SetupTelemetry } from './setup-telemetry.js';
+import { LocalConversationRunner } from './local-runner.js';
+import { DotMemoryService } from './dot-memory.js';
 export class Platform {
   private channelStartupFailed = false;
   readonly setupTelemetry: SetupTelemetry;
   readonly pages: PageService;
   readonly computers: ComputerService;
+  readonly browserUse: BrowserUseService;
+  readonly wallets: WalletService;
+  readonly pump: PumpService;
+  readonly jupiter: JupiterService;
   readonly connections: ConnectionService;
+  readonly memory: DotMemoryService;
+  readonly trading: TradingService;
   readonly intelligence?: CopilotKitIntelligence;
+  readonly localRunner?: LocalConversationRunner;
   readonly handler?: CopilotHonoApp;
   constructor(
     readonly store: Store,
@@ -36,28 +47,66 @@ export class Platform {
     readonly config: PlatformConfig,
   ) {
     this.setupTelemetry = new SetupTelemetry(store);
+    this.memory = new DotMemoryService(store, workspace, config);
+    this.trading = new TradingService(store, workspace, config.tradingEnv);
+    this.wallets = new WalletService(config.owsVaultPath || 'data/ows');
+    this.pump = new PumpService(
+      store.database,
+      workspace,
+      this.wallets,
+      config,
+      () => store.settings().paused,
+    );
+    this.jupiter = new JupiterService(
+      store.database,
+      workspace,
+      config,
+      () => store.settings().paused,
+    );
+    this.browserUse = new BrowserUseService(
+      workspace,
+      config,
+      () => store.settings().paused,
+    );
     this.computers = new ComputerService(
       workspace,
       config,
       () => store.settings().paused,
     );
-    this.connections = new ConnectionService(workspace.connections);
+    this.connections = new ConnectionService(
+      workspace.connections,
+      config.publicMcp ? publicMcpTransport : undefined,
+    );
+    if (!config.intelligenceKey)
+      this.localRunner = new LocalConversationRunner(workspace);
     this.pages = new PageService(workspace, () => {
       this.requireReady();
-      return this.intelligence!;
+      return (
+        this.intelligence ?? {
+          getOrCreateThread: async () => undefined,
+          getThreadMessages: async ({ threadId }: { threadId: string }) => ({
+            messages: this.localRunner!.getThreadMessages(threadId),
+          }),
+        }
+      );
     });
-    if (!config.intelligenceKey) return;
-    this.intelligence = new CopilotKitIntelligence({
-      apiKey: config.intelligenceKey,
-      apiUrl: config.intelligenceApiUrl,
-      wsUrl: config.intelligenceWsUrl,
-      getLearningContainerId: learningSelector(
-        workspace,
-        config.slackDotId ?? workspace.dots()[0]?.id,
-      ),
-    });
+    if (config.intelligenceKey)
+      this.intelligence = new CopilotKitIntelligence({
+        apiKey: config.intelligenceKey,
+        apiUrl: config.intelligenceApiUrl,
+        wsUrl: config.intelligenceWsUrl,
+        getLearningContainerId: learningSelector(
+          workspace,
+          config.slackDotId ?? workspace.dots()[0]?.id,
+        ),
+      });
     const channels = [];
-    if (config.slackChannel && config.slackTeam && config.slackUsers.length) {
+    if (
+      this.intelligence &&
+      config.slackChannel &&
+      config.slackTeam &&
+      config.slackUsers.length
+    ) {
       const dotId = config.slackDotId ?? workspace.dots()[0].id;
       if (!workspace.dot(dotId))
         throw new Error('SLACK_DOT_ID does not identify an existing Dot.');
@@ -74,37 +123,47 @@ export class Platform {
             dotId,
             true,
             this.setupTelemetry,
+            this.memory,
+            this.trading,
           ),
       });
       channels.push(slack);
     }
-    const runtime = new CopilotRuntime({
-      intelligence: this.intelligence,
+    const agents = async () =>
+      Object.fromEntries(
+        workspace
+          .dots()
+          .map((dot) => [
+            dot.id,
+            new DotAgent(
+              store,
+              workspace,
+              config,
+              dot.id,
+              false,
+              this.setupTelemetry,
+              this.memory,
+              this.trading,
+            ),
+          ]),
+      );
+    const common = {
       telemetryId: this.setupTelemetry.identity,
       telemetryProperties: this.setupTelemetry.metadata,
-      identifyUser: async () => ({
-        id: workspace.ownerId,
-        name: 'OpenDots owner',
-      }),
-      agents: async () =>
-        Object.fromEntries(
-          workspace
-            .dots()
-            .map((dot) => [
-              dot.id,
-              new DotAgent(
-                store,
-                workspace,
-                config,
-                dot.id,
-                false,
-                this.setupTelemetry,
-              ),
-            ]),
-        ),
-      channels,
-      generateThreadNames: true,
-    });
+      agents,
+    };
+    const runtime = this.intelligence
+      ? new CopilotRuntime({
+          ...common,
+          intelligence: this.intelligence,
+          identifyUser: async () => ({
+            id: workspace.ownerId,
+            name: 'Solana Dots owner',
+          }),
+          channels,
+          generateThreadNames: true,
+        })
+      : new CopilotRuntime({ ...common, runner: this.localRunner });
     this.handler = createCopilotHonoHandler({
       runtime,
       basePath: '/api/copilotkit',
@@ -122,11 +181,11 @@ export class Platform {
   requireReady() {
     const missing = this.setup().missing;
     if (missing.length)
-      throw new Error(
-        `Setup required: ${missing.join(', ')}. Conversations require CopilotKit Intelligence.`,
-      );
+      throw new Error(`Setup required: ${missing.join(', ')}.`);
   }
   async start() {
+    this.memory.start();
+    this.trading.start();
     this.setupTelemetry.start();
     if (this.handler?.channels) {
       try {
@@ -144,15 +203,23 @@ export class Platform {
     }
   }
   async stop() {
-    await this.setupTelemetry.stop();
-    await this.handler?.channels?.stop();
+    const results = await Promise.allSettled([
+      this.browserUse.stopAll(),
+      this.localRunner?.stopAll(),
+      this.setupTelemetry.stop(),
+      this.handler?.channels?.stop(),
+      this.memory.stop(),
+      this.trading.stop(),
+    ]);
+    const failed = results.find((result) => result.status === 'rejected');
+    if (failed?.status === 'rejected') throw failed.reason;
   }
   async createConversation(dotId: string, title: string) {
     this.requireReady();
     if (!this.workspace.dot(dotId)) throw new Error('Dot not found.');
     const id = randomUUID();
     try {
-      await this.intelligence!.createThread({
+      await this.intelligence?.createThread({
         threadId: id,
         userId: this.workspace.ownerId,
         agentId: dotId,
@@ -168,10 +235,12 @@ export class Platform {
   async history(threadId: string): Promise<string> {
     this.requireReady();
     this.workspace.requireThread(threadId);
-    const history = await this.intelligence!.getThreadMessages({
-      threadId,
-      userId: this.workspace.ownerId,
-    });
+    const history = this.intelligence
+      ? await this.intelligence.getThreadMessages({
+          threadId,
+          userId: this.workspace.ownerId,
+        })
+      : { messages: this.localRunner!.getThreadMessages(threadId) };
     return history.messages
       .filter((message) => ['user', 'assistant'].includes(message.role))
       .slice(-12)
@@ -185,7 +254,7 @@ export class Platform {
   async handle(request: Request): Promise<Response> {
     if (!this.handler)
       return Response.json(
-        { error: `Setup required: ${INTELLIGENCE_KEY_MISSING_LABEL}.` },
+        { error: `Setup required: ${this.setup().missing.join(', ')}.` },
         { status: 503 },
       );
     let body: unknown;
@@ -228,5 +297,10 @@ export class Platform {
       signal,
       metadata,
     );
+  }
+  messagingTurn(threadId: string, prompt: string, signal: AbortSignal) {
+    return this.turn(threadId, prompt, signal, {
+      opendotsSource: 'spectrum_message',
+    });
   }
 }

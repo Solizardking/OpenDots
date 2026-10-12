@@ -11,6 +11,7 @@ import ReactMarkdown from 'react-markdown';
 import type { Dot, Result, Status } from '../shared/types';
 import { Mascot } from './Mascot';
 import { ComputerPanel } from './ComputerPanel';
+import { BrowserUsePanel } from './BrowserUsePanel';
 export function ResultPane({
   latest,
   status,
@@ -28,6 +29,9 @@ export function ResultPane({
 }) {
   const [resultTab, setResultTab] = useState<'Brief' | 'Computer'>('Computer');
   const [computerDotId, setComputerDotId] = useState(defaultDotId);
+  const [computerProvider, setComputerProvider] = useState<
+    'Desktop' | 'Browser Use'
+  >('Desktop');
   const computerDot =
     dots.find((dot) => dot.id === computerDotId) ??
     dots.find((dot) => dot.id === defaultDotId) ??
@@ -75,7 +79,29 @@ export function ResultPane({
             </select>
           </label>
           {computerDot ? (
-            <ComputerPanel key={computerDot.id} dot={computerDot} />
+            <>
+              <div
+                className="computer-provider-tabs"
+                role="tablist"
+                aria-label="Computer provider"
+              >
+                {(['Desktop', 'Browser Use'] as const).map((name) => (
+                  <button
+                    key={name}
+                    role="tab"
+                    aria-selected={computerProvider === name}
+                    onClick={() => setComputerProvider(name)}
+                  >
+                    {name}
+                  </button>
+                ))}
+              </div>
+              {computerProvider === 'Desktop' ? (
+                <ComputerPanel key={computerDot.id} dot={computerDot} />
+              ) : (
+                <BrowserUsePanel key={computerDot.id} dot={computerDot} />
+              )}
+            </>
           ) : (
             <p className="computer-panel">
               Create a Dot to give it a computer.
@@ -105,7 +131,7 @@ export function ResultPane({
                 const url = URL.createObjectURL(blob);
                 const anchor = document.createElement('a');
                 anchor.href = url;
-                anchor.download = 'opendots-brief.txt';
+                anchor.download = 'chatgptee-brief.txt';
                 anchor.click();
                 URL.revokeObjectURL(url);
               }}
@@ -177,6 +203,7 @@ export function ResultPane({
         <div className="pane-empty">
           <Mascot
             identity={defaultDotId}
+            avatarId={dots.find((dot) => dot.id === defaultDotId)?.avatarId}
             name={dots.find((dot) => dot.id === defaultDotId)?.name}
             state={dotState}
           />

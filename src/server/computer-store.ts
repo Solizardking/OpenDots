@@ -7,7 +7,26 @@ import type {
 export class ComputerStore {
   constructor(private db: DatabaseSync) {
     db.exec(`CREATE TABLE IF NOT EXISTS computer_permissions(dotId TEXT PRIMARY KEY,value TEXT NOT NULL);
+      CREATE TABLE IF NOT EXISTS e2b_computers(dotId TEXT PRIMARY KEY,value TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS computer_audit(id TEXT PRIMARY KEY,dotId TEXT NOT NULL,action TEXT NOT NULL,actor TEXT NOT NULL,outcome TEXT NOT NULL,createdAt INTEGER NOT NULL);`);
+  }
+  e2b(id: string) {
+    const row = this.db
+      .prepare('SELECT value FROM e2b_computers WHERE dotId=?')
+      .get(id);
+    return row
+      ? (JSON.parse(String(row.value)) as {
+          sandboxId: string;
+          holder: 'bot' | 'human';
+          resumeSnapshotRequired: boolean;
+          snapshotId: number;
+        })
+      : undefined;
+  }
+  saveE2B(id: string, state: NonNullable<ReturnType<ComputerStore['e2b']>>) {
+    this.db
+      .prepare('INSERT OR REPLACE INTO e2b_computers VALUES (?,?)')
+      .run(id, JSON.stringify(state));
   }
   permissions(id: string): ComputerPermissions {
     const row = this.db

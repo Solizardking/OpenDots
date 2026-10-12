@@ -1,0 +1,135 @@
+.jupiter-panel,
+.jupiter-quote-card,
+.jupiter-transaction-card {
+  min-width: 0;
+  border: 1px solid var(--sd-line, var(--line));
+  border-radius: 16px;
+  background: var(--sd-surface, #fff);
+  padding: 1rem;
+}
+.jupiter-panel > header,
+.jupiter-quote-card > header,
+.jupiter-transaction-card > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.jupiter-panel h2,
+.jupiter-transaction-card h3 {
+  margin: 0 0 0.5rem;
+}
+.jupiter-panel p,
+.jupiter-quote-card p,
+.jupiter-transaction-card p {
+  line-height: 1.6;
+  font-size: 0.85rem;
+}
+.jupiter-panel form,
+.jupiter-panel-fields,
+.jupiter-review-controls {
+  display: grid;
+  gap: 0.75rem;
+}
+.jupiter-panel label {
+  display: grid;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+}
+.jupiter-panel input:not([type='checkbox']),
+.jupiter-panel select {
+  box-sizing: border-box;
+  min-width: 0;
+  width: 100%;
+  padding: 0.65rem;
+  border: 1px solid var(--sd-line, var(--line));
+  border-radius: 8px;
+  color: inherit;
+  background: var(--sd-canvas, #f8f9fb);
+}
+.jupiter-panel .jupiter-check,
+.jupiter-review-controls label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+.jupiter-panel small,
+.jupiter-quote-card > header span,
+.jupiter-transaction-card > header span {
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--sd-muted, #666);
+}
+.jupiter-panel-actions,
+.jupiter-review-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.jupiter-panel-actions button,
+.jupiter-review-actions button {
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--sd-line, var(--line));
+  border-radius: 8px;
+}
+.jupiter-panel .jupiter-quote-card,
+.jupiter-panel .jupiter-transaction-card {
+  margin-top: 1rem;
+}
+.jupiter-quote-card code,
+.jupiter-transaction-card code {
+  overflow-wrap: anywhere;
+  font-size: 0.75rem;
+}
+.jupiter-values {
+  display: grid;
+  gap: 0.5rem;
+  margin: 1rem 0;
+  font-size: 0.8rem;
+}
+.jupiter-values > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+  gap: 0.75rem;
+}
+.jupiter-values dt {
+  color: var(--sd-muted, #666);
+}
+.jupiter-values dd {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.jupiter-values dd code {
+  display: block;
+}
+.jupiter-transaction-card details {
+  margin: 0.75rem 0;
+}
+.jupiter-transaction-card pre {
+  max-height: 200px;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.jupiter-transaction-card textarea {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 72px;
+  resize: vertical;
+}
+.jupiter-notice {
+  padding: 0.75rem;
+  border-radius: 8px;
+  background: var(--sd-canvas, #f8f9fb);
+}
+@media (max-width: 600px) {
+  .jupiter-values > div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.2rem;
+  }
+  .jupiter-panel-actions button,
+  .jupiter-review-actions button {
+    flex: 1;
+  }
+}

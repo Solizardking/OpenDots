@@ -1,0 +1,66 @@
+.batch-panel {
+  line-height: 1.55;
+}
+.batch-panel .batch-model {
+  font-size: 12px;
+  overflow-wrap: anywhere;
+  color: var(--sd-muted);
+}
+.batch-panel label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin: 12px 0 7px;
+}
+.batch-panel textarea {
+  display: block;
+  width: 100%;
+  resize: vertical;
+  min-height: 140px;
+  box-sizing: border-box;
+  font: inherit;
+  padding: 12px;
+  border: 1px solid var(--sd-line);
+  border-radius: 9px;
+  background: var(--sd-surface);
+  color: var(--sd-ink);
+}
+.batch-panel input {
+  max-width: 140px;
+  padding: 8px;
+  border: 1px solid var(--sd-line);
+  border-radius: 8px;
+  background: var(--sd-surface);
+  color: var(--sd-ink);
+}
+.batch-history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.batch-status {
+  font-size: 11px;
+  color: var(--sd-muted);
+  text-transform: capitalize;
+}
+.batch-panel details {
+  margin: 12px 0;
+  border-top: 1px solid var(--sd-line);
+  padding-top: 10px;
+}
+.batch-panel summary {
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+.batch-output {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: inherit;
+  font-size: 13px;
+  padding: 10px 0;
+  max-height: 480px;
+  overflow-y: auto;
+  user-select: text;
+}

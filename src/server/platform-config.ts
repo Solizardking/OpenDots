@@ -1,5 +1,8 @@
 import type { WebConfig } from './parallel.js';
+import type { BrowserUseConfig } from './browser-use-config.js';
 import type { SetupStatus } from '../shared/types.js';
+import type { Mem0Config } from './dot-memory.js';
+import type { OpenMarketService } from './openmarket-service.js';
 
 // `copilotkit project select` writes the CLI name and deletes the template name.
 const INTELLIGENCE_API_KEY_ENV_NAMES = [
@@ -34,8 +37,25 @@ function firstNonEmptyEnvValue(
   return undefined;
 }
 
-export interface PlatformConfig extends WebConfig {
+export interface PlatformConfig
+  extends WebConfig, BrowserUseConfig, Mem0Config {
+  modelProvider?: 'xai' | 'openai' | 'openrouter';
+  openrouterApiKey?: string;
+  openrouterClaudeModel?: string;
+  xaiApiKey?: string;
+  xaiImageModel?: string;
+  owsVaultPath?: string;
+  /** Local desktop transaction approval only. Disabled on hosted workspaces. */
+  pumpEnabled?: boolean;
+  /** Server-only trading provider configuration. Never serialized to the client. */
+  tradingEnv?: Record<string, string | undefined>;
+  solanaRpcUrl?: string;
+  computerProvider?: 'e2b' | 'openbot';
+  e2bApiKey?: string;
+  e2bTemplate?: string;
+  e2bTimeoutMs?: number;
   intelligenceKey?: string;
+  openMarket?: OpenMarketService;
   intelligenceApiUrl?: string;
   intelligenceWsUrl?: string;
   model?: string;
@@ -56,6 +76,8 @@ export interface PlatformConfig extends WebConfig {
   slackDotId?: string;
   runtimeUrl: string;
   ownerToken?: string;
+  /** Server-only boundary for public wallet users' connected MCP endpoints. */
+  publicMcp?: boolean;
 }
 export function setupStatus(
   config: PlatformConfig,
@@ -63,11 +85,21 @@ export function setupStatus(
   activationFailed = false,
 ): SetupStatus {
   const missing = [
-    !config.intelligenceKey && INTELLIGENCE_KEY_MISSING_LABEL,
-    !config.apiKey && 'OPENAI_API_KEY',
-    !config.model && 'OPENAI_MODEL',
+    !config.apiKey &&
+      (config.modelProvider === 'xai'
+        ? 'XAI_API_KEY'
+        : config.modelProvider === 'openrouter'
+          ? 'OPENROUTER_API_KEY'
+          : 'OPENAI_API_KEY'),
+    !config.model &&
+      (config.modelProvider === 'xai'
+        ? 'XAI_MODEL'
+        : config.modelProvider === 'openrouter'
+          ? 'OPENROUTER_MODEL'
+          : 'OPENAI_MODEL'),
   ].filter((item): item is string => !!item);
   const declaredSlack = !!(
+    config.intelligenceKey &&
     config.slackChannel &&
     config.slackTeam &&
     config.slackUsers.length
@@ -82,7 +114,12 @@ export function setupStatus(
   return {
     intelligence: !!config.intelligenceKey,
     model: !!(config.apiKey && config.model),
-    browser: !!(config.browserUrl && config.browserSecret),
+    modelName: config.model,
+    avatarGeneration: !!config.xaiApiKey,
+    browser: !!(
+      config.browserUseApiKey ||
+      (config.browserUrl && config.browserSecret)
+    ),
     voice: !!(config.voiceKey && config.voiceModel && !missing.length),
     slack,
     missing,

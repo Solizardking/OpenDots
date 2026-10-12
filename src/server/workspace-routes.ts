@@ -4,6 +4,7 @@ import { Hono } from 'hono';
 import { z } from 'zod';
 import { Platform } from './platform.js';
 import { VoiceService } from './voice.js';
+import { avatarRoutes } from './avatar-routes.js';
 import {
   learningContainerIdSchema,
   validateLearningSettings,
@@ -11,6 +12,8 @@ import {
 const dotSchema = z
   .object({
     name: z.string().trim().min(1).max(40),
+    avatarId: z.string().uuid().nullable().optional(),
+    walletId: z.string().uuid().nullable().optional(),
     instructions: z.string().trim().min(3).max(2000),
     researchAllowed: z.boolean(),
     memoryAllowed: z.boolean(),
@@ -23,6 +26,7 @@ const dotSchema = z
 export function workspaceRoutes(platform: Platform, voice: VoiceService) {
   const app = new Hono();
   app.route('/', pageRoutes(platform));
+  app.route('/', avatarRoutes(platform.workspace, platform.config));
   app.post('/setup-telemetry', async (c) => {
     const parsed = setupInputSchema.safeParse(
       await c.req.json().catch(() => null),
@@ -45,9 +49,18 @@ export function workspaceRoutes(platform: Platform, voice: VoiceService) {
       dots: platform.workspace.dots(),
       conversations: platform.workspace.conversations(),
       setup: platform.setup(),
+      dotMemory: platform.workspace
+        .dots()
+        .map((dot) => platform.memory.status(dot.id)),
       calls: platform.workspace.calls(),
     }),
   );
+  app.get('/dots/:id/memory', (c) => {
+    const id = c.req.param('id');
+    if (!platform.workspace.dot(id))
+      return c.json({ error: 'Dot not found.' }, 404);
+    return c.json(platform.memory.status(id));
+  });
   app.post('/spaces', async (c) => {
     const data = z
       .object({
@@ -78,6 +91,7 @@ export function workspaceRoutes(platform: Platform, voice: VoiceService) {
         },
         400,
       );
+    if (data.data.walletId) platform.wallets.get(data.data.walletId);
     try {
       validateLearningSettings(
         data.data.learningContainerId ?? null,
@@ -104,6 +118,8 @@ export function workspaceRoutes(platform: Platform, voice: VoiceService) {
         data.data.spaceIds,
         data.data.learningContainerId,
         data.data.skillDeliveryEnabled,
+        data.data.avatarId,
+        data.data.walletId,
       ),
       201,
     );
@@ -112,6 +128,7 @@ export function workspaceRoutes(platform: Platform, voice: VoiceService) {
     const data = dotSchema.safeParse(await c.req.json().catch(() => null));
     if (!data.success)
       return c.json({ error: 'Invalid specialist settings.' }, 400);
+    if (data.data.walletId) platform.wallets.get(data.data.walletId);
     const current = platform.workspace.dot(c.req.param('id'));
     if (!current) return c.json({ error: 'Dot not found.' }, 404);
     try {

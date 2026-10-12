@@ -1,0 +1,223 @@
+.solana-workspace {
+  min-width: 0;
+}
+.solana-workspace-intro {
+  margin-top: 0;
+  color: var(--sd-muted, var(--muted));
+}
+.solana-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 0.75rem;
+}
+.solana-tabs button {
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 0.65rem 0.8rem;
+}
+.solana-tabs button[aria-pressed='true'] {
+  background: var(--sd-tint, var(--lavender));
+  border-color: var(--sd-accent, var(--blue));
+  box-shadow: 0 2px 0 #14f195;
+}
+.solana-feed-status,
+.solana-feed-filters {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  justify-content: space-between;
+  margin: 1rem 0;
+  font-size: 0.78rem;
+}
+.solana-feed-status span {
+  color: var(--sd-green-ink, var(--blue));
+}
+.solana-feed-status small {
+  color: var(--muted);
+}
+.solana-launch-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.solana-launch-actions button,
+.solana-feed-filters button {
+  padding: 0.65rem;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.solana-feed-search {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem;
+  margin-top: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.solana-feed-search input {
+  border: none;
+  background: transparent;
+  min-width: 0;
+  width: 100%;
+  padding: 0;
+}
+.solana-feed-filters label {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+.solana-launch-list {
+  display: grid;
+  gap: 0.65rem;
+  max-height: 420px;
+  overflow: auto;
+}
+.solana-launch-card {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1rem;
+  background: var(--sd-surface, #fff);
+}
+.solana-launch-card header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+.solana-launch-card header div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.solana-launch-card header div:last-child {
+  text-align: right;
+}
+.solana-launch-card header span,
+.solana-launch-card header small {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--muted);
+  margin-top: 0.3rem;
+}
+.solana-mint {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin: 1rem 0;
+}
+.solana-mint code,
+.dflow-quote-card code {
+  display: block;
+  overflow-wrap: anywhere;
+  font-size: 0.72rem;
+  min-width: 0;
+}
+.solana-mint button {
+  padding: 0.3rem;
+}
+.solana-launch-card footer {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 0.75rem;
+}
+.solana-launch-card footer a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.solana-launch-card footer button {
+  margin-left: auto;
+  color: var(--sd-accent, var(--blue));
+}
+.solana-feed-empty,
+.solana-feed-note {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.solana-workspace .pump-panel {
+  margin: 1rem 0;
+  max-height: none;
+}
+.solana-workspace .connected-wallet-panel {
+  padding: 1rem 0;
+}
+.dflow-quote-form {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+}
+.dflow-quote-form form {
+  display: grid;
+  gap: 0.7rem;
+}
+.dflow-quote-form label {
+  display: grid;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+}
+.dflow-quote-form input,
+.dflow-quote-form select {
+  min-width: 0;
+  width: 100%;
+  padding: 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+.solana-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+.dflow-quote-card {
+  border: 1px solid var(--line);
+  padding: 1rem;
+  border-radius: 12px;
+  margin: 1rem 0;
+  min-width: 0;
+  background: var(--sd-surface, #fff);
+}
+.dflow-quote-card header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: space-between;
+}
+.dflow-quote-card header span,
+.dflow-quote-card p {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.dflow-quote-card dl {
+  display: grid;
+  gap: 0.5rem;
+}
+.dflow-quote-card dl div {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: space-between;
+  font-size: 0.8rem;
+}
+.dflow-quote-card dd {
+  margin: 0;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 600px) {
+  .solana-form-row {
+    grid-template-columns: 1fr;
+  }
+  .solana-feed-status {
+    align-items: flex-start;
+  }
+  .solana-feed-status small {
+    text-align: right;
+  }
+}

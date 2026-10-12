@@ -184,7 +184,10 @@ export function ComputerPanel({ dot }: { dot: Dot }) {
       ) : (
         <>
           <div className="computer-status">
-            <strong>{status.state.replaceAll('_', ' ')}</strong>
+            <strong>
+              {status.provider === 'e2b' ? 'E2B · ' : ''}
+              {status.state.replaceAll('_', ' ')}
+            </strong>
             {status.state !== 'running' && (
               <button disabled={busy} onClick={() => void refresh()}>
                 Refresh
@@ -198,9 +201,9 @@ export function ComputerPanel({ dot }: { dot: Dot }) {
             <div className="computer-setup">
               <h3>Connect a computer service</h3>
               <p>
-                This Dot does not have a computer service configured. Configure
-                the server’s computer service URL and token, then restart. Each
-                Dot gets its own browser and workspace.
+                This Dot does not have a computer service configured. Add
+                E2B_API_KEY to the server environment, then restart. Each Dot
+                gets its own browser and workspace.
               </p>
               <a
                 href="https://github.com/CopilotKit/OpenDots/blob/main/docs/COMPUTERS.md"

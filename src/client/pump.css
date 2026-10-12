@@ -1,0 +1,157 @@
+.pump-panel {
+  margin: 0 1rem 1rem;
+  padding: 1rem;
+  border: 1px solid var(--sd-line, var(--line));
+  border-radius: 16px;
+  background: var(--sd-surface, #fff);
+  overflow: auto;
+  max-height: 65vh;
+}
+.pump-panel > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.pump-panel header p {
+  margin: 0.25rem 0 1rem;
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+.pump-panel form {
+  display: grid;
+  gap: 0.75rem;
+}
+.pump-panel label,
+.pump-unlock > label {
+  display: grid;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+}
+.pump-panel input:not([type='checkbox']),
+.pump-wallet-source select,
+.pump-unlock input:not([type='checkbox']),
+.pump-unlock select {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 0.65rem;
+  color: inherit;
+  background: var(--sd-canvas, #f8f9fb);
+  border: 1px solid var(--sd-line, var(--line));
+  border-radius: 8px;
+}
+.pump-wallet-source {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0 0 1rem;
+}
+.pump-wallet-source code,
+.connected-wallet-panel code {
+  overflow-wrap: anywhere;
+}
+.connected-wallet-panel {
+  padding: 1rem;
+}
+.connected-wallet-panel h2 {
+  margin-top: 0;
+}
+.connected-wallet-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+.connected-wallet-actions button {
+  padding: 0.65rem;
+  border: 1px solid var(--sd-line, var(--line));
+  border-radius: 8px;
+}
+.connected-wallet-note {
+  font-size: 0.85rem;
+  opacity: 0.75;
+}
+.pump-modes {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.pump-modes button {
+  flex: 1;
+  padding: 0.6rem;
+  border: 1px solid var(--sd-line, var(--line));
+  border-radius: 8px;
+}
+.pump-modes button[aria-pressed='true'] {
+  border-color: var(--sd-accent, var(--blue));
+  background: var(--sd-tint, var(--lavender));
+}
+.pump-confirm {
+  display: flex !important;
+  align-items: flex-start;
+  gap: 0.5rem !important;
+}
+.pump-confirm input {
+  width: auto;
+  margin-top: 0.2rem;
+}
+.pump-transaction-card {
+  margin-top: 1rem;
+  min-width: 0;
+}
+.pump-transaction-card .page-review-body {
+  max-height: none;
+  overflow: visible;
+}
+.pump-review-values {
+  display: grid;
+  gap: 0.65rem;
+}
+.pump-review-values > div {
+  display: grid;
+  grid-template-columns: minmax(100px, 1fr) minmax(0, 2fr);
+  gap: 0.6rem;
+}
+.pump-review-values dt {
+  opacity: 0.7;
+  font-size: 0.8rem;
+}
+.pump-review-values dd {
+  margin: 0;
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+.pump-transaction-card code {
+  display: block;
+  overflow-wrap: anywhere;
+  font-size: 0.72rem;
+}
+.pump-transaction-card pre {
+  max-height: 220px;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 0.72rem;
+}
+.pump-transaction-card textarea {
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 0.72rem;
+}
+.pump-unlock {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+.pump-error {
+  color: var(--danger, #d45a5a);
+  overflow-wrap: anywhere;
+}
+@media (max-width: 600px) {
+  .pump-panel {
+    margin: 0 0.5rem 0.5rem;
+  }
+  .pump-review-values > div {
+    grid-template-columns: 1fr;
+    gap: 0.15rem;
+  }
+}

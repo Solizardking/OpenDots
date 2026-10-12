@@ -1,12 +1,24 @@
 <div align="center">
 
-# OpenDots
+# Solana Dots
 
-### Always-on AI coworkers that move between text, calls, and Slack.
+The macOS desktop app, side drawers, secure provider setup, and mobile browser pairing are documented in [Solana Dots for Mac](docs/SOLANA-DOTS-DESKTOP.md). Run `npm run desktop:dev` locally or `npm run desktop:package` to build the signed Apple Silicon release.
+
+ChatGPTEE lives at [chatgptee.ai](https://chatgptee.ai). Sign in with a Solana wallet to open your own workspace. [Authentication and deployment](docs/AUTHENTICATION.md) describes Privy, Supabase PostgreSQL, and persistent user storage.
+
+Open **Pump.fun**, **Jupiter**, or **Wallets & assets** in the sidebar for live launch discovery, connected-wallet transaction reviews, and DFlow/Jupiter quote cards. Jupiter offers managed swaps and advanced builds with fast routing, slippage and account-count controls. Each transaction requires approval in your wallet. See [Solana workspace](docs/SOLANA-WORKSPACE.md).
+
+Open **Solana workspace → Trading brain** for natural-language Pump.fun strategies, private Supermemory graph recall, TypeSafe decisions, and opt-in monitoring. The journal survives restarts, outcome observations can raise the review threshold, and trades use the existing wallet approval cards. See [Trading intelligence](docs/TRADING-BRAIN.md).
+
+Open **OpenMarket** in the sidebar or Solana workspace for crypto charts, cross-exchange volume, 1,000-level orderbooks, Hyperliquid heatmaps and Polymarket analytics. Dots can research the same data through the read-only `openmarket_data` tool. Configure the server-only `OPENMARKET_API_KEY`; dataset permissions and quota errors are shown explicitly. See [OpenMarket setup](docs/OPENMARKET.md).
+
+<img src="public/brand/solana-logomark.svg" alt="ChatGPTEE" width="64" />
+
+### Your agents. Your workspace. Your Solana identity.
 
 **An open-source template for persistent AI agents, each with its own computer. Available on Web and Mobile.**
 
-Built with [CopilotKit](https://github.com/CopilotKit/CopilotKit) and [AG-UI](https://docs.ag-ui.com/introduction). · [Get started](#get-started) · [Overview](#overview) · [Architecture](#architecture) · [Features](#features) · [Contributing](CONTRIBUTING.md)
+A Solana-branded adaptation of [OpenDots](https://github.com/CopilotKit/OpenDots), built with [CopilotKit](https://github.com/CopilotKit/CopilotKit) and [AG-UI](https://docs.ag-ui.com/introduction). · [Get started](#get-started) · [Overview](#overview) · [Architecture](#architecture) · [Features](#features) · [Contributing](CONTRIBUTING.md)
 
 [![CI](https://github.com/CopilotKit/OpenDots/actions/workflows/ci.yml/badge.svg)](https://github.com/CopilotKit/OpenDots/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
@@ -14,9 +26,9 @@ Built with [CopilotKit](https://github.com/CopilotKit/CopilotKit) and [AG-UI](ht
 
 <a href="https://trendshift.io/repositories/275323" target="_blank"><img src="https://trendshift.io/api/badge/trendshift/repositories/275323/daily?language=TypeScript" alt="CopilotKit/OpenDots | Trendshift #2 TypeScript Repository Of The Day" width="250" height="55"/></a>
 
-Host OpenDots on your own infrastructure. Conversations require CopilotKit Intelligence: use the hosted service, the [local Docker evaluation](docs/SETUP.md#local-intelligence-evaluation), or a licensed [self-hosted deployment](https://docs.copilotkit.ai/intelligence/self-hosting). Clone this template and customize it however you want.
+Host ChatGPTEE on your own infrastructure. Conversations use local SQLite storage with your configured model. Optionally connect CopilotKit Intelligence for cloud Threads, learning, and Slack through the hosted service, the [local Docker evaluation](docs/SETUP.md#local-intelligence-evaluation), or a licensed [self-hosted deployment](https://docs.copilotkit.ai/intelligence/self-hosting).
 
-[**Building on OpenDots? Meet with the CopilotKit team →**](https://www.copilotkit.ai/talk-to-an-engineer?ref=opendots_readme)
+[**Building on ChatGPTEE? Meet with the CopilotKit team →**](https://www.copilotkit.ai/talk-to-an-engineer?ref=opendots_readme)
 
 </div>
 
@@ -36,7 +48,7 @@ _Ask → browse → approve → save. A live computer view and a human review ca
 
 ## Overview
 
-OpenDots is a starting point for building your own agent workspace. Clone it, define your Dots, connect your services, and adapt the interface and tools to your needs.
+ChatGPTEE is a starting point for building your own agent workspace. Clone it, define your Dots, connect your services, and adapt the interface and tools to your needs.
 
 **A template, not a hosted product.** You run the application and configure its infrastructure. The template is in early development; the Features section below describes what's included and distinguishes local verification from connected-service testing.
 
@@ -44,7 +56,7 @@ OpenDots is a starting point for building your own agent workspace. Clone it, de
 
 A Space is a home for working documents. Dots appear separately in navigation and can be granted access to multiple Spaces in their settings. Each Dot has a default destination for saved pages; existing installations retain their original Space access. Browse pages in a searchable library, switch between grid and list views, and organize documents as nested subpages. Open a page in a focused visual editor with formatting, slash commands, and undo/redo. Write directly, save a conversation as a page, or ask a specialist to create and revise content.
 
-Pages stay in the local workspace database. Their conversations use CopilotKit Threads, with a separate conversation for each page and specialist. Page links connect the document workspace to Dot chat. Manual editing works before you configure conversation services. Autosave reports its progress, failed saves retain your draft, and revision checks prevent stale edits from overwriting newer content. Markdown source mode remains available.
+Pages stay in the local workspace database. Each page and specialist has a separate conversation, stored locally or in the configured CopilotKit Intelligence project. Page links connect the document workspace to Dot chat. Manual editing works before you configure a model. Autosave reports its progress, failed saves retain your draft, and revision checks prevent stale edits from overwriting newer content. Markdown source mode remains available.
 
 <div align="center">
 
@@ -64,9 +76,11 @@ Give each Dot a name, role, instructions, and permitted tools. A researcher can 
 
 ### Dot computers
 
-Each Dot can have its own computer, using [OpenBot](https://github.com/CopilotKit/OpenBot)'s container supervisor and computer service. Its browser profile and workspace files persist across stop/start. The Computer panel exposes browser control, human takeover, files, terminal output, and activity, with browser, file, and shell permissions set per Dot. The application keeps service credentials on the server and derives a different computer credential for each Dot.
+Each Dot can have its own E2B desktop. Its browser profile and workspace files persist across pause/resume. The Computer panel exposes browser control, human takeover, files, terminal output, and activity, with browser, file, and shell permissions set per Dot. The application keeps service credentials on the server and authenticates sandbox ports.
 
-See [Computer setup](docs/COMPUTERS.md) to build the pinned services and connect your deployment. Computer tools require those services; an unconfigured template does not execute commands on your host.
+Set `E2B_API_KEY` and follow [Dot integrations](docs/DOT-INTEGRATIONS.md#e2b-desktop). The original [OpenBot](https://github.com/CopilotKit/OpenBot) alternative remains available with `COMPUTER_PROVIDER=openbot`; see [Computer setup](docs/COMPUTERS.md) to build its pinned services.
+
+The Computer panel also includes [Browser Use Cloud](docs/BROWSER-USE.md), using server-side `BROWSERUSE_API_KEY`, `CLAWD_PROFILE`, and optional `CDP_URL`. It supports recorded browser sessions, `gpt-6-luna` tasks, follow-ups, and explicit session stopping.
 
 <div align="center">
 
@@ -128,7 +142,7 @@ Bring your agents into Slack with [Channels SDK](https://github.com/CopilotKit/c
 
 [AG-UI](https://docs.ag-ui.com/introduction) carries streamed messages, tool calls, and agent state between the backend and CopilotKit components. Computer activity appears inline as the agent works; human-in-the-loop cards pause a tool call for your decision before it continues.
 
-The template uses TanStack AI for model streaming and server-tool execution, CopilotKit's React SDK and runtime, Intelligence for durable Threads, and Channels SDK for Slack. Pages, application metadata, and background-work state are stored separately from conversation history.
+The template uses TanStack AI for model streaming and server-tool execution, CopilotKit's React SDK and runtime, SQLite for local conversation history, optional Intelligence for cloud Threads, and Channels SDK for Slack.
 
 ```mermaid
 flowchart TB
@@ -140,6 +154,7 @@ flowchart TB
   Agents --> AI[TanStack AI]
   AI --> Provider[OpenAI-compatible model provider]
   Runtime <--> Intelligence["Intelligence / Threads"]
+  Runtime <--> LocalHistory[(Local conversation history)]
   Channels <--> Intelligence
   Web <--> Speech[Realtime speech]
   Speech --> Bridge[Compute bridge]
@@ -150,9 +165,9 @@ flowchart TB
   Runtime --> Metadata[(Pages, Spaces, Dots, work metadata)]
 ```
 
-You configure the Intelligence project, model provider, and channel connection for your deployment; calls also need a speech provider. Credentials stay on the server. Missing configuration should produce a clear setup state, and test fixtures should remain visibly separate from live integrations.
+Configure the model provider to chat. Cloud conversations, learning, and Slack also need an Intelligence project; calls need a speech provider. Credentials stay on the server. Missing configuration produces a clear setup state.
 
-[OpenMuse](https://github.com/CopilotKit/OpenMuse) and [OpenBot](https://github.com/CopilotKit/openbot) are code references for persistent work, agent computers, and execution controls. OpenDots can be adapted to your own workflows and deployment choices.
+[OpenMuse](https://github.com/CopilotKit/OpenMuse) and [OpenBot](https://github.com/CopilotKit/openbot) are code references for persistent work, agent computers, and execution controls. ChatGPTEE can be adapted to your own workflows and deployment choices.
 
 ## Get started
 
@@ -163,31 +178,39 @@ git clone https://github.com/CopilotKit/OpenDots.git
 cd OpenDots
 npm ci
 cp .env.example .env
+# Configure DATABASE_URL, wallet authentication, and your model in .env first.
 npm run dev
 ```
 
-Open **http://127.0.0.1:5173**. You can create Spaces, write pages, and configure Dots before connecting services. To start chatting, connect an Intelligence project and a model.
+Open **http://localhost:3460**. Set the server-only Supabase/PostgreSQL `DATABASE_URL` before starting, or use `POSTGRES_URL_NON_POOLING`. Configure the public Privy app/client IDs and server secret for Privy sign-in, and `OPENROUTER_API_KEY` to chat with `anthropic/claude-haiku-5.5`, the shared default for every Dot. Native wallet sign-in also works without Privy. Each account's history persists in its own SQLite workspace. See [authentication setup](docs/AUTHENTICATION.md) and [OpenRouter setup](docs/OPENROUTER.md).
 
-Choose where to store conversations before connecting. For local Docker evaluation, follow [Local Intelligence evaluation](docs/SETUP.md#local-intelligence-evaluation). For hosted Intelligence, sign in and select or create a project in the `OpenDots` folder:
+For optional Intelligence services, follow [Local Intelligence evaluation](docs/SETUP.md#local-intelligence-evaluation), or select a hosted project in the `OpenDots` folder:
 
 ```sh
 npx copilotkit@latest login
 npx copilotkit@latest project select
 ```
 
-`project select` writes a project key to `.env` as `CPK_INTELLIGENCE_API_KEY`. Keep the generated `CPK_TELEMETRY_ID` with that key so SDK usage can resolve to your Intelligence account. Then add `OPENAI_API_KEY` and `OPENAI_MODEL` to `.env` and restart `npm run dev`.
+`project select` writes a project key to `.env` as `CPK_INTELLIGENCE_API_KEY`. Keep the generated `CPK_TELEMETRY_ID` with that key so SDK usage can resolve to your Intelligence account. Add `OPENROUTER_API_KEY` to `.env`, keep `MODEL_PROVIDER=openrouter` and `OPENROUTER_MODEL=anthropic/claude-haiku-5.5`, then restart `npm run dev`. Explicit `MODEL_PROVIDER=xai` and `MODEL_PROVIDER=openai` configurations remain available. Add `E2B_API_KEY` for isolated desktop computers.
 
-Do not run `copilotkit onboard` in this folder. OpenDots already contains its CopilotKit integration, and onboarding adds a second, generic one.
+Open a Dot's settings to generate or edit its avatar with Grok Imagine 2.0, create or select an encrypted OWS wallet, and review wallet signatures. Avatar generation uses a separate `XAI_API_KEY`; avatars and wallets work independently of CopilotKit Intelligence. Open the Computer panel, enable the permissions you want, and start that Dot's E2B desktop. See [models, avatars, wallets, and E2B](docs/DOT-INTEGRATIONS.md).
+
+Do not run `copilotkit onboard` in this folder. ChatGPTEE already contains its CopilotKit integration, and onboarding adds a second, generic one.
 
 See [Setup](docs/SETUP.md) for configuration, Slack, calls, the browser service, and Docker.
 
 ## Data and privacy
 
-Conversation messages, tool calls, and run events are persisted in the configured Intelligence deployment. The hosted setup sends them to CopilotKit's cloud; the local evaluation setup uses Intelligence on your machine. OpenDots has no standalone SQLite conversation store. SQLite stores pages, workspace metadata, and thread bindings separately.
+Dots can recall long-term memories with server-side Mem0 configuration. Completed
+turns queue durably in SQLite, and each owner and Dot has a separate memory scope.
+The Memories view shows extraction status and recalled facts. See
+[persistent Dot memory](docs/DOT-MEMORY.md) for setup, permissions, and verification.
+
+Without an Intelligence key, conversation messages, tool calls, state, and the latest run events persist in the local SQLite database alongside pages and workspace metadata. Back up that database to retain local chats. With an Intelligence key, conversation history uses the configured Intelligence deployment; hosted Intelligence sends it to CopilotKit's cloud. Switching between these storage modes does not migrate existing history.
 
 The configured model provider receives conversation context, including authorized page content and tool results. Local Intelligence does not make a remote model local: configure the app's model and the Automatic Learning model separately. Public-web research sends queries and selected URLs to Parallel by default; set `WEB_SEARCH_PROVIDER=disabled` to disable those tools. Speech and messaging integrations send data to their configured providers when used.
 
-CopilotKit SDK telemetry collects usage metadata separately from conversation persistence. OpenDots also records bounded browser setup stages and first successful assistant activation with a random installation ID; the same opt-out flags disable this tracking and purge pending setup events. See [browser setup telemetry](docs/SETUP-TELEMETRY.md). Runtime events are tagged `OpenDots`; see [signup and usage tracking](docs/TELEMETRY.md). Set `COPILOTKIT_TELEMETRY_DISABLED=true` or `DO_NOT_TRACK=1` to opt out; see [CopilotKit telemetry](https://docs.copilotkit.ai/telemetry). Review [CopilotKit's privacy policy](https://www.copilotkit.ai/privacy-policy) and the policies and retention settings of each service you configure. Installing or renewing local Intelligence still requires CopilotKit sign-in and internet access.
+CopilotKit SDK telemetry collects usage metadata separately from conversation persistence. ChatGPTEE also records bounded browser setup stages and first successful assistant activation with a random installation ID; the same opt-out flags disable this tracking and purge pending setup events. See [browser setup telemetry](docs/SETUP-TELEMETRY.md). Runtime events are tagged `OpenDots`; see [signup and usage tracking](docs/TELEMETRY.md). Set `COPILOTKIT_TELEMETRY_DISABLED=true` or `DO_NOT_TRACK=1` to opt out; see [CopilotKit telemetry](https://docs.copilotkit.ai/telemetry). Review [CopilotKit's privacy policy](https://www.copilotkit.ai/privacy-policy) and the policies and retention settings of each service you configure. Installing or renewing local Intelligence still requires CopilotKit sign-in and internet access.
 
 ## Features
 
@@ -200,14 +223,16 @@ CopilotKit SDK telemetry collects usage metadata separately from conversation pe
 | Calls                      | WebRTC speech, delegated compute, bounded sessions, hangup, and timeline receipts                                                       |
 | Background work            | Scheduled server-side turns in their original conversation, with pause and retry controls                                               |
 | Browser                    | Separate read-only public-page service with page capture and navigation limits                                                          |
-| Dot computers              | Per-Dot browser profiles, files, shell, takeover, permissions, and action records through OpenBot                                       |
+| Dot computers              | Per-Dot E2B desktops, browser profiles, files, shell, takeover, permissions, and action records; OpenBot alternative                    |
+| Model and avatars          | Claude Haiku 5.5 through OpenRouter for every Dot; optional xAI X Search and generated/editable Grok Imagine 2.0 avatars                |
+| Wallets                    | Encrypted OWS wallets, receive addresses, reviewed signatures, policy-scoped tokens, and separate broadcast actions                     |
 | Connections                | Per-Dot MCP servers, per-tool access, and owner approval for non-read-only actions                                                      |
 | Appearance                 | System, light, and dark themes; dark colors are derived at build time from the light styles                                             |
 | Memory                     | User-managed preferences that permitted Dots can use                                                                                    |
 | Automatic Learning         | Per-Dot Learning containers, conversation evidence routing, and published-skill delivery; see [setup](docs/SETUP.md#automatic-learning) |
 | Deployment                 | Local Node setup and separate application/browser containers                                                                            |
 
-Scheduled tasks run in their original conversation. If a worker stops or its lease expires during a run, OpenDots marks that run **Interrupted** and waits for an explicit retry. Review its pages and computer actions, then use **Retry after review** when appropriate. Completed effects may already be present even when a run has no final result.
+Scheduled tasks run in their original conversation. If a worker stops or its lease expires during a run, ChatGPTEE marks that run **Interrupted** and waits for an explicit retry. Review its pages and computer actions, then use **Retry after review** when appropriate. Completed effects may already be present even when a run has no final result.
 
 Local checks cover setup, persistence, permissions, SDK failure handling, and browser isolation. Automated tests use service fixtures. **Live Intelligence, model responses, and page-context chat were verified on September 29, 2026.** Live OpenBot computer browsing, file creation, shell verification, and file persistence across stop/start were also verified locally. Live Realtime speech, call controls, and receipt persistence were verified locally on September 30, 2026. Slack and spoken compute delegation still need connected-service verification. See [recording notes](docs/demos/README.md) for the demonstrated flows and limits.
 

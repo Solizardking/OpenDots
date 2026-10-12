@@ -1,4 +1,5 @@
 import { openPageLink } from './page-navigation';
+import { AccountControl, useAuth } from './AuthGate';
 import { SpaceNav } from './SpaceNav';
 import { SpaceWorkspace } from './SpaceWorkspace';
 import { useCallback, useEffect, useState, useRef } from 'react';
@@ -47,6 +48,12 @@ import { ResultPane } from './ResultPane';
 import { TaskRow } from './TaskPresentation';
 import { TaskActions } from './TaskActions';
 import { WorkspaceDialog, type Dialog } from './WorkspaceDialog';
+import { PhoneDrawer } from './PhoneDrawer';
+import { SolanaWorkspace } from './SolanaWorkspace';
+import { ArrowLeftRight, Rocket, Wallet } from 'lucide-react';
+import { OpenRouterBatches } from './OpenRouterBatches';
+import { Layers3 } from 'lucide-react';
+import { Smartphone } from 'lucide-react';
 import { submitComposerOnEnter } from './chat-composer';
 
 function describeFailure(error: unknown, fallback: string) {
@@ -58,6 +65,7 @@ function describeFailure(error: unknown, fallback: string) {
 }
 
 export function App() {
+  const { session } = useAuth();
   const [state, setState] = useState<State>();
   const [workspace, setWorkspace] = useState<WorkspaceState>();
   const [selectedDot, setSelectedDot] = useState('');
@@ -125,6 +133,18 @@ export function App() {
   const [mobile, setMobile] = useState(false);
   const [navCollapsed, setNavCollapsed] = useState(false);
   const [pane, setPane] = useState(false);
+  const [phone, setPhone] = useState(false);
+  const [solanaTab, setSolanaTab] = useState<'pump' | 'jupiter' | 'wallet' | 'openmarket'>();
+  const closeSolanaWorkspace = useCallback(() => setSolanaTab(undefined), []);
+  const [pumpContext, setPumpContext] = useState<{
+    dotId: string;
+    threadId: string;
+  }>();
+  const [jupiterContext, setJupiterContext] = useState<{
+    dotId: string;
+    threadId: string;
+  }>();
+  const [batches, setBatches] = useState(false);
   const [capture, setCapture] = useState<Result>();
   const [prompt, setPrompt] = useState('');
   const [pendingPrompt, setPendingPrompt] = useState<string>();
@@ -247,6 +267,24 @@ export function App() {
       setBusy(false);
     }
   };
+  const nativeActions = useRef<(action: string) => void>(() => {});
+  nativeActions.current = (action) => {
+    if (action === 'phone') setPhone(true);
+    if (action === 'settings') setDialog({ type: 'settings' });
+    if (action === 'new-chat') void newConversation();
+  };
+  useEffect(
+    () =>
+      window.solanaDots?.onAction((action) => nativeActions.current(action)),
+    [],
+  );
+  useEffect(() => {
+    const key = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMobile(false);
+    };
+    window.addEventListener('keydown', key);
+    return () => window.removeEventListener('keydown', key);
+  }, []);
   if (needsAuth)
     return (
       <main className="unlock">
@@ -280,7 +318,7 @@ export function App() {
             onChange={(e) => setAuth(e.target.value)}
             required
           />
-          <button className="primary">Unlock OpenDots</button>
+          <button className="primary">Unlock ChatGPTEE</button>
         </form>
         {error && (
           <p className="chat-error" role="alert">
@@ -308,13 +346,13 @@ export function App() {
       <nav className="icon-rail" aria-label="Workspace navigation">
         <button
           className="rail-brand"
-          aria-label="OpenDots home"
+          aria-label="ChatGPTEE home"
           onClick={() => {
             setView('chat');
             setSelectedThread(undefined);
           }}
         >
-          o<span>·</span>
+          <img src="/brand/solana-logomark.svg" alt="" />
         </button>
         <button
           aria-label={navCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
@@ -360,7 +398,7 @@ export function App() {
       {mobile && (
         <button
           className="nav-scrim"
-          aria-label="Close navigation"
+          aria-label="Dismiss navigation"
           onClick={() => setMobile(false)}
         />
       )}
@@ -369,19 +407,28 @@ export function App() {
         className={`sidebar ${mobile ? 'open' : ''}`}
       >
         <button
+          className="mobile-nav-close icon-button"
+          aria-label="Close navigation"
+          onClick={() => setMobile(false)}
+        >
+          <X size={18} />
+        </button>
+        <button
           className="wordmark"
+          aria-label="ChatGPTEE"
           onClick={() => {
             setView('chat');
             setSelectedThread(undefined);
           }}
         >
-          <span className="dotted-logo">
-            <i />
-            <i />
-            <i />
-            <i />
+          <img
+            className="solana-mark"
+            src="/brand/solana-logomark.svg"
+            alt=""
+          />
+          <span>
+            ChatGP<strong>TEE</strong>
           </span>
-          OpenDots<span className="wordmark-dot">•</span>
         </button>
         <button
           className="new-chat nav-item"
@@ -413,7 +460,13 @@ export function App() {
                 }
                 onClick={() => chooseDot(item)}
               >
-                <Mascot identity={item.id} name={item.name} small decorative />
+                <Mascot
+                  identity={item.id}
+                  avatarId={item.avatarId}
+                  name={item.name}
+                  small
+                  decorative
+                />
                 <span>{item.name}</span>
               </button>
               <button
@@ -473,6 +526,62 @@ export function App() {
         )}
         <div className="sidebar-bottom">
           <button
+            className="nav-item"
+            onClick={() => {
+              setSolanaTab('pump');
+              setMobile(false);
+            }}
+          >
+            <Rocket size={17} />
+            <span>Pump.fun</span>
+            <small>Launch & trade</small>
+          </button>
+          <button
+            className="nav-item"
+            onClick={() => {
+              setSolanaTab('jupiter');
+              setMobile(false);
+            }}
+          >
+            <ArrowLeftRight size={17} />
+            <span>Jupiter</span>
+            <small>Swap tokens</small>
+          </button>
+          <button
+            className="nav-item"
+            onClick={() => {
+              setSolanaTab('wallet');
+              setMobile(false);
+            }}
+          >
+            <Wallet size={17} />
+            <span>Wallets & assets</span>
+          </button>
+          <button className="nav-item" onClick={() => { setSolanaTab('openmarket'); setMobile(false); }}>
+            <Search size={17}/><span>OpenMarket</span><small>Crypto & Polymarket</small>
+          </button>
+          <button
+            className="nav-item"
+            onClick={() => {
+              setBatches(true);
+              setMobile(false);
+            }}
+          >
+            <Layers3 size={17} />
+            <span>Claude batches</span>
+          </button>
+          <button
+            className="nav-item"
+            onClick={() => {
+              setPhone(true);
+              setMobile(false);
+            }}
+          >
+            <Smartphone size={17} />
+            <span>Phone</span>
+            <small>Call & text</small>
+          </button>
+          <button
             className={`nav-item ${view === 'tasks' ? 'active' : ''}`}
             onClick={() => {
               setView('tasks');
@@ -513,8 +622,12 @@ export function App() {
             <span>Make it your own</span>
             <ArrowUpRight size={13} />
           </a>
+          <a className="nav-item" href="/docs">
+            <BookOpen size={17} />
+            <span>Documentation</span>
+          </a>
           <div className="version">
-            OPEN SOURCE TEMPLATE <span>v0.1</span>
+            CHATGPTEE <span>v0.2</span>
           </div>
         </div>
       </aside>
@@ -545,6 +658,21 @@ export function App() {
             </strong>
           </div>
           <div className="top-actions">
+            <AccountControl />
+            <button
+              className="icon-button"
+              aria-label="Open Solana wallet"
+              onClick={() => setSolanaTab('wallet')}
+            >
+              <Wallet size={17} />
+            </button>
+            <button
+              className="icon-button"
+              aria-label="Open phone and messaging"
+              onClick={() => setPhone(true)}
+            >
+              <Smartphone size={17} />
+            </button>
             <span className="mode-badge">
               {configured ? 'SELF-HOSTED' : 'SETUP REQUIRED'}
             </span>
@@ -624,7 +752,7 @@ export function App() {
                   dot={dot}
                   initialPrompt={pendingPrompt}
                   onConsumed={() => setPendingPrompt(undefined)}
-                  voiceReady={workspace.setup.voice}
+                  voiceReady={workspace.setup.voice && !session.companion}
                   calls={workspace.calls.filter(
                     (call) => call.threadId === thread.id,
                   )}
@@ -640,6 +768,7 @@ export function App() {
                   <div className="empty-chat-persona">
                     <Mascot
                       identity={dot.id}
+                      avatarId={dot.avatarId}
                       name={dot.name}
                       state={state.settings.paused ? 'paused' : 'idle'}
                     />
@@ -662,9 +791,8 @@ export function App() {
                       <div>
                         <strong>Connect your Dot</strong>
                         <p>
-                          Connect your model and conversation service in
-                          Settings to start chatting. Your Spaces and Dot
-                          preferences are ready to use.
+                          Connect your model in Settings to start chatting. Your
+                          Spaces and Dot preferences are ready to use.
                         </p>
                         <p>
                           Setup and usage metadata is collected by default.{' '}
@@ -795,6 +923,54 @@ export function App() {
             </div>
             {view === 'memories' ? (
               <>
+                {!!workspace.dotMemory?.length && (
+                  <section aria-label="Dot long-term memory">
+                    <h2>Dot memory</h2>
+                    <p className="muted">
+                      Each Dot remembers its own completed conversations through
+                      Mem0. History and pending uploads persist locally. Memory
+                      permissions control recall and uploads.
+                    </p>
+                    <div className="memory-grid">
+                      {workspace.dotMemory.map((memory) => (
+                        <article className="memory-card" key={memory.dotId}>
+                          <BookOpen size={18} />
+                          <strong>
+                            {
+                              workspace.dots.find(
+                                (dot) => dot.id === memory.dotId,
+                              )?.name
+                            }
+                          </strong>
+                          <p>
+                            {!memory.configured
+                              ? 'Mem0 is not connected'
+                              : !memory.enabled
+                                ? 'Memory is paused'
+                                : memory.error
+                                  ? 'Using local memory'
+                                  : memory.pending
+                                    ? 'Saving memories…'
+                                    : memory.lastRecallAt || memory.synced
+                                      ? 'Mem0 connected'
+                                      : 'Ready for the first conversation'}
+                          </p>
+                          <small>
+                            {memory.synced} turns processed · {memory.pending}{' '}
+                            pending
+                          </small>
+                          {memory.error && (
+                            <p className="muted">{memory.error}</p>
+                          )}
+                          {memory.memories.slice(0, 3).map((fact) => (
+                            <p key={fact.id}>{fact.text}</p>
+                          ))}
+                        </article>
+                      ))}
+                    </div>
+                    <h2>Shared preferences</h2>
+                  </section>
+                )}
                 <div className="memory-grid">
                   {state.memories.map((memory) => (
                     <article className="memory-card" key={memory.id}>
@@ -944,6 +1120,48 @@ export function App() {
           </div>
         )}
       </div>
+      {phone && <PhoneDrawer dotId={dot?.id} onClose={() => setPhone(false)} />}
+      {solanaTab && (
+        <SolanaWorkspace
+          key={`${solanaTab}:${dot.id}`}
+          initialTab={solanaTab}
+          dotId={dot.id}
+          threadId={
+            thread?.id ||
+            (pumpContext?.dotId === dot.id ? pumpContext.threadId : undefined)
+          }
+          walletId={dot.walletId}
+          jupiterThreadId={
+            thread?.id ||
+            (jupiterContext?.dotId === dot.id
+              ? jupiterContext.threadId
+              : undefined)
+          }
+          paused={state.settings.paused}
+          onPrepare={async () => {
+            const context = await api<Conversation>(
+              '/markets/pump/context',
+              'POST',
+              { dotId: dot.id },
+            );
+            setPumpContext({ dotId: dot.id, threadId: context.id });
+            await refresh();
+            return context.id;
+          }}
+          onPrepareJupiter={async () => {
+            const context = await api<Conversation>(
+              '/markets/jupiter/context',
+              'POST',
+              { dotId: dot.id },
+            );
+            setJupiterContext({ dotId: dot.id, threadId: context.id });
+            await refresh();
+            return context.id;
+          }}
+          onClose={closeSolanaWorkspace}
+        />
+      )}
+      {batches && <OpenRouterBatches onClose={() => setBatches(false)} />}
       {dialog && (
         <WorkspaceDialog
           dialog={dialog}

@@ -34,11 +34,14 @@ export async function api<T>(
     .catch(() => ({ error: 'Server returned an unreadable response.' }))) as {
     error?: string;
   };
-  if (!response.ok)
+  if (!response.ok) {
+    if (response.status === 401 && !path.startsWith('/auth/'))
+      window.dispatchEvent(new Event('solana-dots-auth-expired'));
     throw new ApiError(
       data.error ?? `Request failed (${response.status}).`,
       response.status,
     );
+  }
   return data as T;
 }
 export function authHeaders(): Record<string, string> {
