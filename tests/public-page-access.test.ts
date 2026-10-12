@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { Hono } from 'hono';
 import { getCookie } from 'hono/cookie';
+import { serveStatic } from '@hono/node-server/serve-static';
 import {
   pageAccessBoundary,
   missingPublicResource,
@@ -14,8 +15,9 @@ import {
   publicResource,
 } from '../src/shared/public-pages';
 import { publicDocumentation } from '../src/build/public-docs';
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join, resolve } from 'node:path';
 
 function fixture() {
   const app = new Hono();
@@ -96,6 +98,49 @@ describe('only four public product pages', () => {
     expect((await app.request('/privacy', { method: 'POST' })).status).toBe(
       405,
     );
+  });
+  it('serves the exact frozen release receipt anonymously as JSON while keeping other JSON files private', async () => {
+    const root = mkdtempSync(join(tmpdir(), 'opendots-release-access-'));
+    const receipt = {
+      releaseId: 'opendots-fixture',
+      sourceHash: 'a'.repeat(64),
+    };
+    writeFileSync(join(root, 'opendots-release.json'), JSON.stringify(receipt));
+    const hasSession = vi.fn(() => false);
+    const app = new Hono();
+    app.use('/*', pageAccessBoundary(hasSession));
+    app.use('/*', serveStatic({ root }));
+    app.get('*', (c) =>
+      missingPublicResource(c)
+        ? c.text('Not found.', 404)
+        : c.html('<h1>Private workspace shell</h1>'),
+    );
+    try {
+      const response = await app.request('/opendots-release.json');
+      expect(response.status).toBe(200);
+      expect(response.headers.get('content-type')).toBe('application/json');
+      expect(response.headers.get('cache-control')).toBe('no-store');
+      expect(await response.json()).toEqual(receipt);
+      const head = await app.request('/opendots-release.json', {
+        method: 'HEAD',
+      });
+      expect(head.status).toBe(200);
+      expect(head.headers.get('content-type')).toBe('application/json');
+      expect(await head.text()).toBe('');
+      expect(
+        (await app.request('/opendots-release.json', { method: 'POST' }))
+          .status,
+      ).toBe(405);
+      expect(hasSession).not.toHaveBeenCalled();
+      expect(publicResource('/private-release.json')).toBe(false);
+      const denied = await app.request('/private-release.json');
+      expect(denied.status).toBe(302);
+      expect(denied.headers.get('location')).toBe('/login');
+      rmSync(join(root, 'opendots-release.json'));
+      expect((await app.request('/opendots-release.json')).status).toBe(404);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
   });
   it('keeps utility/callback protocols reachable without confusing them with granted access', async () => {
     const { app } = fixture();

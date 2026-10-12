@@ -134,7 +134,9 @@ export function App() {
   const [navCollapsed, setNavCollapsed] = useState(false);
   const [pane, setPane] = useState(false);
   const [phone, setPhone] = useState(false);
-  const [solanaTab, setSolanaTab] = useState<'pump' | 'jupiter' | 'wallet' | 'openmarket'>();
+  const [solanaTab, setSolanaTab] = useState<
+    'pump' | 'jupiter' | 'wallet' | 'openmarket'
+  >();
   const closeSolanaWorkspace = useCallback(() => setSolanaTab(undefined), []);
   const [pumpContext, setPumpContext] = useState<{
     dotId: string;
@@ -557,8 +559,16 @@ export function App() {
             <Wallet size={17} />
             <span>Wallets & assets</span>
           </button>
-          <button className="nav-item" onClick={() => { setSolanaTab('openmarket'); setMobile(false); }}>
-            <Search size={17}/><span>OpenMarket</span><small>Crypto & Polymarket</small>
+          <button
+            className="nav-item"
+            onClick={() => {
+              setSolanaTab('openmarket');
+              setMobile(false);
+            }}
+          >
+            <Search size={17} />
+            <span>OpenMarket</span>
+            <small>Crypto & Polymarket</small>
           </button>
           <button
             className="nav-item"

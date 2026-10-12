@@ -47,6 +47,7 @@ export function publicResource(path: string) {
       '/logo.png',
       '/favicon.svg',
       '/theme.js',
+      '/opendots-release.json',
       '/agent/SKILL.md',
       '/agent/chatgptee-agent-0.1.0.tgz',
       '/agent/chatgptee-agent-0.1.1.tgz',
