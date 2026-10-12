@@ -2,18 +2,22 @@ import { _electron, chromium } from 'playwright';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { parseEnv } from 'node:util';
 import assert from 'node:assert/strict';
-const directory = 'artifacts/solana-dots';
+const directory = process.env.DOTS_ARTIFACT_DIRECTORY || 'artifacts/solana-dots';
 const release = JSON.parse(readFileSync(`${directory}/release/release.json`));
 const checks = [], errors = [];
 const appPath = process.env.DOTS_VERIFY_APP_PATH || release.appPath;
 const app = await _electron.launch({ executablePath: appPath + '/Contents/MacOS/Solana Dots', timeout: 45000, env: { ...process.env, ELECTRON_RUN_AS_NODE: '' } });
-let browser;
+let browser, originalTheme, originalCompanion;
+let originalDeviceIds = new Set();
+const qaPhoneName = 'QA phone ' + Date.now().toString(36);
 try {
   let page = await app.firstWindow();
   page.on('pageerror', error => errors.push(error.message));
   await page.waitForSelector('.wordmark');
-  for (const device of (await page.evaluate(() => window.solanaDots.companion('state'))).devices.filter(device => device.name === 'QA phone')) await page.evaluate(id => window.solanaDots.companion('revoke', id), device.id);
-  assert.equal(await page.title(), 'Solana Dots');
+  originalTheme = await page.evaluate(() => localStorage.getItem('opendots-theme'));
+  originalCompanion = await page.evaluate(() => window.solanaDots.companion('state'));
+  originalDeviceIds = new Set(originalCompanion.devices.map(device => device.id));
+  assert.equal(await page.title(), 'ChatGPTEE');
   checks.push('signed app launches with isolated native bridge and local workspace');
   if (process.argv.includes('--import-workspace-config') || process.argv.includes('--import-local-config')) {
     const env = parseEnv(readFileSync(process.argv.includes('--import-workspace-config') ? '../.env' : '.env', 'utf8'));
@@ -49,8 +53,8 @@ try {
   await page.screenshot({ path: `${directory}/native-computer.png` });
   await page.getByRole('button', { name: 'Close result panel' }).click();
   checks.push('computer side panel opens and closes');
-  await page.getByRole('button', { name: 'Pair with phone', exact: true }).click();
-  await page.getByRole('button', { name: 'Enable Phone access' }).click();
+  await page.getByRole('button', { name: 'Open phone and messaging', exact: true }).click();
+  if (!originalCompanion.enabled) await page.getByRole('button', { name: 'Enable Phone access' }).click();
   await page.getByRole('button', { name: 'Create pairing code' }).click();
   await page.waitForSelector('.pair-qr');
   const state = await page.evaluate(() => window.solanaDots.companion('state'));
@@ -62,7 +66,7 @@ try {
   phone.on('pageerror', error => errors.push(error.message));
   assert.equal((await context.request.get(origin + '/api/workspace')).status(), 401);
   await phone.goto(origin + '/pair#' + state.pairing.token);
-  await phone.getByLabel('Device name').fill('QA phone');
+  await phone.getByLabel('Device name').fill(qaPhoneName);
   await phone.screenshot({ path: `${directory}/mobile-pair.png` });
   await phone.getByRole('button', { name: 'Pair with Mac' }).click();
   await phone.waitForSelector('.wordmark', { timeout: 20000, state: 'attached' });
@@ -79,11 +83,12 @@ try {
   checks.push('390px phone layout fits viewport and navigation opens and closes');
   if (process.argv.includes('--phone-chat')) {
     const request = 'What is 2 + 2? Answer briefly.';
-    await phone.locator('.composer textarea').fill(request);
-    await phone.locator('.composer textarea').press('Enter');
-    const reply = phone.locator('.chat-bubble.assistant').last();
+    const replyIndex = await phone.locator('.chat-bubble.assistant').count();
+    await phone.locator('.composer textarea, .chat-composer textarea').fill(request);
+    await phone.locator('.composer textarea, .chat-composer textarea').press('Enter');
+    const reply = phone.locator('.chat-bubble.assistant').nth(replyIndex);
     await reply.waitFor({ state: 'visible', timeout: 60000 });
-    await phone.waitForFunction(() => [...document.querySelectorAll('.chat-bubble.assistant')].some(node => /4|four/i.test(node.textContent || '') || node.querySelector('ol')?.start === 4), undefined, { timeout: 60000 });
+    await phone.waitForFunction(index => { const node = document.querySelectorAll('.chat-bubble.assistant')[index]; return node && (/4|four/i.test(node.textContent || '') || node.querySelector('ol')?.start === 4); }, replyIndex, { timeout: 60000 });
     await phone.waitForFunction(() => !document.querySelector('button[aria-label="Stop response"]'), undefined, { timeout: 60000 });
     const answer = await reply.evaluate(node => node.textContent.trim() || `${node.querySelector('ol')?.start}.`);
     assert.match(answer, /4|four/i);
@@ -92,13 +97,13 @@ try {
     await page.locator('.thread-list .nav-item').filter({ hasText: request }).first().click();
     await page.waitForFunction(answer => [...document.querySelectorAll('.chat-bubble.assistant')].some(node => (node.textContent?.trim() || `${node.querySelector('ol')?.start}.`) === answer), answer, { timeout: 20000 });
     await page.screenshot({ path: `${directory}/native-mobile-synced.png` });
-    await page.getByRole('button', { name: 'Pair with phone', exact: true }).click();
+    await page.getByRole('button', { name: 'Open phone and messaging', exact: true }).click();
     checks.push('phone composer receives live model reply and same conversation opens on Mac');
   }
   const paired = await page.evaluate(() => window.solanaDots.companion('state'));
-  const device = paired.devices.find(d => d.name === 'QA phone'); assert(device);
+  const device = paired.devices.find(d => d.name === qaPhoneName && !originalDeviceIds.has(d.id)); assert(device);
   await page.screenshot({ path: `${directory}/native-phone-paired.png` });
-  await page.getByRole('button', { name: 'Revoke QA phone' }).click();
+  await page.getByRole('button', { name: 'Revoke ' + qaPhoneName }).click();
   assert.equal((await context.request.get(origin + '/api/workspace')).status(), 401);
   await page.getByRole('button', { name: 'Turn off Phone access' }).click();
   assert.equal((await page.evaluate(() => window.solanaDots.companion('state'))).enabled, false);
@@ -109,9 +114,13 @@ try {
     const box = page.getByPlaceholder('Message your Dot…');
     // Use the visible composer. This is one model request without tools or transactions.
     const textarea = await box.count() ? box : page.locator('.composer textarea, .chat-composer textarea');
+    const replyIndex = await page.locator('.chat-bubble.assistant').count();
     await textarea.fill(request);
     await textarea.press('Enter');
-    await page.waitForFunction(() => [...document.querySelectorAll('.chat-bubble.assistant')].some(node => /6|six/i.test(node.textContent || '') || node.querySelector('ol')?.start === 6), undefined, { timeout: 60000 });
+    const reply = page.locator('.chat-bubble.assistant').nth(replyIndex);
+    await reply.waitFor({ state: 'visible', timeout: 60000 });
+    await page.waitForFunction(index => { const node = document.querySelectorAll('.chat-bubble.assistant')[index]; return node && (/6|six/i.test(node.textContent || '') || node.querySelector('ol')?.start === 6); }, replyIndex, { timeout: 60000 });
+    await page.waitForFunction(() => !document.querySelector('button[aria-label="Stop response"]'), undefined, { timeout: 60000 });
     await page.screenshot({ path: `${directory}/native-chat-live.png` });
     checks.push('normal desktop composer receives a live model reply');
   }
@@ -126,8 +135,13 @@ try {
 } finally {
   try {
     const page = await app.firstWindow({ timeout: 1000 });
-    for (const device of (await page.evaluate(() => window.solanaDots.companion('state'))).devices.filter(device => device.name === 'QA phone')) await page.evaluate(id => window.solanaDots.companion('revoke', id), device.id);
+    for (const device of (await page.evaluate(() => window.solanaDots.companion('state'))).devices.filter(device => device.name === qaPhoneName && !originalDeviceIds.has(device.id))) await page.evaluate(id => window.solanaDots.companion('revoke', id), device.id);
     await page.evaluate(() => window.solanaDots.companion('stop'));
+    if (originalCompanion?.enabled) {
+      await page.evaluate(() => window.solanaDots.companion('start'));
+      if (originalCompanion.keepAwake) await page.evaluate(() => window.solanaDots.keepAwake(true));
+    }
+    if (originalTheme !== undefined) await page.evaluate(theme => theme === null ? localStorage.removeItem('opendots-theme') : localStorage.setItem('opendots-theme', theme), originalTheme);
   } catch {}
   await browser?.close(); await app.close();
 }
