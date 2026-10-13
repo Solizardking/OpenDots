@@ -1,0 +1,2060 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - link "Skip to documentation" [ref=e4] [cursor=pointer]:
+      - /url: "#docs-content"
+    - banner [ref=e5]:
+      - link "CLAWD Mail documentation" [ref=e6] [cursor=pointer]:
+        - /url: /docs
+        - generic [ref=e7]: CLAWDMail
+      - generic [ref=e9]: DOCUMENTATION
+      - navigation "Documentation navigation" [ref=e10]:
+        - link "Service" [ref=e11] [cursor=pointer]:
+          - /url: /service
+        - link "Sign in" [ref=e12] [cursor=pointer]:
+          - /url: /login
+    - generic [ref=e15]:
+      - complementary "Documentation contents" [ref=e16]:
+        - generic [ref=e17]:
+          - searchbox "Search documentation" [ref=e21]
+          - generic [aria-hidden] [ref=e22]: /
+        - navigation "Documentation sections" [ref=e23]:
+          - generic [ref=e24]:
+            - paragraph [ref=e25]: Start here
+            - link "Meet CLAWD Mail" [ref=e26] [cursor=pointer]:
+              - /url: /docs#overview
+            - link "Your first conversation" [ref=e27] [cursor=pointer]:
+              - /url: /docs#quick-start
+            - link "Accounts, onboarding, and files" [ref=e28] [cursor=pointer]:
+              - /url: /docs#accounts
+          - generic [ref=e29]:
+            - paragraph [ref=e30]: The workspace
+            - link "One CLAWD, twelve agent roles" [ref=e31] [cursor=pointer]:
+              - /url: /docs#agents
+            - link "Mint your email agent" [ref=e32] [cursor=pointer]:
+              - /url: /docs#email-agents
+            - link "Inboxes and conversations" [ref=e33] [cursor=pointer]:
+              - /url: /docs#mail
+            - link "Ask Claude" [ref=e34] [cursor=pointer]:
+              - /url: /docs#assistant
+            - link "Your automatic CLAWD agent" [ref=e35] [cursor=pointer]:
+              - /url: /docs#responder
+          - generic [ref=e36]:
+            - paragraph [ref=e37]: Research and actions
+            - link "Hookedpad launch knowledge" [ref=e38] [cursor=pointer]:
+              - /url: /docs#knowledge
+            - link "Solana research and $CLAWD" [ref=e39] [cursor=pointer]:
+              - /url: /docs#solana
+            - link "Prepare and launch a coin" [ref=e40] [cursor=pointer]:
+              - /url: /docs#pump-launch
+            - link "Claim creator fees" [ref=e41] [cursor=pointer]:
+              - /url: /docs#creator-fees
+          - generic [ref=e42]:
+            - paragraph [ref=e43]: Live rooms
+            - link "CLAWD Voice and live studio" [ref=e44] [cursor=pointer]:
+              - /url: /docs#livekit
+            - link "CLAWD Solana Live" [ref=e45] [cursor=pointer]:
+              - /url: /docs#streaming
+            - link "Voice and vision companions" [ref=e46] [cursor=pointer]:
+              - /url: /docs#voice-vision
+          - generic [ref=e47]:
+            - paragraph [ref=e48]: Developer reference
+            - link "Privacy and permission boundaries" [ref=e49] [cursor=pointer]:
+              - /url: /docs#privacy
+            - link "API authentication and examples" [ref=e50] [cursor=pointer]:
+              - /url: /docs#api-auth
+            - link "API route reference" [ref=e51] [cursor=pointer]:
+              - /url: /docs#api-reference
+          - generic [ref=e52]:
+            - paragraph [ref=e53]: Operate CLAWD Mail
+            - link "Local development and hosting" [ref=e54] [cursor=pointer]:
+              - /url: /docs#self-hosting
+            - link "Configuration reference" [ref=e55] [cursor=pointer]:
+              - /url: /docs#configuration
+            - link "Troubleshooting" [ref=e56] [cursor=pointer]:
+              - /url: /docs#troubleshooting
+            - link "Guides and the article" [ref=e57] [cursor=pointer]:
+              - /url: /docs#resources
+          - link "Download ARTICLE.md" [ref=e58] [cursor=pointer]:
+            - /url: /docs/ARTICLE.BslnmFoX.md
+      - main [ref=e63]:
+        - generic [ref=e64]:
+          - generic [ref=e65]:
+            - generic [ref=e66]: YOUR AGENT. ITS OWN INBOX.
+            - heading "CLAWD Mail documentation." [level=1] [ref=e68]: CLAWD Maildocumentation.
+            - paragraph [ref=e69]: From your first hello to your next launch. Learn the workspace, build with its API, and run the services behind it.
+            - link "Read the story behind CLAWD Mail" [ref=e70] [cursor=pointer]:
+              - /url: /docs/ARTICLE.BslnmFoX.md
+          - img "The CLAWD Mail lobster holding an envelope" [ref=e73]
+        - generic "Documentation starting points" [ref=e74]:
+          - link "Get started Your first account and inbox." [ref=e75] [cursor=pointer]:
+            - /url: /docs#quick-start
+            - strong [ref=e79]: Get started
+            - generic [ref=e80]: Your first account and inbox.
+          - link "Build with the API Examples and 104 routes." [ref=e83] [cursor=pointer]:
+            - /url: /docs#api-auth
+            - strong [ref=e86]: Build with the API
+            - generic [ref=e87]: Examples and 104 routes.
+          - link "Run your own Setup, services, and configuration." [ref=e90] [cursor=pointer]:
+            - /url: /docs#self-hosting
+            - strong [ref=e94]: Run your own
+            - generic [ref=e95]: Setup, services, and configuration.
+        - region [ref=e98]:
+          - generic [ref=e99]:
+            - generic [ref=e100]: Start here
+            - heading [level=2] [ref=e101]:
+              - text: Meet CLAWD Mail
+              - link "Link to Meet CLAWD Mail" [ref=e102] [cursor=pointer]:
+                - /url: /docs#overview
+                - text: "#"
+            - paragraph [ref=e103]: An address, a conversation, and a place for your agent to work.
+          - paragraph [ref=e104]: CLAWD Mail gives agents dedicated email inboxes and gives their owners a familiar place to read conversations, write replies, keep drafts, and manage private files. The same workspace connects reviewed Claude assistance, an automatic CLAWD email responder, public launch knowledge, Solana research, Pump.fun launch preparation, creator-fee claims, and live video and voice rooms.
+          - paragraph [ref=e105]: "The innovation is how these capabilities fit together: an email can begin research or prepare a coin launch, a dated source can support an answer, and the owner can review the resulting transaction in the app. Each feature has its own access and approval rules."
+          - 'region "Meet CLAWD Mail: Capability, How it works" [ref=e106]':
+            - table [ref=e107]:
+              - rowgroup [ref=e108]:
+                - row [ref=e109]:
+                  - columnheader "Capability" [ref=e110]
+                  - columnheader "How it works" [ref=e111]
+              - rowgroup [ref=e112]:
+                - row [ref=e113]:
+                  - cell "Private mail" [ref=e114]
+                  - cell "Cloudflare receives email; Resend sends when configured. Private R2 stores messages and attachments, and Neon accounts govern access and ownership." [ref=e115]
+                - row [ref=e116]:
+                  - cell "Ask Claude" [ref=e117]
+                  - cell "Explicit requests produce reviewed drafts, replies, and summaries through OpenRouter." [ref=e118]
+                - row [ref=e119]:
+                  - cell "CLAWD agents" [ref=e120]
+                  - cell "Twelve example-based roles in /agents produce private, reviewed results through xAI with a configured OpenRouter fallback, using selected owned-inbox context." [ref=e121]
+                - row [ref=e122]:
+                  - cell "Automatic CLAWD replies" [ref=e123]
+                  - cell "A separate continuous worker answers eligible mail in enabled, approved inboxes through xAI with configured OpenRouter alternatives." [ref=e124]
+                - row [ref=e125]:
+                  - cell "Knowledge and Solana research" [ref=e126]
+                  - cell "Shared public Hookedpad snapshots and timestamped, read-only chain/provider observations." [ref=e127]
+                - row [ref=e128]:
+                  - cell "Pump.fun and creator fees" [ref=e129]
+                  - cell "Prepare a request, then review and explicitly approve an exact transaction from a server-managed Privy launch wallet." [ref=e130]
+                - row [ref=e131]:
+                  - cell "CLAWD Solana Live" [ref=e132]
+                  - cell "Approved-account viewing and hosting, room chat, text agents, and an optional host-controlled voice or vision participant." [ref=e133]
+          - complementary [ref=e134]:
+            - generic [ref=e138]:
+              - heading "Public pages and authentication" [level=3] [ref=e139]
+              - paragraph [ref=e140]: The root opens the CLAWD Mail landing page. /docs, /privacy, /terms, /service, and /mobile are also public. /login offers open registration and sign-in; /onboarding requires an account session and verifies the first-login X welcome post. Community, mail, account, agent, and live-room features require sign-in, current terms, completed onboarding, and active access. Callback, protocol, and media-delivery resources keep their route-specific checks.
+          - complementary [ref=e141]:
+            - generic [ref=e145]:
+              - heading "Feature availability" [level=3] [ref=e146]
+              - paragraph [ref=e147]: This page describes the implemented application. AI, email delivery, launches, knowledge search, and media depend on the installation’s configured providers, credentials, credits, and running services. A configured feature or an accepted request does not prove delivery, a live broadcast, or an on-chain confirmation.
+          - generic [ref=e148]:
+            - link "Open CLAWD Mail Create an account or sign in." [ref=e149] [cursor=pointer]:
+              - /url: /login
+              - generic [ref=e150]:
+                - strong [ref=e151]: Open CLAWD Mail
+                - generic [ref=e152]: Create an account or sign in.
+            - link "Browse live rooms An authenticated approved account is required." [ref=e155] [cursor=pointer]:
+              - /url: /stream
+              - generic [ref=e156]:
+                - strong [ref=e157]: Browse live rooms
+                - generic [ref=e158]: An authenticated approved account is required.
+            - link "Read the article The design and innovations behind CLAWD Mail." [ref=e161] [cursor=pointer]:
+              - /url: /docs/ARTICLE.BslnmFoX.md
+              - generic [ref=e162]:
+                - strong [ref=e163]: Read the article
+                - generic [ref=e164]: The design and innovations behind CLAWD Mail.
+        - region [ref=e167]:
+          - generic [ref=e168]:
+            - generic [ref=e169]: Start here
+            - heading [level=2] [ref=e170]:
+              - text: Your first conversation
+              - link "Link to Your first conversation" [ref=e171] [cursor=pointer]:
+                - /url: /docs#quick-start
+                - text: "#"
+            - paragraph [ref=e172]: From signup to a working inbox.
+          - list [ref=e173]:
+            - listitem [ref=e174]: Start at clawdmail.app, open /login, and choose Create account. Enter your name, login email, a password of 12–128 characters, current terms acceptance, and adult affirmation. No invitation or setup key is needed for a member.
+            - listitem [ref=e175]: "On your first sign-in, complete /onboarding: publish the prepared X welcome message with your unique account marker, paste the public post URL, and verify it. Mail and agent features unlock only after server verification succeeds."
+            - listitem [ref=e176]: After onboarding, open your mailbox and choose Create an inbox. Choose an address name and display name. Signup itself does not create an inbox.
+            - listitem [ref=e177]: Check Connection settings for receiving and sending readiness. If domain routing is pending, drafts remain useful while an administrator completes setup.
+            - listitem [ref=e178]: "Choose Compose, enter a recipient, subject, and message, then Send. Review the delivery result: queued, delivered, bounced, or unavailable."
+            - listitem [ref=e179]: Open Account & files → Your CLAWD agent to review or pause automatic replies before sending mail to your enabled inbox. New approved inboxes are enabled by default when the responder is configured.
+          - complementary [ref=e180]:
+            - generic [ref=e184]:
+              - heading "Required X welcome post" [level=3] [ref=e185]
+              - paragraph [ref=e186]: "eureka I've got mail! i just registered for clawdmail powered by $CLAWD on @solana, follow @clawddevs and me as we onboard the world to solana ai one email at a time! The composer appends your unique #ClawdMail<code> marker. Publish it yourself, then verify the public link; the app stores no X password or token."
+          - complementary [ref=e187]:
+            - generic [ref=e191]:
+              - heading "Login email and inbox address" [level=3] [ref=e192]
+              - paragraph [ref=e193]: Your login email identifies your account. It is separate from the agent inbox address you create. Normal account signup does not send an email-verification challenge or prove ownership of the login address.
+          - generic [ref=e194]:
+            - link "Account and onboarding details Understand owner and member access." [ref=e195] [cursor=pointer]:
+              - /url: /docs#accounts
+              - generic [ref=e196]:
+                - strong [ref=e197]: Account and onboarding details
+                - generic [ref=e198]: Understand owner and member access.
+            - link "Mail workflows Folders, drafts, replies, and delivery status." [ref=e201] [cursor=pointer]:
+              - /url: /docs#mail
+              - generic [ref=e202]:
+                - strong [ref=e203]: Mail workflows
+                - generic [ref=e204]: Folders, drafts, replies, and delivery status.
+        - region [ref=e207]:
+          - generic [ref=e208]:
+            - generic [ref=e209]: The workspace
+            - heading [level=2] [ref=e210]:
+              - text: One CLAWD, twelve agent roles
+              - link "Link to One CLAWD, twelve agent roles" [ref=e211] [cursor=pointer]:
+                - /url: /docs#agents
+                - text: "#"
+            - paragraph [ref=e212]: Choose a job for CLAWD, provide context, and review the result.
+          - paragraph [ref=e213]: Open /agents after sign-in and first-login onboarding. Choose Inbox Zero, Invoice Processor, Terminal Assistant, Podcast Booking, Receipt Parser, Sales Signal Router, Sales Agent, Scheduling, Support, Voice to Email, x402 Payment, or Note Taker. Each role adapts the prompts and workflows in the supplied AgentMail examples to CLAWD and the configured server-side AI connections.
+          - list [ref=e214]:
+            - listitem [ref=e215]: Select a role, use its example task or write your own, and fill in any role-specific details.
+            - listitem [ref=e216]: Optionally select an owned inbox and conversation. CLAWD can read bounded context from that inbox. Text tasks work without creating an inbox.
+            - listitem [ref=e217]: For invoices and receipts, add PNG, JPEG, or WebP images. The browser optimizes up to four images to a combined 600 KiB input budget. For Voice to Email, use browser dictation where supported or paste a transcript.
+            - listitem [ref=e218]: Run CLAWD, review the result, and copy or download it. Recent results persist in your private R2 namespace and can be reopened or used for a follow-up.
+            - listitem [ref=e219]: To turn output into mail, review the recipient, subject, and body and save an unsent draft to your owned inbox. Open Drafts in Mailboxes to review and send it.
+          - complementary [ref=e220]:
+            - generic [ref=e224]:
+              - heading "Connections and availability" [level=3] [ref=e225]
+              - paragraph [ref=e226]: These are interactive agent roles. Calendar booking, CRM updates, invoice accounting, scheduled digests, code execution, and payment settlement require their respective services; the current workspace provides proposals and reviewed output for these actions. The supplied x402 example defaults to mock payments. Each role displays its integration requirements.
+          - complementary [ref=e227]:
+            - generic [ref=e231]:
+              - heading "Private xAI requests" [level=3] [ref=e232]
+              - paragraph [ref=e233]: XAI_API_KEY remains on the backend. Selected task text, role details, inbox context, conversation history, and optimized images are sent to xAI, or through OpenRouter to the configured fallback model if xAI is unavailable. This workspace’s tools only read the selected owned inbox; web search and fetching supplied document URLs are disabled. Missing configuration, rejected access, depleted credits, or provider errors are shown explicitly. Dictation depends on the browser’s speech service.
+          - heading "Work together by voice and vision" [level=3] [ref=e234]
+          - paragraph [ref=e235]: Every role also offers a private CLAWD voice session with optional camera or selected-screen frames. Custom lobster controls show capture state, microphone/speaker mute, typed questions, explicit view analysis, transcripts, and read-only Solana research receipts. The supplied Vision-Agents framework uses xAI speech and scene analysis, with OpenRouter alternatives for bounded speech turns and requested view analysis. The controls show the actual voice provider and model.
+          - list [ref=e236]:
+            - listitem [ref=e237]: Starting explicitly shares the chosen media and the task context shown above. Stop before starting with a new role or changed details.
+            - listitem [ref=e238]: Sessions last up to ten minutes, with one per account and four across the service. Stop closes capture tracks and the private connection. An unconfirmed server shutdown remains visible for Retry Stop.
+            - listitem [ref=e239]: Raw media stays out of saved task history. Export the temporary transcript or explicitly use it in a normal task to retain reviewed output.
+            - listitem [ref=e240]: Solana tools only read public mainnet data. Successful and unavailable reads have distinct receipts; voice agents cannot sign, send payments, book calendars, or send mail.
+          - generic [ref=e241]:
+            - link "Open CLAWD agents Sign-in, first-login onboarding, and active account access apply." [ref=e242] [cursor=pointer]:
+              - /url: /agents
+              - generic [ref=e243]:
+                - strong [ref=e244]: Open CLAWD agents
+                - generic [ref=e245]: Sign-in, first-login onboarding, and active account access apply.
+            - link "Agent workspace guide Roles, private context, limits, and external integrations." [ref=e248] [cursor=pointer]:
+              - /url: /docs/AGENTS.H3jseFJc.md
+              - generic [ref=e249]:
+                - strong [ref=e250]: Agent workspace guide
+                - generic [ref=e251]: Roles, private context, limits, and external integrations.
+            - link "Voice and vision integration Exact supplied framework, providers, protocol, privacy, and verification." [ref=e254] [cursor=pointer]:
+              - /url: /docs/VISION-AGENTS.DtxMUo-t.md
+              - generic [ref=e255]:
+                - strong [ref=e256]: Voice and vision integration
+                - generic [ref=e257]: Exact supplied framework, providers, protocol, privacy, and verification.
+        - region [ref=e260]:
+          - generic [ref=e261]:
+            - generic [ref=e262]: The workspace
+            - heading [level=2] [ref=e263]:
+              - text: Mint your email agent
+              - link "Link to Mint your email agent" [ref=e264] [cursor=pointer]:
+                - /url: /docs#email-agents
+                - text: "#"
+            - paragraph [ref=e265]: An owned mailbox, a public Metaplex identity, and a reviewed Solana transaction.
+          - paragraph [ref=e266]: Open /agents/email after signing in and completing account onboarding. Select an owned CLAWD mailbox, a public name and description, supported capabilities, and a verified account wallet. Your owner wallet receives the Core agent asset; the selected sponsor or owner wallet pays mint costs.
+          - list [ref=e267]:
+            - listitem [ref=e268]: Save a private agent draft. Review the chosen CLAWD mailbox address and public profile before consenting to publication.
+            - listitem [ref=e269]: Publish the approved profile and prepare a mint review. Inspect the simulated cost, maximum cost, owner wallet, fee payer, funding shortfall, and review expiry.
+            - listitem [ref=e270]: Approve the exact review. A Privy account wallet signs after your approval; an external wallet prompts for transaction signing and must match the verified owner.
+            - listitem [ref=e271]: Refresh the same request and receipt until the backend verifies the Core asset owner and Metaplex Agent Identity. Submitted or uncertain requests remain visible without creating another mint.
+          - complementary [ref=e272]:
+            - generic [ref=e276]:
+              - heading "Public profile and private mail" [level=3] [ref=e277]
+              - paragraph [ref=e278]: Only the chosen name, description, capabilities, and CLAWD mailbox address are published. Login email, private persona, message content, attachments, and private files remain outside the public profile. Automatic replies retain their separate inbox processing consent and Resume replies action.
+          - complementary [ref=e279]:
+            - generic [ref=e283]:
+              - heading "Funding and receipts" [level=3] [ref=e284]
+              - paragraph [ref=e285]: Sponsorship requires an enabled budget and sufficient onchain balance. The review displays exact SOL amounts from integer lamport strings. The verified receipt links the Core asset, Agent Identity PDA, operational Asset Signer PDA, transaction, and public metadata. Operational wallet funds are displayed separately from mint sponsor funds.
+          - generic [ref=e286]:
+            - link "Mint email agent Requires your approved account and completed onboarding." [ref=e287] [cursor=pointer]:
+              - /url: /agents/email
+              - generic [ref=e288]:
+                - strong [ref=e289]: Mint email agent
+                - generic [ref=e290]: Requires your approved account and completed onboarding.
+            - link "Email-agent mint guide Review publication, signing, funding, and receipt behavior." [ref=e293] [cursor=pointer]:
+              - /url: /docs/EMAIL-AGENTS.DJ8w3zd1.md
+              - generic [ref=e294]:
+                - strong [ref=e295]: Email-agent mint guide
+                - generic [ref=e296]: Review publication, signing, funding, and receipt behavior.
+        - region [ref=e299]:
+          - generic [ref=e300]:
+            - generic [ref=e301]: Start here
+            - heading [level=2] [ref=e302]:
+              - text: Accounts, onboarding, and files
+              - link "Link to Accounts, onboarding, and files" [ref=e303] [cursor=pointer]:
+                - /url: /docs#accounts
+                - text: "#"
+            - paragraph [ref=e304]: Individual sessions and ownership for every private action.
+          - paragraph [ref=e305]: When Neon accounts are configured, sign-in uses your individual email and password through Better Auth. Session cookies are HttpOnly and SameSite=Lax, last eight hours, and use Secure in production. Signing out revokes the server session; changing a password revokes other sessions.
+          - 'region "Accounts, onboarding, and files: Account state, Available actions" [ref=e306]':
+            - table [ref=e307]:
+              - rowgroup [ref=e308]:
+                - row [ref=e309]:
+                  - columnheader "Account state" [ref=e310]
+                  - columnheader "Available actions" [ref=e311]
+              - rowgroup [ref=e312]:
+                - row [ref=e313]:
+                  - cell "First-login onboarding" [ref=e314]
+                  - cell "Publish and verify your account-specific X welcome post. Inspect account status, change password, or sign out; private features remain unavailable until verification." [ref=e315]
+                - row [ref=e316]:
+                  - cell "Approved member" [ref=e317]
+                  - cell "After onboarding, use owned inboxes, files, assistant, responder controls, launch requests, and hosting features when their providers are configured." [ref=e318]
+                - row [ref=e319]:
+                  - cell "Approved owner" [ref=e320]
+                  - cell "Member capabilities plus member approval decisions, optional invitations, and manual public-knowledge crawl requests." [ref=e321]
+                - row [ref=e322]:
+                  - cell "Blocked" [ref=e323]
+                  - cell "Private access and worker processing are denied. Existing sessions are checked against the current decision." [ref=e324]
+          - paragraph [ref=e325]: Public signup automatically approves members. Existing approved signed-in or inbox-owning users are retained at migration; unused accounts complete first-login onboarding. In Account & files, the owner retains access-management controls. Account access does not grant access to someone else’s messages, files, launch wallet, or room controls. Changes are checked on private requests and before automatic generation and dispatch.
+          - heading "Private file storage" [level=3] [ref=e326]
+          - paragraph [ref=e327]: Approved users can upload, download, and delete their own files in Account & files. Each upload is limited to 5 MiB. File metadata lives in Neon; bytes live in private R2 under the user’s namespace. These files are separate from mail attachments and public streaming images; uploading a file does not attach it to an email.
+          - heading "Invitations and alternate connections" [level=3] [ref=e328]
+          - paragraph [ref=e329]: An approved owner can issue a one-use invitation through the API, optionally bound to a login email, valid for seven days. Invitations are optional and do not waive first-login onboarding or prevent public signup. When the individual-account approval policy is active, the independent AgentMail adapter and legacy shared mailbox-key access are disabled. In a legacy installation, first establish a valid CLAWD mailbox session at /login, then open the authenticated /connect page to use the optional AgentMail adapter. An AgentMail key alone does not authorize CLAWD product pages.
+          - link "Open Account & files Sign-in, first-login onboarding, and active account access apply." [ref=e331] [cursor=pointer]:
+            - /url: /account
+            - generic [ref=e332]:
+              - strong [ref=e333]: Open Account & files
+              - generic [ref=e334]: Sign-in, first-login onboarding, and active account access apply.
+        - region [ref=e337]:
+          - generic [ref=e338]:
+            - generic [ref=e339]: The workspace
+            - heading [level=2] [ref=e340]:
+              - text: Inboxes and conversations
+              - link "Link to Inboxes and conversations" [ref=e341] [cursor=pointer]:
+                - /url: /docs#mail
+                - text: "#"
+            - paragraph [ref=e342]: Compose, reply, organize, and understand delivery.
+          - paragraph [ref=e343]: Use the Agent inboxes selector to switch between your owned addresses. New addresses use the installation’s primary mail domain, normally @clawdmail.app. Configured legacy @musebook.trade inboxes keep their existing address and history. Mailbox names are lowercased and accept 1–64 letters, numbers, dots, underscores, or hyphens, beginning with a letter or number.
+          - list [ref=e344]:
+            - listitem [ref=e345]: Inbox, Starred, Sent, Drafts, and Trash keep mail organized. Search conversations by people, subject, or conversation preview using the mailbox search field. Draft search also covers draft text.
+            - listitem [ref=e346]: Compose accepts comma- or semicolon-separated recipients. Save a draft to continue later. Sending a saved draft remains an explicit action.
+            - listitem [ref=e347]: Open a conversation to read its messages, download incoming attachments, and reply in the same thread. Replies preserve threading headers.
+            - listitem [ref=e348]: Star conversations, move them to Trash, or restore them using the folder controls. The core API updates message labels; it does not offer a permanent-message-delete endpoint.
+            - listitem [ref=e349]: Incoming HTML uses sandboxed frames with scripts and external tracking resources blocked. Plain text, original MIME, and incoming attachments remain privately stored.
+            - listitem [ref=e350]: The current composer does not offer manual attachment upload. Incoming and generated reply attachments can be downloaded; private account files are a separate feature.
+          - 'region "Inboxes and conversations: Delivery result, Meaning and next step" [ref=e351]':
+            - table [ref=e352]:
+              - rowgroup [ref=e353]:
+                - row [ref=e354]:
+                  - columnheader "Delivery result" [ref=e355]
+                  - columnheader "Meaning and next step" [ref=e356]
+              - rowgroup [ref=e357]:
+                - row [ref=e358]:
+                  - cell "Queued" [ref=e359]
+                  - cell "The provider accepted the recipient for delivery. Final receipt is not yet proved." [ref=e360]
+                - row [ref=e361]:
+                  - cell "Delivered" [ref=e362]
+                  - cell "The provider reports delivery for the recipient." [ref=e363]
+                - row [ref=e364]:
+                  - cell "Bounced / failed" [ref=e365]
+                  - cell "The provider rejected delivery or the request failed; inspect the displayed result." [ref=e366]
+                - row [ref=e367]:
+                  - cell "Uncertain / ambiguous" [ref=e368]
+                  - cell "Acceptance cannot be established. Check provider records and the thread before any manual resend." [ref=e369]
+                - row [ref=e370]:
+                  - cell "Accepted with storage warning" [ref=e371]
+                  - cell "The provider accepted mail but saving its private sent copy failed. Do not resend just to recreate a copy." [ref=e372]
+          - heading "Mail sounds and signup welcomes" [level=3] [ref=e373]
+          - paragraph [ref=e374]: The speaker button or Account & files can preview or mute the incoming “You’ve got mail!” cue and the sent whoosh. Preferences are per account in this browser and synchronize across its tabs. New owned-inbox mail is polled every 15 seconds, or 30 seconds in a background tab; browser throttling can delay this. The first snapshot is silent. A click, tap, or keypress may be needed to unlock audio. Sounds work while the app is open and do not require system-notification permission.
+          - paragraph [ref=e375]: With signup welcomes enabled, a separate worker job generates original artwork and sends one welcome email to the login address. It reports preparation, acceptance, delivery, failure, or uncertainty. Signup completes independently of that job, and the welcome does not bypass approval. Signup names and addresses are not sent to the artwork model.
+          - generic [ref=e376]:
+            - link "Mail sounds guide Playback, polling, and editable audio sources." [ref=e377] [cursor=pointer]:
+              - /url: /docs/MAIL-SOUNDS.BcbcuyvF.md
+              - generic [ref=e378]:
+                - strong [ref=e379]: Mail sounds guide
+                - generic [ref=e380]: Playback, polling, and editable audio sources.
+            - link "Welcome email guide Setup and delivery behavior." [ref=e383] [cursor=pointer]:
+              - /url: /docs/WELCOME-EMAIL.DQ0TWtJj.md
+              - generic [ref=e384]:
+                - strong [ref=e385]: Welcome email guide
+                - generic [ref=e386]: Setup and delivery behavior.
+        - region [ref=e389]:
+          - generic [ref=e390]:
+            - generic [ref=e391]: The workspace
+            - heading [level=2] [ref=e392]:
+              - text: Ask Claude
+              - link "Link to Ask Claude" [ref=e393] [cursor=pointer]:
+                - /url: /docs#assistant
+                - text: "#"
+            - paragraph [ref=e394]: Reviewed drafting and summaries, with sending under your control.
+          - paragraph [ref=e395]: Ask Claude uses the configured anthropic/claude-haiku-5.5 model through OpenRouter. Use it in Compose for a draft, in a conversation for a reply, or in the reader for a summary. Text streams into a review panel.
+          - list [ref=e396]:
+            - listitem [ref=e397]: Choose draft, reply, or summary and enter instructions.
+            - listitem [ref=e398]: Select Request. Only then is the chosen draft or owned conversation sent to the provider.
+            - listitem [ref=e399]: Wait for completion and review the result. Apply draft or Apply reply replaces the editor body; a summary remains in its panel.
+            - listitem [ref=e400]: Edit as needed and choose Send separately.
+          - list [ref=e401]:
+            - listitem [ref=e402]: Conversation content is loaded from private storage after ownership checks. Attachments are not shared with the assistant.
+            - listitem [ref=e403]: Context uses up to the latest 100 messages and 250,000 body characters; shortened context is identified in the review panel.
+            - listitem [ref=e404]: Each user can have four concurrent requests and submit 20 per hour. Output is bounded to 1,000 tokens.
+            - listitem [ref=e405]: Jobs and results are private in R2. Reopening a job or polling its status does not submit another provider request.
+            - listitem [ref=e406]: Closing the panel or disconnecting the stream does not cancel generation. Cancellation is not available; a lost 90-second execution lease becomes an explicit interrupted result.
+            - listitem [ref=e407]: Provider failures are shown. No automatic model substitution or retry is performed. The assistant has no mail-sending or wallet tools.
+          - link "Assistant guide Provider setup, saved requests, and verification." [ref=e409] [cursor=pointer]:
+            - /url: /docs/ASSISTANT.BOIoMhQy.md
+            - generic [ref=e410]:
+              - strong [ref=e411]: Assistant guide
+              - generic [ref=e412]: Provider setup, saved requests, and verification.
+        - region [ref=e415]:
+          - generic [ref=e416]:
+            - generic [ref=e417]: The workspace
+            - heading [level=2] [ref=e418]:
+              - text: Your automatic CLAWD agent
+              - link "Link to Your automatic CLAWD agent" [ref=e419] [cursor=pointer]:
+                - /url: /docs#responder
+                - text: "#"
+            - paragraph [ref=e420]: An email-native agent that keeps working when the site is closed.
+          - paragraph [ref=e421]: The CLAWD responder is a separate continuous worker using xAI grok-4.7 with a configured OpenRouter text fallback. In an enabled inbox belonging to an approved account, it can answer ordinary human messages, research the web, inspect public Solana data, use curated skills, understand supported images, prepare a launch request, and generate a requested image with xAI grok-imagine-image-2.0 or the separately configured OpenRouter image fallback. It sends its reply to the incoming message’s original author, preserving the thread.
+          - list [ref=e422]:
+            - listitem [ref=e423]: Open Account & files → Your CLAWD agent and choose an owned inbox.
+            - listitem [ref=e424]: Inspect worker availability and recent reply jobs. Edit the agent name or character instructions, then save.
+            - listitem [ref=e425]: Pause replies to stop new private processing and dispatch for that inbox; enable them when you want automatic responses.
+            - listitem [ref=e426]: Email the enabled address. Once the worker sees eligible mail, it generates and sends a response without requiring the website to stay open.
+          - complementary [ref=e427]:
+            - generic [ref=e431]:
+              - heading "Default enablement and historical mail" [level=3] [ref=e432]
+              - paragraph [ref=e433]: Approved inboxes are enabled by default. MAIL_AGENT_BACKFILL=true also includes stored historical received mail for newly configured inboxes. Set it to false before first configuration to begin at configuration time. Existing inbox start times, pause decisions, and character settings are durable.
+          - heading "Tools and context" [level=3] [ref=e434]
+          - list [ref=e435]:
+            - listitem [ref=e436]: "Curated skill IDs: solana-basics, wallet-research, transaction-check, token-research, image-generation, mail-agent, pump-launch, and clawd-and-musebook. Research tools provide bounded, read-only results; the launch tool prepares a draft for owner review."
+            - listitem [ref=e437]: Up to four source-message PNG, JPEG, or WebP images can be interpreted, within a combined 5 MiB input budget. Other files and oversized images are omitted with an explanation.
+            - listitem [ref=e438]: One requested image generation is allowed per message. Generated output must fit 3 MiB so the final email can remain within the provider’s 5 MiB message limit.
+            - listitem [ref=e439]: Text context uses up to 100 non-Trash messages and 100,000 body characters plus 30,000 characters from the source message. Tool use is limited to four rounds and eight calls.
+            - listitem [ref=e440]: Outgoing, self-addressed, automated, bulk/list, bounce, Trash, and invalid-source messages are excluded to prevent loops. A human message with List-ID alone can remain eligible. A Reply-To header cannot redirect the automatic reply.
+          - 'region "Your automatic CLAWD agent: Job state, Meaning" [ref=e441]':
+            - table [ref=e442]:
+              - rowgroup [ref=e443]:
+                - row [ref=e444]:
+                  - columnheader "Job state" [ref=e445]
+                  - columnheader "Meaning" [ref=e446]
+              - rowgroup [ref=e447]:
+                - row [ref=e448]:
+                  - cell "queued / processing" [ref=e449]
+                  - cell "Waiting for work, or a worker is preparing a reply under a durable lease." [ref=e450]
+                - row [ref=e451]:
+                  - cell "retry" [ref=e452]
+                  - cell "A pre-send or definitively rejected transient failure is eligible for bounded retry." [ref=e453]
+                - row [ref=e454]:
+                  - cell "sending" [ref=e455]
+                  - cell "Access and pause checks passed; dispatch is in progress." [ref=e456]
+                - row [ref=e457]:
+                  - cell "sent" [ref=e458]
+                  - cell "The original author was explicitly accepted as queued or delivered." [ref=e459]
+                - row [ref=e460]:
+                  - cell "skipped" [ref=e461]
+                  - cell "Loop prevention, source state, Trash, pause, or access decisions prevented a reply." [ref=e462]
+                - row [ref=e463]:
+                  - cell "failed" [ref=e464]
+                  - cell "A permanent error or the three-attempt limit needs attention." [ref=e465]
+                - row [ref=e466]:
+                  - cell "ambiguous" [ref=e467]
+                  - cell "The send may have been accepted. It will not be automatically replayed." [ref=e468]
+          - paragraph [ref=e469]: Neon deduplicates source messages and coordinates worker leases; private R2 retains generated results before dispatch. Access is rechecked before reads, generation, and sending. If the network fails after dispatch or a sending lease expires, the worker preserves uncertainty rather than resending. There is no automatic replay control for ambiguous jobs.
+          - generic [ref=e470]:
+            - link "Manage your agent An approved account and owned inbox are required." [ref=e471] [cursor=pointer]:
+              - /url: /account#mail-agent
+              - generic [ref=e472]:
+                - strong [ref=e473]: Manage your agent
+                - generic [ref=e474]: An approved account and owned inbox are required.
+            - link "Responder guide Worker setup, tools, limits, and durable delivery." [ref=e477] [cursor=pointer]:
+              - /url: /docs/MAIL-AGENT.DB9O7_gx.md
+              - generic [ref=e478]:
+                - strong [ref=e479]: Responder guide
+                - generic [ref=e480]: Worker setup, tools, limits, and durable delivery.
+        - region [ref=e483]:
+          - generic [ref=e484]:
+            - generic [ref=e485]: Research and actions
+            - heading [level=2] [ref=e486]:
+              - text: Hookedpad launch knowledge
+              - link "Link to Hookedpad launch knowledge" [ref=e487] [cursor=pointer]:
+                - /url: /docs#knowledge
+                - text: "#"
+            - paragraph [ref=e488]: Shared public sources, with dates and links you can inspect.
+          - paragraph [ref=e489]: Account & files → Hookedpad knowledge searches public snapshots of https://www.hookedpad.com/launches and linked token pages. The email agent can retrieve the same corpus using search_hookedpad_launches. Results include source links and crawl dates so you can inspect their freshness.
+          - paragraph [ref=e490]: "The application runs its own bounded crawler and uses Supermemory for ingestion and retrieval. It is not personal inbox memory: mail, files, credentials, and user profiles are not ingested into this shared public namespace."
+          - list [ref=e491]:
+            - listitem [ref=e492]: By default, the continuous worker checks for due crawls every minute and refreshes every six hours. Each run samples the listing plus up to 24 linked detail pages.
+            - listitem [ref=e493]: The crawler honors robots.txt, allows only the exact HTTPS Hookedpad origin and listing/token paths, rejects redirects, and runs no page scripts.
+            - listitem [ref=e494]: A database lease prevents overlapping crawls. R2 stores status and content hashes, and unchanged pages are not reindexed.
+            - listitem [ref=e495]: Supermemory indexing is asynchronous; submitted and indexed page counts are separate. Quota, authentication, robots, and indexing failures remain visible.
+            - listitem [ref=e496]: Approved members can search. The approved installation owner can choose Crawl now; it queues work rather than proving immediate completion.
+            - listitem [ref=e497]: Prices, rules, and launch statuses are dated website observations. Use live chain research for current on-chain facts.
+          - generic [ref=e498]:
+            - generic [ref=e499]:
+              - generic [ref=e500]: Crawler CLI
+              - button "Copy Crawler CLI" [ref=e501] [cursor=pointer]: Copy
+            - generic "Crawler CLI" [ref=e505]:
+              - code [ref=e506]: node backend/crawl-hookedpad.js --status node backend/crawl-hookedpad.js --force node backend/crawl-hookedpad.js --search 'Which launches use social trading?'
+          - generic [ref=e507]:
+            - link "Search launch knowledge Approved-account search with dated sources." [ref=e508] [cursor=pointer]:
+              - /url: /account#hookedpad-knowledge
+              - generic [ref=e509]:
+                - strong [ref=e510]: Search launch knowledge
+                - generic [ref=e511]: Approved-account search with dated sources.
+            - link "Knowledge guide Crawler configuration, namespace, and limits." [ref=e514] [cursor=pointer]:
+              - /url: /docs/SUPERMEMORY.B1oYFbyl.md
+              - generic [ref=e515]:
+                - strong [ref=e516]: Knowledge guide
+                - generic [ref=e517]: Crawler configuration, namespace, and limits.
+        - region [ref=e520]:
+          - generic [ref=e521]:
+            - generic [ref=e522]: Research and actions
+            - heading [level=2] [ref=e523]:
+              - text: Solana research and $CLAWD
+              - link "Link to Solana research and $CLAWD" [ref=e524] [cursor=pointer]:
+                - /url: /docs#solana
+                - text: "#"
+            - paragraph [ref=e525]: Observed market data and verified public-chain receipts.
+          - paragraph [ref=e526]: The agent and live workspace expose public-wallet research, transaction checks, token details, launch observations, and provider market data. RPC reads verify Solana mainnet’s genesis hash. Receipts identify source, observation time, commitment, and slot when available. Provider quota and access failures remain explicit.
+          - list [ref=e527]:
+            - listitem [ref=e528]: Public-wallet research includes SOL, SPL Token, and Token-2022 holdings with a 100-token-account display cap.
+            - listitem [ref=e529]: Token research verifies mint details, supply, decimals, and authorities. Transaction checks inspect status and parsed chain details.
+            - listitem [ref=e530]: Helius is the default RPC through HELIUS_RPC_URL or server-side HELIUS_API_KEY, followed by the configured SOLANA_RPC_URL and SOLANA_BACKUP_RPC_URL fallbacks. Solana Tracker and optional Birdeye market data are separately labeled.
+            - listitem [ref=e531]: Recent launches arrive through wss://clawd-ws.fly.dev/ws. Relay events are observations and can be missed during reconnection. Worker snapshots expire after ten minutes and are labeled stale after thirty seconds without refresh.
+            - listitem [ref=e532]: The authenticated live page’s wallet plugin connects through Wallet Standard only after a click, or watches a pasted public address. It shares public accounts and performs read-only balance/history queries. It does not sign messages or transactions or broadcast funds.
+          - generic [ref=e533]:
+            - generic [ref=e534]:
+              - generic [ref=e535]: Exact $CLAWD mint on Solana
+              - button "Copy Exact $CLAWD mint on Solana" [ref=e536] [cursor=pointer]: Copy
+            - generic "Exact $CLAWD mint on Solana" [ref=e540]:
+              - code [ref=e541]: 8cHzQHUS2s2h8TzCmfqPKYiM4dSt4roa3n7MyRLApump
+          - complementary [ref=e542]:
+            - generic [ref=e546]:
+              - heading "Market data and buying" [level=3] [ref=e547]
+              - paragraph [ref=e548]: Prices and trades are observations rather than executable quotes. The community’s buy links lead to a separate wallet review flow. The automatic responder, stream research agents, and read-only wallet plugin cannot purchase tokens.
+          - generic [ref=e549]:
+            - link "Meet CLAWD and the community The exact mint, contact links, and buy entry point." [ref=e550] [cursor=pointer]:
+              - /url: /clawd
+              - generic [ref=e551]:
+                - strong [ref=e552]: Meet CLAWD and the community
+                - generic [ref=e553]: The exact mint, contact links, and buy entry point.
+            - link "View Solana Live Sign in with an approved account for observations and wallet research." [ref=e556] [cursor=pointer]:
+              - /url: /stream
+              - generic [ref=e557]:
+                - strong [ref=e558]: View Solana Live
+                - generic [ref=e559]: Sign in with an approved account for observations and wallet research.
+        - region [ref=e562]:
+          - generic [ref=e563]:
+            - generic [ref=e564]: Research and actions
+            - heading [level=2] [ref=e565]:
+              - text: Prepare and launch a coin
+              - link "Link to Prepare and launch a coin" [ref=e566] [cursor=pointer]:
+                - /url: /docs#pump-launch
+                - text: "#"
+            - paragraph [ref=e567]: From an email request to an exact owner-approved transaction.
+          - list [ref=e568]:
+            - listitem [ref=e569]: Email an enabled CLAWD inbox with the coin name, symbol, description, and a PNG, JPEG, or WebP image up to 3 MiB, or a published HTTPS/IPFS metadata JSON URI. CLAWD asks for missing details and returns a review link.
+            - listitem [ref=e570]: As the signed-in, approved owner of the receiving inbox, open Account → Launch on Pump.fun. Create the Privy launch wallet and fund its displayed address with SOL.
+            - listitem [ref=e571]: Select the request and choose Review transaction. Inspect the mint, creator-fee wallet, simulated transaction, estimated costs, and 45-second expiry.
+            - listitem [ref=e572]: Check the approval box and choose Approve and launch while the review is valid. An expired review needs a fresh review and approval.
+            - listitem [ref=e573]: Use Refresh receipt for the saved signature. A confirmed coin link appears only after a successful confirmed transaction and live mint/bonding-curve account checks.
+          - paragraph [ref=e574]: "You can also use Prepare a coin in the Account launch panel: choose an owned inbox, fill the fields, add an image or metadata URI, and select Prepare launch. Name is limited to 32 UTF-8 bytes, symbol to 13 UTF-8 bytes, description to 2,000 characters, and metadata URI to 200 characters. The prepared draft follows the same separate review and approval flow."
+          - complementary [ref=e575]:
+            - generic [ref=e579]:
+              - heading "The launch wallet is server-managed" [level=3] [ref=e580]
+              - paragraph [ref=e581]: This installation uses Privy with a server authorization key to manage the launch wallet. It is separate from an external wallet connected to the read-only live plugin. Email and MCP can prepare requests; only the signed-in, approved inbox owner can approve spending in CLAWD Mail.
+          - paragraph [ref=e582]: The implementation creates a standard SOL-paired Token-2022 coin using the official Pump SDK create_v2 transaction. There is no initial buy, mayhem, cashback, or holder rewards. Total cost is capped at 0.05 SOL including rent and network costs. The creator-fee recipient is the launch wallet. Preparing image/description metadata publishes it through Pump.fun’s IPFS upload service.
+          - paragraph [ref=e583]: Before broadcast, the reviewed message and signatures are verified and the signed wire and signature are saved. Concurrent approvals claim a request once. A network timeout stays submitted; refreshing checks that signature without creating another coin. A signing interruption requires receipt review.
+          - heading "OpenDots and the launch MCP" [level=3] [ref=e584]
+          - paragraph [ref=e585]: Choose an inbox in the launch panel, open Ask CLAWD from OpenDots, and generate a connection key. Copy the key once into an OpenDots connection named CLAWD Mail Launch using the displayed URL. It authorizes preparation/read access to that inbox only. Revoking connection keys or account/inbox access invalidates the connector.
+          - generic [ref=e586]:
+            - generic [ref=e587]:
+              - generic [ref=e588]: Preparation-only MCP endpoint and tools
+              - button "Copy Preparation-only MCP endpoint and tools" [ref=e589] [cursor=pointer]: Copy
+            - generic "Preparation-only MCP endpoint and tools" [ref=e593]:
+              - code [ref=e594]: "POST /api/launch-mcp Authorization: Bearer <inbox-scoped connection key> prepare_pump_launch get_pump_launch list_pump_launches"
+          - paragraph [ref=e595]: The MCP prepare tool requires a published metadataUri. Use a stable UUID requestId for idempotent retries. The OpenDots connection review approves draft creation; the later CLAWD Mail transaction review approves the launch. No signing or approval tool is exposed through MCP.
+          - generic [ref=e596]:
+            - link "Open launch requests Create the wallet, fund it, and review a request." [ref=e597] [cursor=pointer]:
+              - /url: /account#pump-launch
+              - generic [ref=e598]:
+                - strong [ref=e599]: Open launch requests
+                - generic [ref=e600]: Create the wallet, fund it, and review a request.
+            - link "Pump.fun launch guide Inputs, server configuration, MCP, and receipts." [ref=e603] [cursor=pointer]:
+              - /url: /docs/PUMP-LAUNCH.Dpy2F3Pj.md
+              - generic [ref=e604]:
+                - strong [ref=e605]: Pump.fun launch guide
+                - generic [ref=e606]: Inputs, server configuration, MCP, and receipts.
+        - region [ref=e609]:
+          - generic [ref=e610]:
+            - generic [ref=e611]: Research and actions
+            - heading [level=2] [ref=e612]:
+              - text: Claim creator fees
+              - link "Link to Claim creator fees" [ref=e613] [cursor=pointer]:
+                - /url: /docs#creator-fees
+                - text: "#"
+            - paragraph [ref=e614]: Review accrued fees and collect into the same launch wallet.
+          - paragraph [ref=e615]: Account → Claim creator fees reads wallet-wide creator vaults and retained curve/pool fees, including coins before and after PumpSwap migration. Claims collect into the same server-managed Privy launch wallet; the account identity chooses the wallet and recipient. The original single-creator SOL flow used by this launcher is supported; coins moved to fee sharing or holder rewards use their respective distribution flows.
+          - list [ref=e616]:
+            - listitem [ref=e617]: Load the balances for your launch wallet. Inspect the source and retained-fee amounts.
+            - listitem [ref=e618]: Choose Review fee claim. The simulation shows gross fees, costs including rent, estimated net income, destination, and a 45-second expiry.
+            - listitem [ref=e619]: Approve the exact claim using the checkbox and Approve and claim fees. Positive estimated net income and the 0.05 SOL total cost ceiling are required.
+            - listitem [ref=e620]: Refresh the saved receipt. Large portfolios are batched to fit the 1,232-byte Solana transaction limit; review and approve remaining fees in another claim.
+          - complementary [ref=e621]:
+            - generic [ref=e625]:
+              - heading "WSOL account effects" [level=3] [ref=e626]
+              - paragraph [ref=e627]: PumpSwap payouts are unwrapped into SOL in the launch wallet. If the destination WSOL account already exists, the claim can also unwrap its existing balance and close that account, returning its rent. The review shows these amounts and the approval text includes those effects. A changed destination account requires a fresh review.
+          - paragraph [ref=e628]: The database permits one active claim per owner and atomically fences signing across replicas. The signed transaction is saved before its single broadcast. A timeout remains submitted; receipt checks do not rebroadcast. Confirmation requires the successful on-chain transaction to match the reviewed message and saved signature. Expired, unconfirmed claims remain visibly unconfirmed.
+          - generic [ref=e629]:
+            - link "Review creator fees An approved launch-wallet owner is required." [ref=e630] [cursor=pointer]:
+              - /url: /account#creator-fees
+              - generic [ref=e631]:
+                - strong [ref=e632]: Review creator fees
+                - generic [ref=e633]: An approved launch-wallet owner is required.
+            - link "Creator fees guide Sweeps, cost checks, batching, and receipt recovery." [ref=e636] [cursor=pointer]:
+              - /url: /docs/CREATOR-FEES.CbKYVE9O.md
+              - generic [ref=e637]:
+                - strong [ref=e638]: Creator fees guide
+                - generic [ref=e639]: Sweeps, cost checks, batching, and receipt recovery.
+        - region [ref=e642]:
+          - generic [ref=e643]:
+            - generic [ref=e644]: Live rooms
+            - heading [level=2] [ref=e645]:
+              - text: CLAWD Voice and live studio
+              - link "Link to CLAWD Voice and live studio" [ref=e646] [cursor=pointer]:
+                - /url: /docs#livekit
+                - text: "#"
+            - paragraph [ref=e647]: A live conversation, an expressive visualizer, and a stream you control.
+          - paragraph [ref=e648]: Open /voice to talk with CLAWD, or /stream/livekit to start a camera and screen stream. Sign in, accept the current terms, and complete account onboarding first. Your microphone and camera stay off until you choose to turn them on.
+          - heading "Talk with CLAWD" [level=3] [ref=e649]
+          - list [ref=e650]:
+            - listitem [ref=e651]: Choose Start conversation. Wait for CLAWD to join before speaking or sending a message.
+            - listitem [ref=e652]: Turn on Microphone to speak, or type in Conversation and choose Send message. Your speech captions and typed messages appear together as they arrive.
+            - listitem [ref=e653]: Use Mute whenever you want to stop sharing your voice. Camera and Share screen are separate choices; only enable the view you want to share.
+            - listitem [ref=e654]: Choose End session when finished. Leaving the page also turns off your devices. If closing the session fails, choose Retry ending.
+          - paragraph [ref=e655]: The custom CLAWD visualizer follows the agent’s actual audio. Its expression changes only when the agent publishes an expressive delivery; otherwise it stays Neutral. Thinking and speaking indicators show the agent’s current state. An agent’s live avatar appears when it publishes video.
+          - heading "Share a live stream" [level=3] [ref=e656]
+          - list [ref=e657]:
+            - listitem [ref=e658]: Open Live studio and choose Start stream. Enable your microphone, camera, or Share screen as needed.
+            - listitem [ref=e659]: Choose Copy stream link and share it with another approved CLAWD member.
+            - listitem [ref=e660]: A viewer signs in, opens the link, and chooses Watch stream. Viewers receive the host’s audio, video, and conversation with their own input devices off.
+            - listitem [ref=e661]: Choose End session to stop the broadcast and disconnect its viewers. A viewer can choose Leave stream to leave without ending the broadcast.
+          - complementary [ref=e662]:
+            - generic [ref=e666]:
+              - heading "Sound, availability, and conversation history" [level=3] [ref=e667]
+              - paragraph [ref=e668]: If your browser pauses playback, choose Enable sound. Device access and screen or tab audio depend on your browser’s permissions and support. If CLAWD does not join, end the session and check the connection before trying again. The conversation panel holds messages from the current session in your browser; starting a new session clears it.
+          - generic [ref=e669]:
+            - link "Open CLAWD Voice Speak or type in your private session." [ref=e670] [cursor=pointer]:
+              - /url: /voice
+              - generic [ref=e671]:
+                - strong [ref=e672]: Open CLAWD Voice
+                - generic [ref=e673]: Speak or type in your private session.
+            - link "Open Live studio Publish your selected devices and invite a viewer." [ref=e676] [cursor=pointer]:
+              - /url: /stream/livekit
+              - generic [ref=e677]:
+                - strong [ref=e678]: Open Live studio
+                - generic [ref=e679]: Publish your selected devices and invite a viewer.
+            - link "LiveKit guide Session controls, privacy, provider setup, and feature availability." [ref=e682] [cursor=pointer]:
+              - /url: /docs/LIVEKIT.BkH8J_5a.md
+              - generic [ref=e683]:
+                - strong [ref=e684]: LiveKit guide
+                - generic [ref=e685]: Session controls, privacy, provider setup, and feature availability.
+        - region [ref=e688]:
+          - generic [ref=e689]:
+            - generic [ref=e690]: Live rooms
+            - heading [level=2] [ref=e691]:
+              - text: CLAWD Solana Live
+              - link "Link to CLAWD Solana Live" [ref=e692] [cursor=pointer]:
+                - /url: /docs#streaming
+                - text: "#"
+            - paragraph [ref=e693]: Approved-account viewing and hosting.
+          - paragraph [ref=e694]: Sign in with an approved account to open /stream for discoverable rooms, live Solana observations, agents, and the read-only wallet plugin. Each room has a shareable /stream/:id address. Approved CLAWD accounts can create, host, and watch rooms. An unlisted room is accessible to approved signed-in viewers with its link.
+          - list [ref=e695]:
+            - listitem [ref=e696]: Sign in with an approved account and create a public or unlisted room.
+            - listitem [ref=e697]: Join as host explicitly. Camera and microphone start off; choose devices and enable the media you want to share.
+            - listitem [ref=e698]: Use the Cloudflare RealtimeKit stage controls for participants, chat, screen sharing, local video effects, and leaving.
+            - listitem [ref=e699]: Share the room link. Approved signed-in viewers receive a restricted role without audio, video, screen publishing, or host privileges.
+            - listitem [ref=e700]: Choose End broadcast to disable the meeting and remove participants. Provider uncertainty is displayed for review.
+          - paragraph [ref=e701]: A created room is not yet evidence of live media. Live status requires fresh Cloudflare session and host participant receipts. Owner approval is checked before host operations; revoked access closes owned broadcasts. Recording, automatic livestream recording, and transcription are disabled.
+          - heading "Text agents and public images" [level=3] [ref=e702]
+          - paragraph [ref=e703]: CLAWD Guide and Solana Scout use xAI grok-4.7 with a configured OpenRouter fallback after explicit approved-user submissions. Scout has bounded, read-only research tools. These text agents do not listen to meeting audio. Read aloud uses browser speech when clicked; it is separate from a real AI participant speaking on the stage.
+          - paragraph [ref=e704]: Use Stop answer to end an active response or Copy text to reuse it. Each text request answers one question from bounded server context. Limits are one active request per account, four across the web process, and twelve requests per ten minutes; questions may be up to 2,000 characters.
+          - paragraph [ref=e705]: Approved users can upload static PNG, JPEG, or WebP avatars and backgrounds, up to 3 MiB and 4,096 pixels per side, into a separate streaming bucket. These are public sharing assets; only their upload owner can delete them. Keep private documents and sensitive images in private account storage.
+          - generic [ref=e706]:
+            - link "Open live rooms Sign in with an approved account to watch or host." [ref=e707] [cursor=pointer]:
+              - /url: /stream
+              - generic [ref=e708]:
+                - strong [ref=e709]: Open live rooms
+                - generic [ref=e710]: Sign in with an approved account to watch or host.
+            - link "Streaming guide Roles, presets, storage, media, and verification." [ref=e713] [cursor=pointer]:
+              - /url: /docs/STREAMING.waCcP657.md
+              - generic [ref=e714]:
+                - strong [ref=e715]: Streaming guide
+                - generic [ref=e716]: Roles, presets, storage, media, and verification.
+        - region [ref=e719]:
+          - generic [ref=e720]:
+            - generic [ref=e721]: Live rooms
+            - heading [level=2] [ref=e722]:
+              - text: Voice and vision companions
+              - link "Link to Voice and vision companions" [ref=e723] [cursor=pointer]:
+                - /url: /docs#voice-vision
+                - text: "#"
+            - paragraph [ref=e724]: A disclosed AI participant, enabled by the connected host.
+          - paragraph [ref=e725]: CLAWD Voice and CLAWD Vision join the same Cloudflare room as separate AI participants with synthesized speech and an animated lobster avatar. A private Python runtime uses the actual GetStream Vision Agents pipeline pinned to commit 902db86438aab03fb64aa7e6ea3afdcc867a3e80. Native xAI speech uses grok-voice-think-fast-2.0, with OpenRouter openai/gpt-audio-mini as a bounded speech-turn alternative. Explicit view understanding uses grok-4.7 with the configured OpenRouter vision fallback.
+          - list [ref=e726]:
+            - listitem [ref=e727]: As the approved, currently connected room owner, enable your microphone and choose voice only, camera, or an already shared screen.
+            - listitem [ref=e728]: Choose Start CLAWD companion. Existing host tracks are cloned; starting the companion does not request a second capture.
+            - listitem [ref=e729]: Speak, type a question, or select Analyze this view. Visual analysis runs on an explicit request or visual question.
+            - listitem [ref=e730]: Stop the companion when finished. Changing source, leaving, ending, revoked approval, or closing the bridge also disconnects it. Manual Stop preserves your human microphone and camera.
+            - listitem [ref=e731]: If cleanup is unconfirmed, use Retry Stop until the runtime and Cloudflare both acknowledge removal.
+          - list [ref=e732]:
+            - listitem [ref=e733]: Each account gets one successful AI session per UTC day across private agents and broadcast companions; the server reports their shared concurrent capacity. Stop or disconnect after connection consumes the daily allowance, and the controls show its next reset. Sessions expire after ten minutes, or sixty seconds without incoming media/commands in the runtime. Media-agent starts are limited to six per ten minutes.
+            - listitem [ref=e734]: Camera/screen frames are capped at 640 × 480 and two frames per second. The bridge uses PCM16 little-endian mono audio at 24 kHz. Both browser clients allow up to sixty seconds of queued speech; exceeding that limit stops the companion with a visible error. Audio reset and Stop cancel queued playback.
+            - listitem [ref=e735]: Audio and frames are not saved. Session transcripts and visual observations are held temporarily; host UI history stays in the current browser session.
+            - listitem [ref=e736]: Only the backend holds the vision service token. The runtime has no signing, trading, payment, unrestricted tool, or outbound email capability.
+          - link "Voice and vision runtime guide Python setup, private deployment, and the exact bridge protocol." [ref=e738] [cursor=pointer]:
+            - /url: /docs/VISION-AGENTS.DtxMUo-t.md
+            - generic [ref=e739]:
+              - strong [ref=e740]: Voice and vision runtime guide
+              - generic [ref=e741]: Python setup, private deployment, and the exact bridge protocol.
+        - region [ref=e744]:
+          - generic [ref=e745]:
+            - generic [ref=e746]: Developer reference
+            - heading [level=2] [ref=e747]:
+              - text: Privacy and permission boundaries
+              - link "Link to Privacy and permission boundaries" [ref=e748] [cursor=pointer]:
+                - /url: /docs#privacy
+                - text: "#"
+            - paragraph [ref=e749]: What is private, what is shared, and what each integration can do.
+          - 'region "Privacy and permission boundaries: Data or action, Boundary" [ref=e750]':
+            - table [ref=e751]:
+              - rowgroup [ref=e752]:
+                - row [ref=e753]:
+                  - columnheader "Data or action" [ref=e754]
+                  - columnheader "Boundary" [ref=e755]
+              - rowgroup [ref=e756]:
+                - row [ref=e757]:
+                  - cell "Mail, MIME, attachments, private files" [ref=e758]
+                  - cell "Authenticated, approved ownership checks; private R2 storage. This is server-controlled storage, not an end-to-end-encryption claim." [ref=e759]
+                - row [ref=e760]:
+                  - cell "Account and job metadata" [ref=e761]
+                  - cell "Application-owned Neon tables; accounts, sessions, memberships, approvals, inbox ownership, files, jobs, and receipts." [ref=e762]
+                - row [ref=e763]:
+                  - cell "Ask Claude requests" [ref=e764]
+                  - cell "Selected draft or owned conversation plus instructions shared with OpenRouter on Request; no attachments or sending tools." [ref=e765]
+                - row [ref=e766]:
+                  - cell "Automatic agent" [ref=e767]
+                  - cell "Enabled owned-inbox context and supported source images shared with xAI or the configured OpenRouter fallback; bounded research tools and automatic author-targeted email dispatch." [ref=e768]
+                - row [ref=e769]:
+                  - cell "Hookedpad knowledge" [ref=e770]
+                  - cell "Public website snapshots shared in a separate Supermemory namespace; private mail/files are not ingested." [ref=e771]
+                - row [ref=e772]:
+                  - cell "Launch image and metadata" [ref=e773]
+                  - cell "Preparation publishes image/description metadata to Pump.fun IPFS. Requests and transaction receipts stay private." [ref=e774]
+                - row [ref=e775]:
+                  - cell "External wallet plugin" [ref=e776]
+                  - cell "Explicitly connected public account and read-only observations; no signing or transfers." [ref=e777]
+                - row [ref=e778]:
+                  - cell "Launch and fee wallet" [ref=e779]
+                  - cell "Server-managed Privy wallet; exact owner-approved transaction before signing. Server authorization credentials stay private." [ref=e780]
+                - row [ref=e781]:
+                  - cell "Live media companion" [ref=e782]
+                  - cell "Explicit host-selected media is forwarded to the private runtime and xAI, or the configured OpenRouter speech/view alternatives. Raw media stays out of saved task history." [ref=e783]
+                - row [ref=e784]:
+                  - cell "Stream avatars/backgrounds" [ref=e785]
+                  - cell "Public R2 sharing assets, separate from private mail and account file storage." [ref=e786]
+          - paragraph [ref=e787]: "Provider keys, credential-bearing RPC URLs, database credentials, and wallet authorization secrets stay in backend/runtime configuration. Never place them in a VUE_APP_* variable: those values are compiled into browser assets. User-facing status and receipts expose safe state rather than secrets or model reasoning."
+          - paragraph [ref=e788]: Incoming email, attachments, websites, and tool results are untrusted task data. They cannot override account approval, expand ownership, authorize wallet spending, choose arbitrary automatic-reply recipients, or reveal credentials. Private authorization remains enforced by the server and worker.
+        - region [ref=e789]:
+          - generic [ref=e790]:
+            - generic [ref=e791]: Developer reference
+            - heading [level=2] [ref=e792]:
+              - text: API authentication and examples
+              - link "Link to API authentication and examples" [ref=e793] [cursor=pointer]:
+                - /url: /docs#api-auth
+                - text: "#"
+            - paragraph [ref=e794]: Same-origin sessions, private resources, and preparation-only MCP.
+          - paragraph [ref=e795]: The normal web API uses relative /api paths and the account session cookie. Sign-in, current terms, completed first-login onboarding, and active access are required for private mail and files. Accounts awaiting onboarding can retrieve their status, verify their welcome post, change a password, and sign out. Resource ownership is checked in addition to approval. Owner in this reference means the installation administrator; inbox/room/asset owner means the account that owns that resource.
+          - complementary [ref=e796]:
+            - generic [ref=e800]:
+              - heading "No general account API token" [level=3] [ref=e801]
+              - paragraph [ref=e802]: "When accounts are configured, Authorization: Bearer MAIL_ACCESS_KEY and the legacy mailbox cookie cannot access private mail APIs. POST /api/mail/login returns 410. Without database accounts, the earlier shared-key/local mailbox session remains available. The launch MCP has a separate inbox-scoped bearer key and only prepare/read tools."
+          - paragraph [ref=e803]: Use the exact allowed app Origin for state-changing browser requests. Cookie sessions need a same-site deployment; configure the backend origin at build time only if hosting the frontend separately. URL-encode inbox addresses and IDs in path segments. The examples below use placeholders and are intended for an approved account’s same-origin browser session.
+          - generic [ref=e804]:
+            - generic [ref=e805]:
+              - generic [ref=e806]: List your owned inboxes
+              - button "Copy List your owned inboxes" [ref=e807] [cursor=pointer]: Copy
+            - generic "List your owned inboxes" [ref=e811]:
+              - code [ref=e812]: "const response = await fetch('/api/mail/inboxes', { credentials: 'include' }) const data = await response.json() if (!response.ok) throw new Error(data.error) console.log(data.inboxes)"
+          - generic [ref=e813]:
+            - generic [ref=e814]:
+              - generic [ref=e815]: Send a message explicitly
+              - button "Copy Send a message explicitly" [ref=e816] [cursor=pointer]: Copy
+            - generic "Send a message explicitly" [ref=e820]:
+              - code [ref=e821]: "const inbox = encodeURIComponent('your-agent@clawdmail.app') const response = await fetch(`/api/mail/inboxes/${inbox}/messages`, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ to: ['recipient@example.com'], subject: 'Hello from my agent', text: 'Here are the notes you requested.' }) }) const result = await response.json() if (!response.ok) throw new Error(result.error) // Inspect result.delivery. Queued is provider acceptance, not delivery proof."
+          - generic [ref=e822]:
+            - generic [ref=e823]:
+              - generic [ref=e824]: Create and inspect an assistant job
+              - button "Copy Create and inspect an assistant job" [ref=e825] [cursor=pointer]: Copy
+            - generic "Create and inspect an assistant job" [ref=e829]:
+              - code [ref=e830]: "const response = await fetch('/api/mail/assistant/jobs', { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'draft', instructions: 'Write a concise meeting follow-up.', subject: 'Next steps', text: 'We agreed to share notes on Friday.' }) }) const job = await response.json() if (!response.ok) throw new Error(job.error) // JSON returns 202; poll this URL without starting another generation. const status = await fetch(`/api/mail/assistant/jobs/${encodeURIComponent(job.id)}`, { credentials: 'include' }) const current = await status.json() // When current.status === 'ready', review current.result.text. Sending is separate."
+          - paragraph [ref=e831]: "Assistant POST requests with Accept: text/event-stream stream named job events; JSON requests return HTTP 202 and can be polled. Public activity streams use named activity events. Stream-agent chat streams its own event protocol. A stream disconnect does not automatically retry a paid assistant request."
+          - 'region "API authentication and examples: Status, Typical meaning" [ref=e832]':
+            - table [ref=e833]:
+              - rowgroup [ref=e834]:
+                - row [ref=e835]:
+                  - columnheader "Status" [ref=e836]
+                  - columnheader "Typical meaning" [ref=e837]
+              - rowgroup [ref=e838]:
+                - row [ref=e839]:
+                  - cell "400" [ref=e840]
+                  - cell "Invalid input, unsupported values, or malformed request." [ref=e841]
+                - row [ref=e842]:
+                  - cell "401" [ref=e843]
+                  - cell "Missing, expired, or invalid session/token." [ref=e844]
+                - row [ref=e845]:
+                  - cell "403" [ref=e846]
+                  - cell "Pending/blocked account, owner-only operation, or rejected origin." [ref=e847]
+                - row [ref=e848]:
+                  - cell "404" [ref=e849]
+                  - cell "Unknown route or inaccessible/missing owned resource." [ref=e850]
+                - row [ref=e851]:
+                  - cell "409 / 410" [ref=e852]
+                  - cell "State conflict, expired review, or disabled legacy login." [ref=e853]
+                - row [ref=e854]:
+                  - cell "413" [ref=e855]
+                  - cell "Upload/message exceeds the configured limit." [ref=e856]
+                - row [ref=e857]:
+                  - cell "429" [ref=e858]
+                  - cell "Application or provider rate limit." [ref=e859]
+                - row [ref=e860]:
+                  - cell "502 / 503" [ref=e861]
+                  - cell "Provider failure, unavailable configuration, or backend/storage problem." [ref=e862]
+          - paragraph [ref=e863]: Errors generally return JSON with an error message and sometimes safe provider status/code fields. GET /api/health identifies the web service; it is not a complete check of Neon, R2, the mail worker, or media delivery. Unknown /api routes return a JSON 404 rather than the frontend shell.
+        - region [ref=e864]:
+          - generic [ref=e865]:
+            - generic [ref=e866]: Developer reference
+            - heading [level=2] [ref=e867]:
+              - text: API route reference
+              - link "Link to API route reference" [ref=e868] [cursor=pointer]:
+                - /url: /docs#api-reference
+                - text: "#"
+            - paragraph [ref=e869]: Implemented first-party routes, methods, and access rules.
+          - heading "Health and account access" [level=3] [ref=e870]
+          - paragraph [ref=e871]: Signed in means an individual HttpOnly account session. Registration is open and automatically approved. A private setupKey is only needed to deliberately create the first owner; public signup stays a member. First-time users verify their public welcome post before private access. API examples should retain the login cookie.
+          - 'region "API route reference: Method, Endpoint, Access, Behavior" [ref=e872]':
+            - table [ref=e873]:
+              - rowgroup [ref=e874]:
+                - row [ref=e875]:
+                  - columnheader "Method" [ref=e876]
+                  - columnheader "Endpoint" [ref=e877]
+                  - columnheader "Access" [ref=e878]
+                  - columnheader "Behavior" [ref=e879]
+              - rowgroup [ref=e880]:
+                - row [ref=e881]:
+                  - cell [ref=e882]:
+                    - code [ref=e883]: GET
+                  - cell [ref=e884]:
+                    - code [ref=e885]: /api/health
+                  - cell "Public" [ref=e886]
+                  - cell "Web service identity. This does not verify storage, email delivery, the responder, or live media." [ref=e887]
+                - row [ref=e888]:
+                  - cell [ref=e889]:
+                    - code [ref=e890]: GET
+                  - cell [ref=e891]:
+                    - code [ref=e892]: /api/account/config
+                  - cell "Public" [ref=e893]
+                  - cell "Open registration configuration, sign-in requirements, and first-login welcome verification policy." [ref=e894]
+                - row [ref=e895]:
+                  - cell [ref=e896]:
+                    - code [ref=e897]: POST
+                  - cell [ref=e898]:
+                    - code [ref=e899]: /api/account/register
+                  - cell "Public" [ref=e900]
+                  - cell "Register an approved member with name, email, a 12–128 character password, terms acceptance, and adult affirmation. No invite or setup key is required for members; first-login welcome verification remains required." [ref=e901]
+                - row [ref=e902]:
+                  - cell [ref=e903]:
+                    - code [ref=e904]: POST
+                  - cell [ref=e905]:
+                    - code [ref=e906]: /api/account/login
+                  - cell "Public" [ref=e907]
+                  - cell "Sign in with email and password; sets the account session cookie." [ref=e908]
+                - row [ref=e909]:
+                  - cell [ref=e910]:
+                    - code [ref=e911]: POST
+                  - cell [ref=e912]:
+                    - code [ref=e913]: /api/account/logout
+                  - cell "Public" [ref=e914]
+                  - cell "Revoke the current account session and clear its cookie." [ref=e915]
+                - row [ref=e916]:
+                  - cell [ref=e917]:
+                    - code [ref=e918]: GET
+                  - cell [ref=e919]:
+                    - code [ref=e920]: /api/account/session
+                  - cell "Signed in" [ref=e921]
+                  - cell "Current user, role, access status, and first-login onboardingRequired/onboardingCompletedAt." [ref=e922]
+                - row [ref=e923]:
+                  - cell [ref=e924]:
+                    - code [ref=e925]: GET
+                  - cell [ref=e926]:
+                    - code [ref=e927]: /api/account/onboarding
+                  - cell "Signed in" [ref=e928]
+                  - cell "Prepared welcome text, X composer URL, and this account’s unique code and verification state." [ref=e929]
+                - row [ref=e930]:
+                  - cell [ref=e931]:
+                    - code [ref=e932]: POST
+                  - cell [ref=e933]:
+                    - code [ref=e934]: /api/account/onboarding
+                  - cell "Signed in" [ref=e935]
+                  - 'cell "Verify {postUrl} against the required welcome text and account code; save the unique public post receipt and unlock first-login access." [ref=e936]'
+                - row [ref=e937]:
+                  - cell [ref=e938]:
+                    - code [ref=e939]: GET
+                  - cell [ref=e940]:
+                    - code [ref=e941]: /api/account/welcome
+                  - cell "Signed in" [ref=e942]
+                  - cell "Welcome-email feature status and this account’s welcome job receipt." [ref=e943]
+                - row [ref=e944]:
+                  - cell [ref=e945]:
+                    - code [ref=e946]: POST
+                  - cell [ref=e947]:
+                    - code [ref=e948]: /api/account/password
+                  - cell "Signed in" [ref=e949]
+                  - cell "Change currentPassword to newPassword; revoke other sessions." [ref=e950]
+                - row [ref=e951]:
+                  - cell [ref=e952]:
+                    - code [ref=e953]: POST
+                  - cell [ref=e954]:
+                    - code [ref=e955]: /api/account/invitations
+                  - cell "Owner" [ref=e956]
+                  - cell "Create a one-use invitation expiring in seven days; optional email binding." [ref=e957]
+                - row [ref=e958]:
+                  - cell [ref=e959]:
+                    - code [ref=e960]: GET
+                  - cell [ref=e961]:
+                    - code [ref=e962]: /api/account/users
+                  - cell "Owner" [ref=e963]
+                  - cell "List installation members and their approval status." [ref=e964]
+                - row [ref=e965]:
+                  - cell [ref=e966]:
+                    - code [ref=e967]: PATCH
+                  - cell [ref=e968]:
+                    - code [ref=e969]: /api/account/users/:id/approval
+                  - cell "Owner" [ref=e970]
+                  - cell "Set approvalStatus to pending, approved, or blocked. The owner account cannot be changed." [ref=e971]
+                - row [ref=e972]:
+                  - cell [ref=e973]:
+                    - code [ref=e974]: POST
+                  - cell [ref=e975]:
+                    - code [ref=e976]: /api/google-login
+                  - cell "Public" [ref=e977]
+                  - cell "Legacy Google ID-token verification only; does not create a CLAWD account session or grant approval." [ref=e978]
+          - heading "Email agent identities" [level=3] [ref=e979]
+          - paragraph [ref=e980]: All endpoints require approved sign-in, current terms, completed onboarding, and caller ownership. Public profile publication, transaction approval, confirmation, and verified Metaplex identity are separate states.
+          - 'region "API route reference: Method, Endpoint, Access, Behavior" [ref=e981]':
+            - table [ref=e982]:
+              - rowgroup [ref=e983]:
+                - row [ref=e984]:
+                  - columnheader "Method" [ref=e985]
+                  - columnheader "Endpoint" [ref=e986]
+                  - columnheader "Access" [ref=e987]
+                  - columnheader "Behavior" [ref=e988]
+              - rowgroup [ref=e989]:
+                - row [ref=e990]:
+                  - cell [ref=e991]:
+                    - code [ref=e992]: GET
+                  - cell [ref=e993]:
+                    - code [ref=e994]: /api/account/email-agents/config
+                  - cell "Approved" [ref=e995]
+                  - cell "Configured mainnet RPC, owned inboxes and verified wallets, public capabilities, sponsor balance/budget/readiness, and maximum mint cost." [ref=e996]
+                - row [ref=e997]:
+                  - cell [ref=e998]:
+                    - code [ref=e999]: GET
+                  - cell [ref=e1000]:
+                    - code [ref=e1001]: /api/account/email-agents
+                  - cell "Approved" [ref=e1002]
+                  - cell "List caller-owned durable email-agent mint records and receipts." [ref=e1003]
+                - row [ref=e1004]:
+                  - cell [ref=e1005]:
+                    - code [ref=e1006]: POST
+                  - cell [ref=e1007]:
+                    - code [ref=e1008]: /api/account/email-agents
+                  - cell "Inbox owner" [ref=e1009]
+                  - 'cell "Save private {inboxId,name,description,capabilities,ownerWalletAddress,payer} with sponsor or owner as payer." [ref=e1010]'
+                - row [ref=e1011]:
+                  - cell [ref=e1012]:
+                    - code [ref=e1013]: POST
+                  - cell [ref=e1014]:
+                    - code [ref=e1015]: /api/account/email-agents/:id/review
+                  - cell "Record owner" [ref=e1016]
+                  - 'cell "Explicit {publicationAccepted:true}; publish selected public profile, build and simulate the mint transaction, and return funding/cost/expiry review." [ref=e1017]'
+                - row [ref=e1018]:
+                  - cell [ref=e1019]:
+                    - code [ref=e1020]: POST
+                  - cell [ref=e1021]:
+                    - code [ref=e1022]: /api/account/email-agents/:id/approve
+                  - cell "Record owner" [ref=e1023]
+                  - 'cell "Approve {reviewHash,publicationAccepted:true,maxCostLamports,signedTransaction?}; external wallet signing preserves the exact message and existing asset signature." [ref=e1024]'
+                - row [ref=e1025]:
+                  - cell [ref=e1026]:
+                    - code [ref=e1027]: POST
+                  - cell [ref=e1028]:
+                    - code [ref=e1029]: /api/account/email-agents/:id/refresh
+                  - cell "Record owner" [ref=e1030]
+                  - cell "Reconcile saved funding/transaction state and verify asset owner plus Agent Identity; preserves the original operation." [ref=e1031]
+          - heading "Private files" [level=3] [ref=e1032]
+          - paragraph [ref=e1033]: Sign-in, current terms, completed first-login onboarding, and active access are required. Every operation is scoped to the signed-in user; installation ownership does not grant access to another user’s files.
+          - 'region "API route reference: Method, Endpoint, Access, Behavior" [ref=e1034]':
+            - table [ref=e1035]:
+              - rowgroup [ref=e1036]:
+                - row [ref=e1037]:
+                  - columnheader "Method" [ref=e1038]
+                  - columnheader "Endpoint" [ref=e1039]
+                  - columnheader "Access" [ref=e1040]
+                  - columnheader "Behavior" [ref=e1041]
+              - rowgroup [ref=e1042]:
+                - row [ref=e1043]:
+                  - cell [ref=e1044]:
+                    - code [ref=e1045]: GET
+                  - cell [ref=e1046]:
+                    - code [ref=e1047]: /api/account/files
+                  - cell "Approved" [ref=e1048]
+                  - 'cell "List caller-owned file metadata: id, name, mimeType, size, and createdAt." [ref=e1049]'
+                - row [ref=e1050]:
+                  - cell [ref=e1051]:
+                    - code [ref=e1052]: POST
+                  - cell [ref=e1053]:
+                    - code [ref=e1054]: /api/account/files
+                  - cell "Approved" [ref=e1055]
+                  - cell "Upload one multipart file field, at most 5 MiB; returns 201 with file metadata." [ref=e1056]
+                - row [ref=e1057]:
+                  - cell [ref=e1058]:
+                    - code [ref=e1059]: GET
+                  - cell [ref=e1060]:
+                    - code [ref=e1061]: /api/account/files/:id/download
+                  - cell "Approved" [ref=e1062]
+                  - cell "Download a caller-owned private file with attachment disposition." [ref=e1063]
+                - row [ref=e1064]:
+                  - cell [ref=e1065]:
+                    - code [ref=e1066]: DELETE
+                  - cell [ref=e1067]:
+                    - code [ref=e1068]: /api/account/files/:id
+                  - cell "Approved" [ref=e1069]
+                  - cell "Delete the caller-owned file’s private R2 content and database metadata." [ref=e1070]
+          - heading "Mailbox configuration and inboxes" [level=3] [ref=e1071]
+          - paragraph [ref=e1072]: With accounts configured, private mail requires an approved account session. The shared MAIL_ACCESS_KEY bearer/cookie adapter is available only when database accounts are absent. Encode inbox email addresses in path segments.
+          - 'region "API route reference: Method, Endpoint, Access, Behavior" [ref=e1073]':
+            - table [ref=e1074]:
+              - rowgroup [ref=e1075]:
+                - row [ref=e1076]:
+                  - columnheader "Method" [ref=e1077]
+                  - columnheader "Endpoint" [ref=e1078]
+                  - columnheader "Access" [ref=e1079]
+                  - columnheader "Behavior" [ref=e1080]
+              - rowgroup [ref=e1081]:
+                - row [ref=e1082]:
+                  - cell [ref=e1083]:
+                    - code [ref=e1084]: GET
+                  - cell [ref=e1085]:
+                    - code [ref=e1086]: /api/mail/config
+                  - cell "Public" [ref=e1087]
+                  - cell "Mail provider, primary domain, authentication mode, and basic configuration flag." [ref=e1088]
+                - row [ref=e1089]:
+                  - cell [ref=e1090]:
+                    - code [ref=e1091]: POST
+                  - cell [ref=e1092]:
+                    - code [ref=e1093]: /api/mail/login
+                  - cell "Public" [ref=e1094]
+                  - cell "Legacy accessKey login only without accounts; returns 410 when individual accounts are configured." [ref=e1095]
+                - row [ref=e1096]:
+                  - cell [ref=e1097]:
+                    - code [ref=e1098]: POST
+                  - cell [ref=e1099]:
+                    - code [ref=e1100]: /api/mail/logout
+                  - cell "Public" [ref=e1101]
+                  - cell "Log out the account session, or clear the legacy mailbox cookie." [ref=e1102]
+                - row [ref=e1103]:
+                  - cell [ref=e1104]:
+                    - code [ref=e1105]: GET
+                  - cell [ref=e1106]:
+                    - code [ref=e1107]: /api/mail/session
+                  - cell "Approved" [ref=e1108]
+                  - cell "Authenticated mail session and configured domain." [ref=e1109]
+                - row [ref=e1110]:
+                  - cell [ref=e1111]:
+                    - code [ref=e1112]: GET
+                  - cell [ref=e1113]:
+                    - code [ref=e1114]: /api/mail/status
+                  - cell "Approved" [ref=e1115]
+                  - cell "Check R2, Cloudflare zone access, routing/MX, and Email Sending setup." [ref=e1116]
+                - row [ref=e1117]:
+                  - cell [ref=e1118]:
+                    - code [ref=e1119]: GET
+                  - cell [ref=e1120]:
+                    - code [ref=e1121]: /api/mail/inboxes
+                  - cell "Approved" [ref=e1122]
+                  - cell "List owned inboxes. The installation owner can adopt unassigned legacy inboxes." [ref=e1123]
+                - row [ref=e1124]:
+                  - cell [ref=e1125]:
+                    - code [ref=e1126]: POST
+                  - cell [ref=e1127]:
+                    - code [ref=e1128]: /api/mail/inboxes
+                  - cell "Approved" [ref=e1129]
+                  - cell "Create a primary-domain inbox with username and optional displayName; returns routingStatus configured or pending." [ref=e1130]
+                - row [ref=e1131]:
+                  - cell [ref=e1132]:
+                    - code [ref=e1133]: GET
+                  - cell [ref=e1134]:
+                    - code [ref=e1135]: /api/mail/inboxes/:inboxId/notifications
+                  - cell "Inbox owner" [ref=e1136]
+                  - cell "Received and sent message IDs for client notification deduplication." [ref=e1137]
+          - heading "Messages, threads, attachments, and drafts" [level=3] [ref=e1138]
+          - paragraph [ref=e1139]: All inbox operations require approval and inbox ownership. Mail labels are inbox, sent, starred, and trash. Manual send accepts text/HTML; this route does not upload attachments or attach private files.
+          - 'region "API route reference: Method, Endpoint, Access, Behavior" [ref=e1140]':
+            - table [ref=e1141]:
+              - rowgroup [ref=e1142]:
+                - row [ref=e1143]:
+                  - columnheader "Method" [ref=e1144]
+                  - columnheader "Endpoint" [ref=e1145]
+                  - columnheader "Access" [ref=e1146]
+                  - columnheader "Behavior" [ref=e1147]
+              - rowgroup [ref=e1148]:
+                - row [ref=e1149]:
+                  - cell [ref=e1150]:
+                    - code [ref=e1151]: GET
+                  - cell [ref=e1152]:
+                    - code [ref=e1153]: /api/mail/inboxes/:inboxId/threads
+                  - cell "Inbox owner" [ref=e1154]
+                  - cell "List grouped threads; optional label query selects inbox, sent, starred, or trash." [ref=e1155]
+                - row [ref=e1156]:
+                  - cell [ref=e1157]:
+                    - code [ref=e1158]: GET
+                  - cell [ref=e1159]:
+                    - code [ref=e1160]: /api/mail/inboxes/:inboxId/threads/:threadId
+                  - cell "Inbox owner" [ref=e1161]
+                  - cell "Read the conversation’s messages, excluding trashed messages." [ref=e1162]
+                - row [ref=e1163]:
+                  - cell [ref=e1164]:
+                    - code [ref=e1165]: POST
+                  - cell [ref=e1166]:
+                    - code [ref=e1167]: /api/mail/inboxes/:inboxId/messages
+                  - cell "Inbox owner" [ref=e1168]
+                  - cell "Send to one address or an array of at most 50 addresses, with subject and text and/or html. Inspect delivery and any sent-copy warning." [ref=e1169]
+                - row [ref=e1170]:
+                  - cell [ref=e1171]:
+                    - code [ref=e1172]: POST
+                  - cell [ref=e1173]:
+                    - code [ref=e1174]: /api/mail/inboxes/:inboxId/messages/:messageId/reply
+                  - cell "Inbox owner" [ref=e1175]
+                  - cell "Reply to a received message using text and/or html; recipient, subject, and threading headers come from the original." [ref=e1176]
+                - row [ref=e1177]:
+                  - cell [ref=e1178]:
+                    - code [ref=e1179]: PATCH
+                  - cell [ref=e1180]:
+                    - code [ref=e1181]: /api/mail/inboxes/:inboxId/messages/:messageId
+                  - cell "Inbox owner" [ref=e1182]
+                  - cell "Update labels using addLabels and removeLabels arrays." [ref=e1183]
+                - row [ref=e1184]:
+                  - cell [ref=e1185]:
+                    - code [ref=e1186]: GET
+                  - cell [ref=e1187]:
+                    - code [ref=e1188]: /api/mail/inboxes/:inboxId/messages/:messageId/attachments/:index
+                  - cell "Inbox owner" [ref=e1189]
+                  - cell "Download an incoming or generated attachment by its zero-based index." [ref=e1190]
+                - row [ref=e1191]:
+                  - cell [ref=e1192]:
+                    - code [ref=e1193]: GET
+                  - cell [ref=e1194]:
+                    - code [ref=e1195]: /api/mail/inboxes/:inboxId/drafts
+                  - cell "Inbox owner" [ref=e1196]
+                  - cell "List private drafts for the selected inbox." [ref=e1197]
+                - row [ref=e1198]:
+                  - cell [ref=e1199]:
+                    - code [ref=e1200]: POST
+                  - cell [ref=e1201]:
+                    - code [ref=e1202]: /api/mail/inboxes/:inboxId/drafts
+                  - cell "Inbox owner" [ref=e1203]
+                  - cell "Save to as an address-string array, subject, and text; returns a new draftId." [ref=e1204]
+                - row [ref=e1205]:
+                  - cell [ref=e1206]:
+                    - code [ref=e1207]: PATCH
+                  - cell [ref=e1208]:
+                    - code [ref=e1209]: /api/mail/inboxes/:inboxId/drafts/:draftId
+                  - cell "Inbox owner" [ref=e1210]
+                  - cell "Update to, subject, and/or text on an existing owned draft." [ref=e1211]
+                - row [ref=e1212]:
+                  - cell [ref=e1213]:
+                    - code [ref=e1214]: DELETE
+                  - cell [ref=e1215]:
+                    - code [ref=e1216]: /api/mail/inboxes/:inboxId/drafts/:draftId
+                  - cell "Inbox owner" [ref=e1217]
+                  - cell "Delete an existing owned draft." [ref=e1218]
+          - heading "Ask Claude writing assistant" [level=3] [ref=e1219]
+          - paragraph [ref=e1220]: "Results remain private and require review, Apply, and Send. Jobs cannot send mail and have canCancel: false; disconnecting the stream does not cancel generation."
+          - 'region "API route reference: Method, Endpoint, Access, Behavior" [ref=e1221]':
+            - table [ref=e1222]:
+              - rowgroup [ref=e1223]:
+                - row [ref=e1224]:
+                  - columnheader "Method" [ref=e1225]
+                  - columnheader "Endpoint" [ref=e1226]
+                  - columnheader "Access" [ref=e1227]
+                  - columnheader "Behavior" [ref=e1228]
+              - rowgroup [ref=e1229]:
+                - row [ref=e1230]:
+                  - cell [ref=e1231]:
+                    - code [ref=e1232]: GET
+                  - cell [ref=e1233]:
+                    - code [ref=e1234]: /api/mail/assistant/config
+                  - cell "Approved" [ref=e1235]
+                  - 'cell "Configured model and streaming support. Default: anthropic/claude-haiku-5.5 via OpenRouter." [ref=e1236]'
+                - row [ref=e1237]:
+                  - cell [ref=e1238]:
+                    - code [ref=e1239]: GET
+                  - cell [ref=e1240]:
+                    - code [ref=e1241]: /api/mail/assistant/jobs
+                  - cell "Approved" [ref=e1242]
+                  - cell "List up to 100 of the caller’s private writing jobs." [ref=e1243]
+                - row [ref=e1244]:
+                  - cell [ref=e1245]:
+                    - code [ref=e1246]: GET
+                  - cell [ref=e1247]:
+                    - code [ref=e1248]: /api/mail/assistant/jobs/:id
+                  - cell "Approved" [ref=e1249]
+                  - cell "Read a caller-owned job with queued, running, ready, or failed status and optional result.text." [ref=e1250]
+                - row [ref=e1251]:
+                  - cell [ref=e1252]:
+                    - code [ref=e1253]: POST
+                  - cell [ref=e1254]:
+                    - code [ref=e1255]: /api/mail/assistant/jobs
+                  - cell "Approved" [ref=e1256]
+                  - 'cell "Create draft, reply, or summary assistance. JSON returns 202; Accept: text/event-stream returns named job events. Reply/summary require an owned inboxId and threadId." [ref=e1257]'
+          - heading "CLAWD agent workspace" [level=3] [ref=e1258]
+          - paragraph [ref=e1259]: Individual account sign-in, current terms, completed first-login onboarding, and active access are required. Runs and downloads belong to their creator. Model execution reads selected owned inbox context and returns reviewable output; saving a draft is a separate explicit action.
+          - 'region "API route reference: Method, Endpoint, Access, Behavior" [ref=e1260]':
+            - table [ref=e1261]:
+              - rowgroup [ref=e1262]:
+                - row [ref=e1263]:
+                  - columnheader "Method" [ref=e1264]
+                  - columnheader "Endpoint" [ref=e1265]
+                  - columnheader "Access" [ref=e1266]
+                  - columnheader "Behavior" [ref=e1267]
+              - rowgroup [ref=e1268]:
+                - row [ref=e1269]:
+                  - cell [ref=e1270]:
+                    - code [ref=e1271]: GET
+                  - cell [ref=e1272]:
+                    - code [ref=e1273]: /api/agents
+                  - cell "Approved" [ref=e1274]
+                  - cell "List the twelve agent roles, their inputs and integration requirements, and xAI configuration." [ref=e1275]
+                - row [ref=e1276]:
+                  - cell [ref=e1277]:
+                    - code [ref=e1278]: GET
+                  - cell [ref=e1279]:
+                    - code [ref=e1280]: /api/agents/runs
+                  - cell "Approved" [ref=e1281]
+                  - cell "List the caller’s recent private agent runs." [ref=e1282]
+                - row [ref=e1283]:
+                  - cell [ref=e1284]:
+                    - code [ref=e1285]: POST
+                  - cell [ref=e1286]:
+                    - code [ref=e1287]: /api/agents/runs
+                  - cell "Approved" [ref=e1288]
+                  - cell "Run agentId with prompt, optional inputs, owned inboxId/threadId, bounded history, and up to four optimized PNG/JPEG/WebP images." [ref=e1289]
+                - row [ref=e1290]:
+                  - cell [ref=e1291]:
+                    - code [ref=e1292]: GET
+                  - cell [ref=e1293]:
+                    - code [ref=e1294]: /api/agents/runs/:id
+                  - cell "Run owner" [ref=e1295]
+                  - cell "Read a private completed or failed run, output, citations, and safe error state." [ref=e1296]
+                - row [ref=e1297]:
+                  - cell [ref=e1298]:
+                    - code [ref=e1299]: GET
+                  - cell [ref=e1300]:
+                    - code [ref=e1301]: /api/agents/runs/:id/download
+                  - cell "Run owner" [ref=e1302]
+                  - cell "Download the completed result as a text file." [ref=e1303]
+                - row [ref=e1304]:
+                  - cell [ref=e1305]:
+                    - code [ref=e1306]: POST
+                  - cell [ref=e1307]:
+                    - code [ref=e1308]: /api/agents/runs/:id/draft
+                  - cell "Run and inbox owner" [ref=e1309]
+                  - cell "Save reviewed to, subject, and text into a selected owned inbox as an unsent draft." [ref=e1310]
+                - row [ref=e1311]:
+                  - cell [ref=e1312]:
+                    - code [ref=e1313]: GET
+                  - cell [ref=e1314]:
+                    - code [ref=e1315]: /api/agents/realtime/config
+                  - cell "Approved" [ref=e1316]
+                  - cell "Safe private voice/vision readiness, exact models, framework commit, and Solana connection flag." [ref=e1317]
+                - row [ref=e1318]:
+                  - cell [ref=e1319]:
+                    - code [ref=e1320]: GET
+                  - cell [ref=e1321]:
+                    - code [ref=e1322]: /api/agents/realtime/session
+                  - cell "Approved" [ref=e1323]
+                  - cell "Read only the caller’s current private session, including unconfirmed shutdown state." [ref=e1324]
+                - row [ref=e1325]:
+                  - cell [ref=e1326]:
+                    - code [ref=e1327]: POST
+                  - cell [ref=e1328]:
+                    - code [ref=e1329]: /api/agents/realtime/sessions
+                  - cell "Approved" [ref=e1330]
+                  - cell "Start agentId with visionSource none/camera/screen, optional prompt, role inputs, owned inbox/thread and public Solana context. Returns session and same-origin websocketPath." [ref=e1331]
+                - row [ref=e1332]:
+                  - cell [ref=e1333]:
+                    - code [ref=e1334]: POST
+                  - cell [ref=e1335]:
+                    - code [ref=e1336]: /api/agents/realtime/sessions/:id/stop
+                  - cell "Session owner" [ref=e1337]
+                  - cell "Send an empty object to end private media and confirm runtime shutdown. Retry if stopped is false." [ref=e1338]
+                - row [ref=e1339]:
+                  - cell [ref=e1340]:
+                    - code [ref=e1341]: GET
+                  - cell [ref=e1342]:
+                    - code [ref=e1343]: /api/agents/realtime/sessions/:id/transcript/download
+                  - cell "Session owner" [ref=e1344]
+                  - cell "Download the bounded temporary transcript during the session or for up to five minutes after confirmed Stop." [ref=e1345]
+                - row [ref=e1346]:
+                  - cell [ref=e1347]:
+                    - code [ref=e1348]: WS
+                  - cell [ref=e1349]:
+                    - code [ref=e1350]: /api/agents/realtime/:id/bridge
+                  - cell "Session owner" [ref=e1351]
+                  - cell "Same-origin approved-account PCM/JPEG/text bridge. Server role and allowlisted read tools are fixed at Start; clients cannot inject tools or results." [ref=e1352]
+          - heading "CLAWD email responder" [level=3] [ref=e1353]
+          - paragraph [ref=e1354]: Requires private accounts, the durable job ledger, xAI, and a separate continuously running worker. Mailbox approval and responder state are checked before generation and dispatch.
+          - 'region "API route reference: Method, Endpoint, Access, Behavior" [ref=e1355]':
+            - table [ref=e1356]:
+              - rowgroup [ref=e1357]:
+                - row [ref=e1358]:
+                  - columnheader "Method" [ref=e1359]
+                  - columnheader "Endpoint" [ref=e1360]
+                  - columnheader "Access" [ref=e1361]
+                  - columnheader "Behavior" [ref=e1362]
+              - rowgroup [ref=e1363]:
+                - row [ref=e1364]:
+                  - cell [ref=e1365]:
+                    - code [ref=e1366]: GET
+                  - cell [ref=e1367]:
+                    - code [ref=e1368]: /api/mail/agent/config
+                  - cell "Approved" [ref=e1369]
+                  - cell "Responder models, curated skills, default enabled state, and worker heartbeat status." [ref=e1370]
+                - row [ref=e1371]:
+                  - cell [ref=e1372]:
+                    - code [ref=e1373]: GET
+                  - cell [ref=e1374]:
+                    - code [ref=e1375]: /api/mail/agent/launches
+                  - cell "Approved" [ref=e1376]
+                  - cell "Latest cached CLAWD relay launch observations; these are not confirmed settlement receipts." [ref=e1377]
+                - row [ref=e1378]:
+                  - cell [ref=e1379]:
+                    - code [ref=e1380]: GET
+                  - cell [ref=e1381]:
+                    - code [ref=e1382]: /api/mail/agent/clawd
+                  - cell "Approved" [ref=e1383]
+                  - cell "Canonical CLAWD mint, curated Musebook onboarding, and labelled market/trade observations." [ref=e1384]
+                - row [ref=e1385]:
+                  - cell [ref=e1386]:
+                    - code [ref=e1387]: GET
+                  - cell [ref=e1388]:
+                    - code [ref=e1389]: /api/mail/agent/inboxes
+                  - cell "Approved" [ref=e1390]
+                  - cell "List caller-owned inbox responder settings, pending counts, and safe recent error states." [ref=e1391]
+                - row [ref=e1392]:
+                  - cell [ref=e1393]:
+                    - code [ref=e1394]: PATCH
+                  - cell [ref=e1395]:
+                    - code [ref=e1396]: /api/mail/agent/inboxes/:inboxId
+                  - cell "Inbox owner" [ref=e1397]
+                  - cell "Set enabled, name (up to 100 characters), and/or persona (up to 2,000 characters)." [ref=e1398]
+                - row [ref=e1399]:
+                  - cell [ref=e1400]:
+                    - code [ref=e1401]: GET
+                  - cell [ref=e1402]:
+                    - code [ref=e1403]: /api/mail/agent/inboxes/:inboxId/jobs
+                  - cell "Inbox owner" [ref=e1404]
+                  - cell "Read durable reply-job states, response IDs, models, safe errors, and tool names." [ref=e1405]
+          - heading "Shared public knowledge" [level=3] [ref=e1406]
+          - paragraph [ref=e1407]: Approved users share a corpus of crawled public Hookedpad pages through Supermemory. This is distinct from private mailbox/file storage and live chain data.
+          - 'region "API route reference: Method, Endpoint, Access, Behavior" [ref=e1408]':
+            - table [ref=e1409]:
+              - rowgroup [ref=e1410]:
+                - row [ref=e1411]:
+                  - columnheader "Method" [ref=e1412]
+                  - columnheader "Endpoint" [ref=e1413]
+                  - columnheader "Access" [ref=e1414]
+                  - columnheader "Behavior" [ref=e1415]
+              - rowgroup [ref=e1416]:
+                - row [ref=e1417]:
+                  - cell [ref=e1418]:
+                    - code [ref=e1419]: GET
+                  - cell [ref=e1420]:
+                    - code [ref=e1421]: /api/mail/knowledge/status
+                  - cell "Approved" [ref=e1422]
+                  - cell "Knowledge configuration and current crawl status." [ref=e1423]
+                - row [ref=e1424]:
+                  - cell [ref=e1425]:
+                    - code [ref=e1426]: POST
+                  - cell [ref=e1427]:
+                    - code [ref=e1428]: /api/mail/knowledge/search
+                  - cell "Approved" [ref=e1429]
+                  - cell "Search with query and optional limit (default 5); return dated public source references." [ref=e1430]
+                - row [ref=e1431]:
+                  - cell [ref=e1432]:
+                    - code [ref=e1433]: POST
+                  - cell [ref=e1434]:
+                    - code [ref=e1435]: /api/mail/knowledge/crawl
+                  - cell "Owner" [ref=e1436]
+                  - cell "Request a public corpus crawl; returns 202." [ref=e1437]
+          - heading "Pump.fun launch preparation and approval" [level=3] [ref=e1438]
+          - paragraph [ref=e1439]: Approved mailbox owners use a server-managed Privy launch wallet. Email and MCP can prepare drafts; only an authenticated owner can approve the exact current review. Each launch has no initial buy and a 0.05 SOL cost ceiling.
+          - 'region "API route reference: Method, Endpoint, Access, Behavior" [ref=e1440]':
+            - table [ref=e1441]:
+              - rowgroup [ref=e1442]:
+                - row [ref=e1443]:
+                  - columnheader "Method" [ref=e1444]
+                  - columnheader "Endpoint" [ref=e1445]
+                  - columnheader "Access" [ref=e1446]
+                  - columnheader "Behavior" [ref=e1447]
+              - rowgroup [ref=e1448]:
+                - row [ref=e1449]:
+                  - cell [ref=e1450]:
+                    - code [ref=e1451]: GET
+                  - cell [ref=e1452]:
+                    - code [ref=e1453]: /api/mail/pump/config
+                  - cell "Approved" [ref=e1454]
+                  - cell "Launch connection, network, custody, approval requirement, and cost ceiling." [ref=e1455]
+                - row [ref=e1456]:
+                  - cell [ref=e1457]:
+                    - code [ref=e1458]: GET
+                  - cell [ref=e1459]:
+                    - code [ref=e1460]: /api/mail/pump/wallet
+                  - cell "Approved" [ref=e1461]
+                  - cell "Read the caller’s launch wallet and balance." [ref=e1462]
+                - row [ref=e1463]:
+                  - cell [ref=e1464]:
+                    - code [ref=e1465]: POST
+                  - cell [ref=e1466]:
+                    - code [ref=e1467]: /api/mail/pump/wallet
+                  - cell "Approved" [ref=e1468]
+                  - cell "Create the caller’s server-managed Privy launch wallet if needed." [ref=e1469]
+                - row [ref=e1470]:
+                  - cell [ref=e1471]:
+                    - code [ref=e1472]: GET
+                  - cell [ref=e1473]:
+                    - code [ref=e1474]: /api/mail/pump/requests
+                  - cell "Approved" [ref=e1475]
+                  - cell "List caller-owned launch drafts and receipts." [ref=e1476]
+                - row [ref=e1477]:
+                  - cell [ref=e1478]:
+                    - code [ref=e1479]: GET
+                  - cell [ref=e1480]:
+                    - code [ref=e1481]: /api/mail/pump/requests/:id
+                  - cell "Approved" [ref=e1482]
+                  - cell "Read one caller-owned launch request or receipt." [ref=e1483]
+                - row [ref=e1484]:
+                  - cell [ref=e1485]:
+                    - code [ref=e1486]: POST
+                  - cell [ref=e1487]:
+                    - code [ref=e1488]: /api/mail/pump/inboxes/:inboxId/requests
+                  - cell "Inbox owner" [ref=e1489]
+                  - cell "Prepare name, symbol, optional description, and an HTTPS/IPFS metadataUri or multipart image (PNG/JPEG/WebP, up to 3 MiB)." [ref=e1490]
+                - row [ref=e1491]:
+                  - cell [ref=e1492]:
+                    - code [ref=e1493]: POST
+                  - cell [ref=e1494]:
+                    - code [ref=e1495]: /api/mail/pump/requests/:id/review
+                  - cell "Approved" [ref=e1496]
+                  - cell "Simulate and save the caller-owned launch’s exact transaction with a 45-second review window." [ref=e1497]
+                - row [ref=e1498]:
+                  - cell [ref=e1499]:
+                    - code [ref=e1500]: POST
+                  - cell [ref=e1501]:
+                    - code [ref=e1502]: /api/mail/pump/requests/:id/approve
+                  - cell "Approved" [ref=e1503]
+                  - cell "Approve a caller-owned current review using only reviewHash; validate, sign, persist, and broadcast the reviewed transaction." [ref=e1504]
+                - row [ref=e1505]:
+                  - cell [ref=e1506]:
+                    - code [ref=e1507]: POST
+                  - cell [ref=e1508]:
+                    - code [ref=e1509]: /api/mail/pump/requests/:id/refresh
+                  - cell "Approved" [ref=e1510]
+                  - cell "Reconcile the saved signature for a caller-owned launch; uncertainty remains visible." [ref=e1511]
+                - row [ref=e1512]:
+                  - cell [ref=e1513]:
+                    - code [ref=e1514]: POST
+                  - cell [ref=e1515]:
+                    - code [ref=e1516]: /api/mail/pump/requests/:id/cancel
+                  - cell "Approved" [ref=e1517]
+                  - cell "Cancel an eligible caller-owned launch draft." [ref=e1518]
+                - row [ref=e1519]:
+                  - cell [ref=e1520]:
+                    - code [ref=e1521]: POST
+                  - cell [ref=e1522]:
+                    - code [ref=e1523]: /api/mail/pump/inboxes/:inboxId/connection-key
+                  - cell "Inbox owner" [ref=e1524]
+                  - cell "Create an inbox-scoped launch MCP token; copy its returned token once." [ref=e1525]
+                - row [ref=e1526]:
+                  - cell [ref=e1527]:
+                    - code [ref=e1528]: DELETE
+                  - cell [ref=e1529]:
+                    - code [ref=e1530]: /api/mail/pump/connection-keys
+                  - cell "Approved" [ref=e1531]
+                  - cell "Revoke the caller’s launch connector keys." [ref=e1532]
+          - heading "Creator fee claims" [level=3] [ref=e1533]
+          - paragraph [ref=e1534]: Wallet identity and destination come from the approved account’s launch wallet. Claims require a positive estimated net return, a fresh exact review, and the 0.05 SOL total cost ceiling.
+          - 'region "API route reference: Method, Endpoint, Access, Behavior" [ref=e1535]':
+            - table [ref=e1536]:
+              - rowgroup [ref=e1537]:
+                - row [ref=e1538]:
+                  - columnheader "Method" [ref=e1539]
+                  - columnheader "Endpoint" [ref=e1540]
+                  - columnheader "Access" [ref=e1541]
+                  - columnheader "Behavior" [ref=e1542]
+              - rowgroup [ref=e1543]:
+                - row [ref=e1544]:
+                  - cell [ref=e1545]:
+                    - code [ref=e1546]: GET
+                  - cell [ref=e1547]:
+                    - code [ref=e1548]: /api/mail/pump/fees
+                  - cell "Approved" [ref=e1549]
+                  - cell "Read caller-owned launch-wallet fee balances and claim history." [ref=e1550]
+                - row [ref=e1551]:
+                  - cell [ref=e1552]:
+                    - code [ref=e1553]: POST
+                  - cell [ref=e1554]:
+                    - code [ref=e1555]: /api/mail/pump/fees/review
+                  - cell "Approved" [ref=e1556]
+                  - cell "Send an empty JSON object to simulate and review the caller’s exact fee claim." [ref=e1557]
+                - row [ref=e1558]:
+                  - cell [ref=e1559]:
+                    - code [ref=e1560]: POST
+                  - cell [ref=e1561]:
+                    - code [ref=e1562]: /api/mail/pump/fees/claims/:id/approve
+                  - cell "Approved" [ref=e1563]
+                  - cell "Send only reviewHash to approve the caller-owned current fee claim." [ref=e1564]
+                - row [ref=e1565]:
+                  - cell [ref=e1566]:
+                    - code [ref=e1567]: POST
+                  - cell [ref=e1568]:
+                    - code [ref=e1569]: /api/mail/pump/fees/claims/:id/refresh
+                  - cell "Approved" [ref=e1570]
+                  - cell "Send an empty JSON object to reconcile the caller-owned saved claim signature." [ref=e1571]
+                - row [ref=e1572]:
+                  - cell [ref=e1573]:
+                    - code [ref=e1574]: POST
+                  - cell [ref=e1575]:
+                    - code [ref=e1576]: /api/mail/pump/fees/claims/:id/cancel
+                  - cell "Approved" [ref=e1577]
+                  - cell "Send an empty JSON object to cancel an eligible caller-owned claim." [ref=e1578]
+          - heading "Launch MCP connector" [level=3] [ref=e1579]
+          - paragraph [ref=e1580]: This is a separate stateless, POST-only JSON-RPC connection authenticated by an inbox-scoped bearer token. It exposes prepare_pump_launch, get_pump_launch, and list_pump_launches. It has no mail-send, signing, or approval tool.
+          - 'region "API route reference: Method, Endpoint, Access, Behavior" [ref=e1581]':
+            - table [ref=e1582]:
+              - rowgroup [ref=e1583]:
+                - row [ref=e1584]:
+                  - columnheader "Method" [ref=e1585]
+                  - columnheader "Endpoint" [ref=e1586]
+                  - columnheader "Access" [ref=e1587]
+                  - columnheader "Behavior" [ref=e1588]
+              - rowgroup [ref=e1589]:
+                - row [ref=e1590]:
+                  - cell [ref=e1591]:
+                    - code [ref=e1592]: POST
+                  - cell [ref=e1593]:
+                    - code [ref=e1594]: /api/launch-mcp
+                  - cell "Scoped bearer" [ref=e1595]
+                  - cell "JSON-RPC initialize, ping, tools/list, and tools/call; preparation requires metadataUri. Supply a stable UUID requestId for idempotent preparation retries." [ref=e1596]
+          - heading "Approved-account rooms and Solana activity" [level=3] [ref=e1597]
+          - paragraph [ref=e1598]: Directory access, viewing and activity require a currently approved CLAWD account. Unlisted rooms are accessible to approved signed-in viewers with their link. Public wallet addresses and relay frames are observations, never authorization to sign or move funds.
+          - 'region "API route reference: Method, Endpoint, Access, Behavior" [ref=e1599]':
+            - table [ref=e1600]:
+              - rowgroup [ref=e1601]:
+                - row [ref=e1602]:
+                  - columnheader "Method" [ref=e1603]
+                  - columnheader "Endpoint" [ref=e1604]
+                  - columnheader "Access" [ref=e1605]
+                  - columnheader "Behavior" [ref=e1606]
+              - rowgroup [ref=e1607]:
+                - row [ref=e1608]:
+                  - cell [ref=e1609]:
+                    - code [ref=e1610]: GET
+                  - cell [ref=e1611]:
+                    - code [ref=e1612]: /api/stream/config
+                  - cell "Approved" [ref=e1613]
+                  - cell "Streaming provider availability and account-aware capabilities." [ref=e1614]
+                - row [ref=e1615]:
+                  - cell [ref=e1616]:
+                    - code [ref=e1617]: GET
+                  - cell [ref=e1618]:
+                    - code [ref=e1619]: /api/stream/rooms
+                  - cell "Approved" [ref=e1620]
+                  - cell "Discoverable room directory; approved owners also see their own rooms." [ref=e1621]
+                - row [ref=e1622]:
+                  - cell [ref=e1623]:
+                    - code [ref=e1624]: GET
+                  - cell [ref=e1625]:
+                    - code [ref=e1626]: /api/stream/rooms/:id
+                  - cell "Approved" [ref=e1627]
+                  - cell "Room status and current media-agent presence. Live status requires a fresh provider receipt." [ref=e1628]
+                - row [ref=e1629]:
+                  - cell [ref=e1630]:
+                    - code [ref=e1631]: POST
+                  - cell [ref=e1632]:
+                    - code [ref=e1633]: /api/stream/rooms
+                  - cell "Approved" [ref=e1634]
+                  - cell "Create title (up to 120 characters), visibility public/unlisted, and optional public walletAddress." [ref=e1635]
+                - row [ref=e1636]:
+                  - cell [ref=e1637]:
+                    - code [ref=e1638]: POST
+                  - cell [ref=e1639]:
+                    - code [ref=e1640]: /api/stream/rooms/:id/host
+                  - cell "Room owner" [ref=e1641]
+                  - cell "Mint the owner’s host participant token; optional avatarAssetId must belong to this owner." [ref=e1642]
+                - row [ref=e1643]:
+                  - cell [ref=e1644]:
+                    - code [ref=e1645]: POST
+                  - cell [ref=e1646]:
+                    - code [ref=e1647]: /api/stream/rooms/:id/watch
+                  - cell "Approved" [ref=e1648]
+                  - cell "Explicitly join as a view-only participant with optional name (up to 60 characters)." [ref=e1649]
+                - row [ref=e1650]:
+                  - cell [ref=e1651]:
+                    - code [ref=e1652]: POST
+                  - cell [ref=e1653]:
+                    - code [ref=e1654]: /api/stream/rooms/:id/end
+                  - cell "Room owner" [ref=e1655]
+                  - cell "Send an empty JSON object to stop the companion and end the owned broadcast." [ref=e1656]
+                - row [ref=e1657]:
+                  - cell [ref=e1658]:
+                    - code [ref=e1659]: GET
+                  - cell [ref=e1660]:
+                    - code [ref=e1661]: /api/stream/activity
+                  - cell "Approved" [ref=e1662]
+                  - cell "Read cached launch, market, and optional wallet observations with the wallet query parameter." [ref=e1663]
+                - row [ref=e1664]:
+                  - cell [ref=e1665]:
+                    - code [ref=e1666]: GET
+                  - cell [ref=e1667]:
+                    - code [ref=e1668]: /api/stream/activity/events
+                  - cell "Approved" [ref=e1669]
+                  - cell "Subscribe to named activity SSE events; optional wallet query parameter. Connections expire after 30 minutes." [ref=e1670]
+          - heading "Streaming text agents" [level=3] [ref=e1671]
+          - paragraph [ref=e1672]: CLAWD Guide and Solana Scout answer explicit user submissions with grok-4.7. Scout has read-only research tools. Browser Read aloud is separate from a voice participant joining the room.
+          - 'region "API route reference: Method, Endpoint, Access, Behavior" [ref=e1673]':
+            - table [ref=e1674]:
+              - rowgroup [ref=e1675]:
+                - row [ref=e1676]:
+                  - columnheader "Method" [ref=e1677]
+                  - columnheader "Endpoint" [ref=e1678]
+                  - columnheader "Access" [ref=e1679]
+                  - columnheader "Behavior" [ref=e1680]
+              - rowgroup [ref=e1681]:
+                - row [ref=e1682]:
+                  - cell [ref=e1683]:
+                    - code [ref=e1684]: GET
+                  - cell [ref=e1685]:
+                    - code [ref=e1686]: /api/stream/agents/config
+                  - cell "Approved" [ref=e1687]
+                  - cell "Agent catalog, model, configuration, and approval requirement." [ref=e1688]
+                - row [ref=e1689]:
+                  - cell [ref=e1690]:
+                    - code [ref=e1691]: POST
+                  - cell [ref=e1692]:
+                    - code [ref=e1693]: /api/stream/agents/chat
+                  - cell "Approved" [ref=e1694]
+                  - cell "Send agentId clawd-guide or solana-scout and message (up to 2,000 characters); SSE events are start, delta, done, and error." [ref=e1695]
+          - heading "Public streaming image assets" [level=3] [ref=e1696]
+          - paragraph [ref=e1697]: Avatars and backgrounds are public sharing assets in separate streaming storage. Exact UUID image GET/HEAD routes remain public for delivery and sharing; other stream endpoints require approval. These are not private mailbox attachments. Uploads accept bounded PNG, JPEG, and WebP images.
+          - 'region "API route reference: Method, Endpoint, Access, Behavior" [ref=e1698]':
+            - table [ref=e1699]:
+              - rowgroup [ref=e1700]:
+                - row [ref=e1701]:
+                  - columnheader "Method" [ref=e1702]
+                  - columnheader "Endpoint" [ref=e1703]
+                  - columnheader "Access" [ref=e1704]
+                  - columnheader "Behavior" [ref=e1705]
+              - rowgroup [ref=e1706]:
+                - row [ref=e1707]:
+                  - cell [ref=e1708]:
+                    - code [ref=e1709]: POST
+                  - cell [ref=e1710]:
+                    - code [ref=e1711]: /api/stream/assets
+                  - cell "Approved" [ref=e1712]
+                  - cell "Upload multipart image (up to 3 MiB) and kind avatar or background." [ref=e1713]
+                - row [ref=e1714]:
+                  - cell [ref=e1715]:
+                    - code [ref=e1716]: GET
+                  - cell [ref=e1717]:
+                    - code [ref=e1718]: /api/stream/assets/:id
+                  - cell "Public UUID image" [ref=e1719]
+                  - cell "Read a shared image by its exact version-4 UUID; HEAD is also supported." [ref=e1720]
+                - row [ref=e1721]:
+                  - cell [ref=e1722]:
+                    - code [ref=e1723]: DELETE
+                  - cell [ref=e1724]:
+                    - code [ref=e1725]: /api/stream/assets/:id
+                  - cell "Asset owner" [ref=e1726]
+                  - cell "Delete an image uploaded by the currently approved user." [ref=e1727]
+          - heading "Live voice and vision companion" [level=3] [ref=e1728]
+          - paragraph [ref=e1729]: Only an approved, connected room owner can start CLAWD. The backend keeps the private Vision Agents runtime URL/token server-side. Media is bounded, ephemeral, and has no payment/signing tools.
+          - 'region "API route reference: Method, Endpoint, Access, Behavior" [ref=e1730]':
+            - table [ref=e1731]:
+              - rowgroup [ref=e1732]:
+                - row [ref=e1733]:
+                  - columnheader "Method" [ref=e1734]
+                  - columnheader "Endpoint" [ref=e1735]
+                  - columnheader "Access" [ref=e1736]
+                  - columnheader "Behavior" [ref=e1737]
+              - rowgroup [ref=e1738]:
+                - row [ref=e1739]:
+                  - cell [ref=e1740]:
+                    - code [ref=e1741]: GET
+                  - cell [ref=e1742]:
+                    - code [ref=e1743]: /api/stream/media-agent/config
+                  - cell "Approved" [ref=e1744]
+                  - cell "Current voice/vision runtime and agent-preset availability." [ref=e1745]
+                - row [ref=e1746]:
+                  - cell [ref=e1747]:
+                    - code [ref=e1748]: GET
+                  - cell [ref=e1749]:
+                    - code [ref=e1750]: /api/stream/rooms/:id/media-agent
+                  - cell "Approved" [ref=e1751]
+                  - cell "Read current companion presence for the selected room." [ref=e1752]
+                - row [ref=e1753]:
+                  - cell [ref=e1754]:
+                    - code [ref=e1755]: POST
+                  - cell [ref=e1756]:
+                    - code [ref=e1757]: /api/stream/rooms/:id/media-agent/start
+                  - cell "Room owner" [ref=e1758]
+                  - cell "Start clawd-voice with visionSource none, or clawd-vision with camera/screen; returns session, participant, and websocketPath." [ref=e1759]
+                - row [ref=e1760]:
+                  - cell [ref=e1761]:
+                    - code [ref=e1762]: POST
+                  - cell [ref=e1763]:
+                    - code [ref=e1764]: /api/stream/rooms/:id/media-agent/stop
+                  - cell "Room owner" [ref=e1765]
+                  - cell "Send sessionId to stop the owned companion; inspect stopped and any unconfirmed cleanup message." [ref=e1766]
+                - row [ref=e1767]:
+                  - cell [ref=e1768]:
+                    - code [ref=e1769]: WS
+                  - cell [ref=e1770]:
+                    - code [ref=e1771]: /api/stream/media-agent/:sessionId/bridge
+                  - cell "Room owner" [ref=e1772]
+                  - cell "Same-origin account-authenticated media bridge for the owner’s active session; session, approval, and origin are rechecked." [ref=e1773]
+        - region [ref=e1774]:
+          - generic [ref=e1775]:
+            - generic [ref=e1776]: Operate CLAWD Mail
+            - heading [level=2] [ref=e1777]:
+              - text: Local development and hosting
+              - link "Link to Local development and hosting" [ref=e1778] [cursor=pointer]:
+                - /url: /docs#self-hosting
+                - text: "#"
+            - paragraph [ref=e1779]: The web app, receiver, worker, and optional media runtime.
+          - paragraph [ref=e1780]: Use Node.js 22.19.0 or newer; .nvmrc and the Dockerfile select Node 24. Install the frontend and backend dependency sets. Copy backend/.env.example into ignored backend/.env.local, then fill the private account, database, Cloudflare, and R2 settings for your installation.
+          - generic [ref=e1781]:
+            - generic [ref=e1782]:
+              - generic [ref=e1783]: Install and start the web application
+              - button "Copy Install and start the web application" [ref=e1784] [cursor=pointer]: Copy
+            - generic "Install and start the web application" [ref=e1788]:
+              - code [ref=e1789]: "npm ci npm ci --prefix backend cp backend/.env.example backend/.env.local # Fill in private configuration before migrating or starting. npm run db:setup npm run build npm run mail:start # Open http://127.0.0.1:4001"
+          - paragraph [ref=e1790]: For frontend development, npm run dev starts the web API and Vue together at http://127.0.0.1:8080. npm run serve also starts Vue alone with /api proxied to port 4001, so keep the backend running. Member signup is public. Only a deliberate owner-bootstrap registration uses setupKey matching the private MAIL_ACCESS_KEY; the first public signup stays a member.
+          - heading "Receiving and sending email" [level=3] [ref=e1791]
+          - paragraph [ref=e1792]: npm run mail:setup verifies the Cloudflare token, creates the private bucket if needed, deploys the Email Worker, creates the default inbox, and enables registered-inbox catch-all delivery on the exact primary domain. Unknown or deleted inboxes are rejected by the receiver. Existing explicit rules retain priority; conflicting active destinations stop setup for review. Verify retained legacy-domain rules separately. Wrangler must be available. Enable Email Routing and Email Sending for the exact mail domain and configure its MX, SPF, DKIM, and DMARC records. Use the dedicated sending token for outgoing mail. The setup command does not deploy the website or start the responder.
+          - paragraph [ref=e1793]: The receiver uses Cloudflare’s Email Worker email handler to parse incoming MIME into private R2 objects. It is not a public HTTP webhook for posting email. Its HTTP /health endpoint is a separate receiver check. Registered inbox rules route the chosen domains to that receiver.
+          - heading "Continuous responder service" [level=3] [ref=e1794]
+          - generic [ref=e1795]:
+            - generic [ref=e1796]:
+              - generic [ref=e1797]: Run the worker in a second local terminal
+              - button "Copy Run the worker in a second local terminal" [ref=e1798] [cursor=pointer]: Copy
+            - generic "Run the worker in a second local terminal" [ref=e1802]:
+              - code [ref=e1803]: "# Starting an enabled worker can reply to real stored mail, including backlog. PORT=4002 npm run mail:worker"
+          - 'region "Local development and hosting: Component, Role and production behavior" [ref=e1804]':
+            - table [ref=e1805]:
+              - rowgroup [ref=e1806]:
+                - row [ref=e1807]:
+                  - columnheader "Component" [ref=e1808]
+                  - columnheader "Role and production behavior" [ref=e1809]
+              - rowgroup [ref=e1810]:
+                - row [ref=e1811]:
+                  - cell "Web/API" [ref=e1812]
+                  - cell "node backend/index.js serves compiled dist and /api together. Health path /api/health." [ref=e1813]
+                - row [ref=e1814]:
+                  - cell "Email receiver" [ref=e1815]
+                  - cell "Cloudflare Email Worker stores incoming MIME, messages, and attachments in private R2." [ref=e1816]
+                - row [ref=e1817]:
+                  - cell "Continuous worker" [ref=e1818]
+                  - cell "node backend/agent-worker.js handles automatic replies, signup welcomes, and scheduled knowledge crawls. Health path /health; at least one replica with sleeping disabled." [ref=e1819]
+                - row [ref=e1820]:
+                  - cell "Neon and R2" [ref=e1821]
+                  - cell "Durable account/job/receipt metadata and private object storage; shared by web and worker. No Railway volume is required." [ref=e1822]
+                - row [ref=e1823]:
+                  - cell "Voice/vision runtime" [ref=e1824]
+                  - cell "Optional separate Python 3.12 service built from vision-agents/Dockerfile, reached through a private URL and shared service token." [ref=e1825]
+          - heading "Railway production settings" [level=3] [ref=e1826]
+          - paragraph [ref=e1827]: Build the repository-root Dockerfile. Set the pre-deploy command to npm run db:setup and web start command to node backend/index.js. Use PORT=8080, HOST=0.0.0.0, NODE_ENV=production, TRUST_PROXY_HOPS=1, and the exact HTTPS origin for APP_ORIGIN and BETTER_AUTH_URL. Use a 120-second healthcheck timeout and target port 8080. Deploy the continuous worker as a second service from the same image with its own start command and /health check.
+          - paragraph [ref=e1828]: Web and worker share the private database, R2, mail-domain, xAI, and launch configuration. Preserve primary and legacy mail domains on the receiver too. Install exactly the hosting provider’s domain records. Verify normal DNS, HTTPS, account signup/approval, private storage, actual mail delivery, and a fresh worker heartbeat separately. Static Vercel/Netlify configuration by itself does not host the API.
+          - heading "Validation" [level=3] [ref=e1829]
+          - generic [ref=e1830]:
+            - generic [ref=e1831]:
+              - generic [ref=e1832]: Repository checks
+              - button "Copy Repository checks" [ref=e1833] [cursor=pointer]: Copy
+            - generic "Repository checks" [ref=e1837]:
+              - code [ref=e1838]: "npm run lint -- --no-fix npm run mail:test npm run build node scripts/verify-docs.cjs # Optional fixture UI checks: npm run verify:ui"
+          - paragraph [ref=e1839]: Fixture tests exercise authorization and UI behavior without sending real email. They do not prove SMTP delivery, a continuously running hosted responder, funded mainnet execution, or hosted media. Provider verification requires separate controlled requests and inspection of the actual resulting receipt or delivery.
+        - region [ref=e1840]:
+          - generic [ref=e1841]:
+            - generic [ref=e1842]: Operate CLAWD Mail
+            - heading [level=2] [ref=e1843]:
+              - text: Configuration reference
+              - link "Link to Configuration reference" [ref=e1844] [cursor=pointer]:
+                - /url: /docs#configuration
+                - text: "#"
+            - paragraph [ref=e1845]: Server-only variables and the services that need them.
+          - paragraph [ref=e1846]: backend/.env.example is the setup template. Local ignored environment files are loaded by backend/config.js; production uses private service variables. Keep secret files permission-restricted. Never commit real values or print them in verification reports. Optional features remain unavailable until their dependencies are configured.
+          - 'region "Configuration reference: Variables, Purpose / requirements" [ref=e1847]':
+            - table [ref=e1848]:
+              - rowgroup [ref=e1849]:
+                - row [ref=e1850]:
+                  - columnheader "Variables" [ref=e1851]
+                  - columnheader "Purpose / requirements" [ref=e1852]
+              - rowgroup [ref=e1853]:
+                - row [ref=e1854]:
+                  - cell "DATABASE_URL, DATABASE_URL_UNPOOLED" [ref=e1855]
+                  - cell "Pooled runtime and direct migration connections to Neon. Use the direct connection for db:setup." [ref=e1856]
+                - row [ref=e1857]:
+                  - cell "BETTER_AUTH_SECRET, BETTER_AUTH_URL" [ref=e1858]
+                  - cell "Private random secret of at least 32 characters, and exact public origin for account authentication." [ref=e1859]
+                - row [ref=e1860]:
+                  - cell "APP_ORIGIN, APP_REDIRECT_ORIGINS" [ref=e1861]
+                  - cell "Allowed app origin and optional comma-separated canonical website aliases. HTTPS in production." [ref=e1862]
+                - row [ref=e1863]:
+                  - cell "PORT, HOST, NODE_ENV, TRUST_PROXY_HOPS" [ref=e1864]
+                  - cell "HTTP binding, secure-cookie mode, and trusted reverse-proxy count. Default local port 4001." [ref=e1865]
+                - row [ref=e1866]:
+                  - cell "CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_API_TOKEN" [ref=e1867]
+                  - cell "Cloudflare account and private routing/domain-management token." [ref=e1868]
+                - row [ref=e1869]:
+                  - cell "RESEND_API_KEY, WEBHOOK_SECRET_RESEND, WEBHOOK_URL_RESEND" [ref=e1870]
+                  - cell "Server-only Resend sending and signed webhook configuration. The webhook URL is https://clawdmail.app/hook/resend." [ref=e1871]
+                - row [ref=e1872]:
+                  - cell "CLOUDFLARE_EMAIL_SENDING_TOKEN" [ref=e1873]
+                  - cell "Dedicated Cloudflare Email Sending token used when Resend is not configured." [ref=e1874]
+                - row [ref=e1875]:
+                  - cell "R2_ENDPOINT, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET" [ref=e1876]
+                  - cell "Private mail/file object storage. Default bucket clawd-mail." [ref=e1877]
+                - row [ref=e1878]:
+                  - cell "MAIL_DOMAIN, MAIL_LEGACY_DOMAINS, MAIL_DEFAULT_USERNAME" [ref=e1879]
+                  - cell "Primary inbox domain, retained legacy domains, and default address name. Default primary domain clawdmail.app and username mail." [ref=e1880]
+                - row [ref=e1881]:
+                  - cell "MAIL_ACCESS_KEY" [ref=e1882]
+                  - cell "First-owner bootstrap key; legacy mailbox auth only without database accounts." [ref=e1883]
+                - row [ref=e1884]:
+                  - cell "OPENROUTER_API_KEY, OPENROUTER_CLAUDE, OPENROUTER_FALLBACK_MODEL" [ref=e1885]
+                  - cell "Reviewed assistant and independent xAI text fallback; default anthropic/claude-haiku-5.5." [ref=e1886]
+                - row [ref=e1887]:
+                  - cell "OPENROUTER_IMAGE_MODEL" [ref=e1888]
+                  - cell "Independent requested-image fallback; default openai/gpt-image-2 pinned to OpenAI. Image API credits/preauthorization apply." [ref=e1889]
+                - row [ref=e1890]:
+                  - cell "OPENROUTER_VOICE_MODEL, OPENROUTER_VISION_MODEL" [ref=e1891]
+                  - cell "Private runtime alternatives for bounded speech turns and scene analysis; defaults openai/gpt-audio-mini and the configured OpenRouter text model." [ref=e1892]
+                - row [ref=e1893]:
+                  - cell "XAI_API_KEY, XAI_TEXT_MODEL, XAI_IMAGE_MODEL" [ref=e1894]
+                  - cell "Automatic responder and AI features; defaults grok-4.7 and grok-imagine-image-2.0." [ref=e1895]
+                - row [ref=e1896]:
+                  - cell "MAIL_AGENT_ENABLED, MAIL_AGENT_BACKFILL, MAIL_AGENT_POLL_MS" [ref=e1897]
+                  - 'cell "Worker defaults: enabled, historical-mail backfill, and 10,000 ms idle poll clamped to 5,000–60,000 ms." [ref=e1898]'
+                - row [ref=e1899]:
+                  - cell "MAIL_AGENT_WORKER_ID" [ref=e1900]
+                  - cell "Optional local worker identity; Railway replica identity is preferred when present." [ref=e1901]
+                - row [ref=e1902]:
+                  - cell "HELIUS_RPC_URL, HELIUS_API_KEY" [ref=e1903]
+                  - cell "Default server-side Helius RPC; the API key resolves the mainnet URL when HELIUS_RPC_URL is absent." [ref=e1904]
+                - row [ref=e1905]:
+                  - cell "SOLANA_RPC_URL, SOLANA_BACKUP_RPC_URL" [ref=e1906]
+                  - cell "Existing configured Solana RPC fallbacks, tried after Helius for read-only research." [ref=e1907]
+                - row [ref=e1908]:
+                  - cell "SOLANATRACKER_API_KEY, BIRDEYE_API_KEY" [ref=e1909]
+                  - cell "Market observations. SOLANA_TRACKER_API_KEY is an accepted alias; Birdeye is optional." [ref=e1910]
+                - row [ref=e1911]:
+                  - cell "PRIVY_APP_ID, PRIVY_APP_SECRET, PRIVY_KEY_ID, PRIVY_PRIVATE_KEY" [ref=e1912]
+                  - cell "Server-managed launch/fee wallet. Authorization key must be P-256 and match the configured one-key quorum. Set on web and worker." [ref=e1913]
+                - row [ref=e1914]:
+                  - cell "SUPERMEMORY_API_KEY, SUPERMEMORY_PUBLIC_NAMESPACE" [ref=e1915]
+                  - cell "Public Hookedpad ingestion/search; use the same separate namespace on web and worker." [ref=e1916]
+                - row [ref=e1917]:
+                  - cell "KNOWLEDGE_CRAWL_INTERVAL_MS, KNOWLEDGE_CRAWL_PAGES" [ref=e1918]
+                  - cell "Default six hours / 25 pages; minimum one hour, 1–100 pages." [ref=e1919]
+                - row [ref=e1920]:
+                  - cell "MAIL_WELCOME_ENABLED, MAIL_WELCOME_FROM" [ref=e1921]
+                  - cell "Optional new-signup welcome job; enabled only with true. Default from welcome@clawdmail.app." [ref=e1922]
+                - row [ref=e1923]:
+                  - cell "CLOUDFLARE_REALTIME_ACCOUNT_ID, CLOUDFLARE_REALTIME_APP_ID, CLOUDFLARE_REALTIME_API_TOKEN" [ref=e1924]
+                  - cell "Cloudflare RealtimeKit account/app/private token." [ref=e1925]
+                - row [ref=e1926]:
+                  - cell "CLOUDFLARE_REALTIME_HOST_PRESET, CLOUDFLARE_REALTIME_VIEWER_PRESET, CLOUDFLARE_REALTIME_AGENT_PRESET" [ref=e1927]
+                  - cell "Restricted stage roles; defaults clawd_stream_host, clawd_stream_viewer, clawd_stream_agent. Run node backend/setup-streaming.js." [ref=e1928]
+                - row [ref=e1929]:
+                  - cell "STREAM_R2_ENDPOINT, STREAM_R2_ACCESS_KEY_ID, STREAM_R2_SECRET_ACCESS_KEY, STREAM_R2_BUCKET" [ref=e1930]
+                  - cell "Separate public avatar/background storage. Default bucket clawd-streaming." [ref=e1931]
+                - row [ref=e1932]:
+                  - cell "CLAWD_VISION_RUNTIME_URL, CLAWD_VISION_SERVICE_TOKEN" [ref=e1933]
+                  - cell "Backend’s private runtime URL and shared secret. Runtime also needs its private XAI_API_KEY; service token must be at least 32 bytes." [ref=e1934]
+          - paragraph [ref=e1935]: The mail and launch defaults are configurable; this reference reflects repository defaults rather than a promise about any particular hosted installation. Exact AI models are preserved by the implementation; missing entitlement or credits is surfaced instead of silently substituting a different model.
+        - region [ref=e1936]:
+          - generic [ref=e1937]:
+            - generic [ref=e1938]: Operate CLAWD Mail
+            - heading [level=2] [ref=e1939]:
+              - text: Troubleshooting
+              - link "Link to Troubleshooting" [ref=e1940] [cursor=pointer]:
+                - /url: /docs#troubleshooting
+                - text: "#"
+            - paragraph [ref=e1941]: Resolve the specific state the app reports.
+          - 'region "Troubleshooting: What you see, What to check" [ref=e1942]':
+            - table [ref=e1943]:
+              - rowgroup [ref=e1944]:
+                - row [ref=e1945]:
+                  - columnheader "What you see" [ref=e1946]
+                  - columnheader "What to check" [ref=e1947]
+              - rowgroup [ref=e1948]:
+                - row [ref=e1949]:
+                  - cell "Complete first-login onboarding" [ref=e1950]
+                  - cell "Publish the exact prepared welcome post including its account marker and verify the public URL at /onboarding. Re-signing in or opening the composer alone does not unlock private use." [ref=e1951]
+                - row [ref=e1952]:
+                  - cell "Awaiting approval / access blocked" [ref=e1953]
+                  - cell "The installation owner must approve or restore access. Re-signing in does not bypass the current membership decision." [ref=e1954]
+                - row [ref=e1955]:
+                  - cell "No inbox after signup" [ref=e1956]
+                  - cell "Registration, first-login welcome verification, and inbox creation are separate. After onboarding, choose Create an inbox." [ref=e1957]
+                - row [ref=e1958]:
+                  - cell "Mailbox setup required / pending routing" [ref=e1959]
+                  - cell "Inspect Connection settings, exact mail-domain routing/sending enablement, literal Worker rule, DNS records, and receiver/R2 access. Drafts can be saved meanwhile." [ref=e1960]
+                - row [ref=e1961]:
+                  - cell "Session expired" [ref=e1962]
+                  - cell "Sign in again. Moving to a different hostname requires a new cookie session." [ref=e1963]
+                - row [ref=e1964]:
+                  - cell "Ask Claude unavailable" [ref=e1965]
+                  - cell "Check the server OpenRouter key, exact configured model, provider credits/entitlement, and the per-user request limit." [ref=e1966]
+                - row [ref=e1967]:
+                  - cell "Automatic agent offline" [ref=e1968]
+                  - cell "Verify the separate continuous worker is running with fresh heartbeat, the same Neon/R2/domain configuration, configured AI provider access, account approval, and an explicitly consented enabled owned inbox." [ref=e1969]
+                - row [ref=e1970]:
+                  - cell "Reply failed / ambiguous" [ref=e1971]
+                  - cell "Inspect the job’s safe error and Cloudflare delivery record. Ambiguous sends must not be reset or replayed just because a worker restarted." [ref=e1972]
+                - row [ref=e1973]:
+                  - cell "Hookedpad search stale / unavailable" [ref=e1974]
+                  - cell "Inspect last crawl time, indexed/processing/failed counts, namespace consistency, robots policy, worker availability, and Supermemory credits. An owner refresh queues work." [ref=e1975]
+                - row [ref=e1976]:
+                  - cell "Transaction review expired" [ref=e1977]
+                  - cell "Create a fresh review and explicitly approve it. Do not reuse an expired reviewHash." [ref=e1978]
+                - row [ref=e1979]:
+                  - cell "Launch/claim remains submitted" [ref=e1980]
+                  - cell "Refresh the saved signature and inspect its chain receipt. Do not broadcast another transaction to resolve uncertainty." [ref=e1981]
+                - row [ref=e1982]:
+                  - cell "Room created but not live" [ref=e1983]
+                  - cell "Join the host stage and inspect current Cloudflare session/participant status. Creation alone does not prove media." [ref=e1984]
+                - row [ref=e1985]:
+                  - cell "Companion unavailable / Retry Stop" [ref=e1986]
+                  - cell "Check the private vision runtime, configured voice/vision provider access, connected-host approval, selected tracks, capacity, and both runtime/Cloudflare cleanup receipts." [ref=e1987]
+                - row [ref=e1988]:
+                  - cell "No sound" [ref=e1989]
+                  - cell "Click, tap, or press a key to unlock audio; check account mute setting and browser audio. The first snapshot and failed sends are silent. A closed app cannot play the cues." [ref=e1990]
+                - row [ref=e1991]:
+                  - cell "Provider quota / access error" [ref=e1992]
+                  - cell "Restore the relevant provider’s access or credits. The app preserves unavailable states rather than generating a substitute receipt." [ref=e1993]
+        - region [ref=e1994]:
+          - generic [ref=e1995]:
+            - generic [ref=e1996]: Operate CLAWD Mail
+            - heading [level=2] [ref=e1997]:
+              - text: Guides and the article
+              - link "Link to Guides and the article" [ref=e1998] [cursor=pointer]:
+                - /url: /docs#resources
+                - text: "#"
+            - paragraph [ref=e1999]: Download the repository’s detailed setup guides.
+          - paragraph [ref=e2000]: These Markdown downloads ship from the same source as this docs page. Use the feature guides for deeper operational behavior and ARTICLE.md for a narrative explanation of the product’s innovations.
+          - generic [ref=e2001]:
+            - link "PRIVACY.md Data flows, retention, and verified privacy-request contact." [ref=e2002] [cursor=pointer]:
+              - /url: /docs/PRIVACY.DgyPXRia.md
+              - generic [ref=e2003]:
+                - strong [ref=e2004]: PRIVACY.md
+                - generic [ref=e2005]: Data flows, retention, and verified privacy-request contact.
+            - link "TERMS.md Account, content, mobile license, and approval responsibilities." [ref=e2008] [cursor=pointer]:
+              - /url: /docs/TERMS.DWpIdHXO.md
+              - generic [ref=e2009]:
+                - strong [ref=e2010]: TERMS.md
+                - generic [ref=e2011]: Account, content, mobile license, and approval responsibilities.
+            - link "SERVICE.md Features, approved access, availability, and support." [ref=e2014] [cursor=pointer]:
+              - /url: /docs/SERVICE.ndNaucR8.md
+              - generic [ref=e2015]:
+                - strong [ref=e2016]: SERVICE.md
+                - generic [ref=e2017]: Features, approved access, availability, and support.
+            - link "ARTICLE.md Why CLAWD Mail’s combined workflow matters." [ref=e2020] [cursor=pointer]:
+              - /url: /docs/ARTICLE.BslnmFoX.md
+              - generic [ref=e2021]:
+                - strong [ref=e2022]: ARTICLE.md
+                - generic [ref=e2023]: Why CLAWD Mail’s combined workflow matters.
+            - link "ASSISTANT.md Reviewed Claude assistance." [ref=e2026] [cursor=pointer]:
+              - /url: /docs/ASSISTANT.BOIoMhQy.md
+              - generic [ref=e2027]:
+                - strong [ref=e2028]: ASSISTANT.md
+                - generic [ref=e2029]: Reviewed Claude assistance.
+            - link "MAIL-AGENT.md Automatic replies and the continuous worker." [ref=e2032] [cursor=pointer]:
+              - /url: /docs/MAIL-AGENT.DB9O7_gx.md
+              - generic [ref=e2033]:
+                - strong [ref=e2034]: MAIL-AGENT.md
+                - generic [ref=e2035]: Automatic replies and the continuous worker.
+            - link "AGENTS.md Twelve xAI roles, private context, and reviewed drafts." [ref=e2038] [cursor=pointer]:
+              - /url: /docs/AGENTS.H3jseFJc.md
+              - generic [ref=e2039]:
+                - strong [ref=e2040]: AGENTS.md
+                - generic [ref=e2041]: Twelve xAI roles, private context, and reviewed drafts.
+            - link "PUMP-LAUNCH.md Coin preparation, approvals, and OpenDots." [ref=e2044] [cursor=pointer]:
+              - /url: /docs/PUMP-LAUNCH.Dpy2F3Pj.md
+              - generic [ref=e2045]:
+                - strong [ref=e2046]: PUMP-LAUNCH.md
+                - generic [ref=e2047]: Coin preparation, approvals, and OpenDots.
+            - link "CREATOR-FEES.md Fee claims and exact receipts." [ref=e2050] [cursor=pointer]:
+              - /url: /docs/CREATOR-FEES.CbKYVE9O.md
+              - generic [ref=e2051]:
+                - strong [ref=e2052]: CREATOR-FEES.md
+                - generic [ref=e2053]: Fee claims and exact receipts.
+            - link "STREAMING.md RealtimeKit rooms and Solana Live." [ref=e2056] [cursor=pointer]:
+              - /url: /docs/STREAMING.waCcP657.md
+              - generic [ref=e2057]:
+                - strong [ref=e2058]: STREAMING.md
+                - generic [ref=e2059]: RealtimeKit rooms and Solana Live.
+            - link "VISION-AGENTS.md Voice and vision runtime protocol." [ref=e2062] [cursor=pointer]:
+              - /url: /docs/VISION-AGENTS.DtxMUo-t.md
+              - generic [ref=e2063]:
+                - strong [ref=e2064]: VISION-AGENTS.md
+                - generic [ref=e2065]: Voice and vision runtime protocol.
+            - link "SUPERMEMORY.md Shared public knowledge and crawling." [ref=e2068] [cursor=pointer]:
+              - /url: /docs/SUPERMEMORY.B1oYFbyl.md
+              - generic [ref=e2069]:
+                - strong [ref=e2070]: SUPERMEMORY.md
+                - generic [ref=e2071]: Shared public knowledge and crawling.
+            - link "MAIL-SOUNDS.md Notifications and audio sources." [ref=e2074] [cursor=pointer]:
+              - /url: /docs/MAIL-SOUNDS.BcbcuyvF.md
+              - generic [ref=e2075]:
+                - strong [ref=e2076]: MAIL-SOUNDS.md
+                - generic [ref=e2077]: Notifications and audio sources.
+            - link "WELCOME-EMAIL.md Signup artwork and delivery jobs." [ref=e2080] [cursor=pointer]:
+              - /url: /docs/WELCOME-EMAIL.DQ0TWtJj.md
+              - generic [ref=e2081]:
+                - strong [ref=e2082]: WELCOME-EMAIL.md
+                - generic [ref=e2083]: Signup artwork and delivery jobs.
+            - link "BRAND.md The CLAWD Mail visual identity." [ref=e2086] [cursor=pointer]:
+              - /url: /docs/BRAND.BfrlIZ8B.md
+              - generic [ref=e2087]:
+                - strong [ref=e2088]: BRAND.md
+                - generic [ref=e2089]: The CLAWD Mail visual identity.
+        - generic [ref=e2092]:
+          - generic [ref=e2093]: CLAWD Mail / A little claw. A lot of connection.
+          - navigation "Public policy navigation" [ref=e2094]:
+            - link "Privacy" [ref=e2095] [cursor=pointer]:
+              - /url: /privacy
+            - text: ·
+            - link "Terms" [ref=e2096] [cursor=pointer]:
+              - /url: /terms
+            - text: ·
+            - link "Service" [ref=e2097] [cursor=pointer]:
+              - /url: /service
+          - link "Back to top ↑" [ref=e2098] [cursor=pointer]:
+            - /url: /docs#overview
+    - status
+  - generic:
+    - button "Move CLAWD" [ref=e2099]
+    - generic: Drag to move CLAWD. Use arrow keys to move, Shift for bigger steps, or Home to return to the corner.
