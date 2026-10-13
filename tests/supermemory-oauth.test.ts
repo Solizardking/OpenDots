@@ -40,6 +40,7 @@ function remote() {
   let expireAccess = false;
   let spaceError = false;
   let hostileMetadata = false;
+  let tokenError = false;
   const hits: {
     url: string;
     method: string;
@@ -80,6 +81,14 @@ function remote() {
       return json(metadata());
     if (url.pathname === '/api/auth/oauth2/register')
       return json({ ...JSON.parse(body), client_id: 'fixture-client' }, 201);
+    if (url.pathname === '/api/auth/oauth2/token' && tokenError)
+      return json(
+        {
+          error: 'invalid_grant',
+          error_description: 'Echoed fixture-refresh and fixture-access-1',
+        },
+        400,
+      );
     if (url.pathname === '/api/auth/oauth2/token')
       return json({
         access_token: `fixture-access-${++issued}`,
@@ -204,6 +213,9 @@ function remote() {
     },
     set hostileMetadata(value: boolean) {
       hostileMetadata = value;
+    },
+    set tokenError(value: boolean) {
+      tokenError = value;
     },
   };
 }
@@ -363,6 +375,17 @@ it('binds callbacks to the owner workspace, refuses issuer mismatch and replay, 
       state,
       iss: 'https://evil.example',
     }),
+    a.routes.request(
+      'https://chatgptee.ai/connections/supermemory/oauth/finish',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Origin: 'https://another.example',
+        },
+        body: JSON.stringify({ code: 'fixture-code', state }),
+      },
+    ),
   ])
     expect((await request).status).toBe(400);
   expect(a.service.hits.some((hit) => hit.url.endsWith('/oauth2/token'))).toBe(
@@ -563,4 +586,28 @@ it('routes generic Supermemory additions to OAuth and disconnect removes credent
       })
     ).status,
   ).toBe(400);
+});
+
+it('redacts provider auth failures and marks revoked credentials as needing reconnection', async () => {
+  const f = fixture();
+  const connected = await f.finish(await f.start());
+  f.service.expire = true;
+  f.service.tokenError = true;
+  const response = await f.request(
+    `/connections/${connected.id}/supermemory/spaces`,
+  );
+  expect(response.status).toBe(400);
+  const body = JSON.stringify(await response.json());
+  expect(body).not.toContain('fixture-refresh');
+  expect(body).not.toContain('fixture-access');
+  expect(body).not.toContain('Echoed');
+  expect(f.workspace.connections.get(connected.id)?.authStatus).toBe('expired');
+  expect(f.connections.tools(f.dot.id)).toEqual([]);
+});
+
+it('bounds OAuth discovery and token response bodies', async () => {
+  const read = supermemoryFetch(async () => new Response('x'.repeat(512001)));
+  await expect(
+    read(`${SUPERMEMORY_OAUTH_ISSUER}/oauth2/token`),
+  ).rejects.toThrow('too large');
 });
