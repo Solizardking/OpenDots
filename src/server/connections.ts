@@ -239,6 +239,7 @@ export class ConnectionService {
         }
         throw new Error(
           'Supermemory request failed. Reconnect Supermemory or retry.',
+          { cause: error },
         );
       }
       throw error;
