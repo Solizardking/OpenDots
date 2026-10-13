@@ -1,6 +1,6 @@
 # Birdeye in chat
 
-Open a conversation and choose **Birdeye research** in the chat header. The panel and the Dot's research tools use the same backend. A public token mint or wallet address is enough; connecting a signing wallet is optional for research.
+Open a conversation and choose **Research** in the chat header. The Birdeye panel and the Dot's research tools use the same backend. A public token mint or wallet address is enough; connecting a signing wallet is optional for research.
 
 Set `BIRDEYE_API_KEY` in the server environment or the local `.env`. Docker Compose forwards it. In the Mac app, save the Birdeye connection under **Settings → Provider connections**; it uses the existing encrypted credential store. Restart the server after environment changes. No `VITE_` credential is needed. The browser, paired phone and automation service never receive this key.
 
