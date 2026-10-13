@@ -194,6 +194,11 @@ export class ConnectionStore {
         'INSERT INTO mcp_oauth_credentials VALUES (?, ?, ?) ON CONFLICT(connectionId) DO UPDATE SET encrypted=excluded.encrypted,status=excluded.status',
       )
       .run(id, encrypted, nextStatus);
+    this.db.prepare('UPDATE mcp_connections SET token=NULL WHERE id=?').run(id);
+    if (nextStatus === 'pending')
+      this.db
+        .prepare('UPDATE mcp_connections SET error=NULL WHERE id=?')
+        .run(id);
     if (previous?.status !== nextStatus)
       this.db
         .prepare('UPDATE mcp_connections SET updatedAt=? WHERE id=?')
@@ -221,13 +226,18 @@ export class ConnectionStore {
       );
     return state;
   }
-  consumeOAuth(state: string) {
+  consumeOAuth(state: string, callbackUrl?: string) {
     const hash = createHash('sha256').update(state).digest('hex');
     const attempt = this.db
       .prepare(
-        'DELETE FROM mcp_oauth_attempts WHERE stateHash=? AND ownerId=? AND expiresAt>? RETURNING *',
+        `DELETE FROM mcp_oauth_attempts WHERE stateHash=? AND ownerId=? AND expiresAt>? ${callbackUrl ? 'AND callbackUrl=?' : ''} RETURNING *`,
       )
-      .get(hash, this.ownerId, Date.now());
+      .get(
+        hash,
+        this.ownerId,
+        Date.now(),
+        ...(callbackUrl ? [callbackUrl] : []),
+      );
     if (!attempt)
       throw new Error(
         'Supermemory authorization expired or is not valid for this workspace. Reconnect Supermemory.',

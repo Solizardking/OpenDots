@@ -216,6 +216,32 @@ export class ConnectionService {
         },
       );
       return await use(client, bounded);
+    } catch (error) {
+      if (oauth) {
+        const status =
+          error && typeof error === 'object' && 'code' in error
+            ? error.code
+            : undefined;
+        if (
+          error instanceof SupermemoryAuthorizationRequired ||
+          (error instanceof Error &&
+            [
+              'UnauthorizedError',
+              'InvalidGrantError',
+              'InvalidTokenError',
+              'InvalidClientError',
+            ].includes(error.constructor.name)) ||
+          status === 401 ||
+          status === 403
+        ) {
+          this.oauth.expired(target.connectionId!);
+          throw new SupermemoryAuthorizationRequired();
+        }
+        throw new Error(
+          'Supermemory request failed. Reconnect Supermemory or retry.',
+        );
+      }
+      throw error;
     } finally {
       await client.close().catch(() => {});
     }
@@ -291,8 +317,13 @@ export class ConnectionService {
       this.store.saveOAuth(connection.id, { redirectUrl }, 'pending');
     return this.oauth.start(connection.id, origin);
   }
-  async finishSupermemory(code: string, state: string, iss?: string) {
-    const connection = await this.oauth.finish(code, state, iss);
+  async finishSupermemory(
+    code: string,
+    state: string,
+    iss?: string,
+    origin?: string,
+  ) {
+    const connection = await this.oauth.finish(code, state, iss, origin);
     return this.refresh(connection.id);
   }
   async refresh(id: string) {

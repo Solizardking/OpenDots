@@ -104,6 +104,8 @@ Ask a Dot to show a draft before saving it. A CopilotKit human-in-the-loop card 
 
 Give a Dot tools from any MCP server, such as email, calendar, GitHub, or your own services. Read-only tools run on their own. Any other tool pauses for an **Approve & run** card in chat, and only your approval runs it. You can turn each tool on or off per Dot. See [Connections](docs/CONNECTIONS.md).
 
+Choose **Connect Supermemory** for OAuth access to `https://mcp.supermemory.ai/mcp`, with native space selection and per-Dot tool controls. The separate server-only `SUPERMEMORY_API_KEY` powers the private trading-memory outbox, including when TypeSafe is unavailable. See [Supermemory](docs/SUPERMEMORY.md).
+
 ### Text and calls
 
 A continuous conversation keeps the Dot's avatar and status above the messages, with text and call controls close at hand. Work updates, source links, and call receipts appear in the timeline; a side panel shows results or the agent's computer.

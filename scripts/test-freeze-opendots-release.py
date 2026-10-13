@@ -138,6 +138,14 @@ class FreezeTests(unittest.TestCase):
         self.assertNotIn(marker, str(caught.exception))
         self.assertNotIn("fixture-key", str(caught.exception))
 
+    def test_supermemory_credential_is_rejected_without_value_in_error(self):
+        marker = "sm_" + "synthetic" * 12
+        self.put("src/server/accident.ts", marker)
+        with self.assertRaises(freezer.FreezeError) as caught:
+            self.freeze()
+        self.assertIn("src/server/accident.ts", str(caught.exception))
+        self.assertNotIn(marker, str(caught.exception))
+
     def test_input_modes_and_shared_state_settings_are_preserved(self):
         script = self.put("deployment/start-chatgptee.sh", "#!/bin/sh\n")
         script.chmod(0o755)

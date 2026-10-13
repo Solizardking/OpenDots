@@ -318,10 +318,13 @@ export class SupermemoryOAuth {
       await network.close();
     }
   }
-  async finish(code: string, state: string, iss?: string) {
+  async finish(code: string, state: string, iss?: string, origin?: string) {
     if (iss && iss !== SUPERMEMORY_OAUTH_ISSUER)
       throw new Error('Supermemory authorization issuer is not allowed.');
-    const { connection, callbackUrl } = this.store.consumeOAuth(state);
+    const { connection, callbackUrl } = this.store.consumeOAuth(
+      state,
+      origin ? supermemoryCallback(origin) : undefined,
+    );
     this.require(connection.id);
     const credentials = this.store.oauthCredentials(connection.id);
     if (credentials?.redirectUrl !== callbackUrl)

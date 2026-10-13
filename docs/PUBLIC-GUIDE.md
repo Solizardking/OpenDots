@@ -183,7 +183,9 @@ Authentication: optional server-stored bearer token
 Tool policy: enabled + Ask first for changes you want to review
 ```
 
-Tokens stay in server SQLite and are not sent back to the browser. Signed-in accounts can connect to public HTTP(S) destinations; private network addresses and redirects are rejected and DNS results are pinned. The original owner can additionally configure local servers. OAuth-only MCP servers are not supported by this connection form; use a compatible token-based endpoint.
+Tokens stay on the server and are not sent back to the browser. Signed-in accounts can connect to public HTTP(S) destinations; private network addresses and redirects are rejected and DNS results are pinned. The original owner can additionally configure local servers.
+
+For Supermemory, choose **Connect Supermemory** to authorize `https://mcp.supermemory.ai/mcp` through OAuth. No API key or custom header is required. Return through the callback to discover this Dot's tools, then choose an accessible space and explicitly set it active for future requests. Name another space for a one-off tool call without changing the active space. OAuth credentials are encrypted in the private workspace and retained on the persistent volume. Reconnect if authorization expires. Supermemory's interactive upload and graph widgets require an MCP Apps-compatible client; OpenDots provides native connection and space controls. See [Supermemory setup and spaces](https://supermemory.ai/docs/supermemory-mcp/setup).
 
 ## Memory and learning
 
@@ -303,7 +305,7 @@ Use the server integration for the real credential. [Birdeye's official tool cat
 
 The selected Dot's **Trading brain** combines persistent strategies, source evidence, decisions, a journal, a graph and optional recall. Chat tools include save_trading_strategy, trading_brain, trading_journal and monitor_trading_strategy.
 
-SQLite stores owner/Dot-scoped strategy versions, decisions, paper observations, monitor expiry and a retryable Supermemory outbox. Mem0 conversation memory remains independent. Supermemory indexing is complete only after the provider confirms it.
+SQLite stores owner/Dot-scoped strategy versions, decisions, paper observations, monitor expiry and a retryable Supermemory outbox. Mem0 conversation memory remains independent. The outbox syncs with `SUPERMEMORY_API_KEY` alone; TypeSafe is needed for decisions and monitoring. A record is marked indexed only after Supermemory confirms both document indexing and memory generation are complete. The server API key and each user's OAuth MCP connection are independent.
 
 ```dotenv
 SUPERMEMORY_API_KEY=REPLACE_ON_THE_SERVER

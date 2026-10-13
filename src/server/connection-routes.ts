@@ -79,7 +79,12 @@ export function connectionRoutes(
       .strict()
       .parse(await c.req.json());
     return c.json(
-      await connections.finishSupermemory(body.code, body.state, body.iss),
+      await connections.finishSupermemory(
+        body.code,
+        body.state,
+        body.iss,
+        origin(c),
+      ),
     );
   });
   app.get('/connections/:id/supermemory/spaces', async (c) =>
