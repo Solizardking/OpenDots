@@ -14,6 +14,7 @@ export const PUBLIC_ENTRY_UTILITIES = [
   '/authorize',
   '/pair',
   '/connect',
+  '/supermemory/callback',
 ] as const;
 
 export const PUBLIC_DOCUMENT_DOWNLOADS = [
