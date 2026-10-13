@@ -10,6 +10,14 @@ Connections give a Dot tools from remote [MCP](https://modelcontextprotocol.io) 
 
 Use **Refresh** after the server adds or changes tools. Your choices for existing tools are kept.
 
+## Supermemory
+
+Select **Connect Supermemory** to use `https://mcp.supermemory.ai/mcp` with OAuth. Sign in at Supermemory, approve access to your spaces, and return through the ChatGPTEE callback. An API key or manually supplied bearer token is not required. Credentials stay encrypted on the server in your workspace.
+
+After connecting, load the accessible spaces and explicitly set one active for future requests. For a one-off action, name a space and use its resolved namespace without changing the active space. Omitted space arguments use the provider's active space or account default. Read-only tools and **Ask first** approvals keep the same rules as other connections.
+
+Use **Reconnect Supermemory** if authorization expires. The native connection and space controls do not render Supermemory's MCP Apps upload or graph widgets. See [Supermemory](SUPERMEMORY.md) for the separate server API-key integration and [official MCP setup](https://supermemory.ai/docs/supermemory-mcp/setup) for other compatible clients.
+
 ## Approvals
 
 Every tool starts enabled. A tool the server marks as read-only (`readOnlyHint`) runs on its own. Every other tool starts with **Ask first** on.
@@ -27,4 +35,4 @@ Changing a Dot's connections or tool settings stops that Dot's active turn.
 - Tokens are stored in the server's SQLite database and are never sent to the browser. Protect `DATABASE_PATH` the way you protect `.env`.
 - Tool results are passed to the model as untrusted data.
 - Endpoints must use `http` or `https` and cannot contain credentials in the URL. Wallet accounts can connect to public network destinations; private addresses and redirects are rejected, and DNS results are pinned during each request. The existing owner workspace also supports local MCP servers. Only add servers you trust.
-- OAuth-only servers are not supported yet. Use a server that accepts a bearer token, or put a token-authenticated proxy in front of it.
+- Supermemory has a dedicated OAuth flow. Other connections currently use optional bearer tokens. Adding the Supermemory URL through the generic form uses the same OAuth flow and rejects manual credentials.
