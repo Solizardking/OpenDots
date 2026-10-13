@@ -274,6 +274,31 @@ The openmarket_data Dot tool is read-only and requires both workspace and Dot re
 
 Analytics neither sign nor execute trades. A provider observation time identifies freshness, not a guaranteed fill or price.
 
+## Birdeye token and wallet research
+
+Birdeye adds read-only token discovery, market prices, candles, security evidence, large trades and public-wallet PnL research to permitted Dots. Set the server-only credential or save it in native encrypted **Provider connections → Birdeye** settings:
+
+```dotenv
+BIRDEYE_API_KEY=REPLACE_ON_THE_SERVER
+```
+
+The server supplies `x-api-key` authentication to the official Beta MCP at `https://mcp.birdeye.so/mcp` and `X-API-KEY` plus `x-chain: solana` to the Data API. Dots discover current schemas with `birdeye_mcp_catalog`, then call an explicitly read-only discovered tool with `birdeye_mcp_call`. `birdeye_meme_detail` reads a mint directly. Beta tools and limits may change. Both workspace and Dot research permission apply; hosted users share the configured account's quota while their conversations stay private.
+
+The additional authenticated APIs are `GET /api/birdeye/mcp/catalog?threadId=...` (optional `search`), `POST /api/birdeye/mcp/call` with `{threadId,name,arguments}`, and `GET /api/birdeye/meme-detail?threadId=...&address=...`. Each conversation must belong to the active workspace and permit research. A successful MCP initialization is separate from completed session verification, catalog discovery and tool execution.
+
+Use exact public mint or wallet addresses and retain observation times, missing fields and provider errors. New listings and smart-money flows are candidates for research. Security flags are evidence rather than a safety guarantee; closed candles and meaningful pool volume are needed before trusting a threshold or spread. Wallet signing remains in the existing explicit review flow.
+
+The requested meme-detail dataset is `GET /defi/v3/token/meme/detail/single` for mint `HHuLN58RAJoyNxwYte8NdEyV7dhQzDCLXDmTraHspump`. A placeholder-only reference request is:
+
+```sh
+curl --request GET \
+  --url 'https://public-api.birdeye.so/defi/v3/token/meme/detail/single?address=HHuLN58RAJoyNxwYte8NdEyV7dhQzDCLXDmTraHspump' \
+  --header 'X-API-KEY: <api-key>' \
+  --header 'x-chain: solana'
+```
+
+Use the server integration for the real credential. [Birdeye's official tool catalog](https://data.birdeye.so/docs/agents/tool-catalog) maps tasks to datasets. Configuration, live MCP discovery, a REST response and a model reply using the tool establish separate evidence; account credit and dataset entitlements still apply.
+
 ## Trading Brain
 
 The selected Dot's **Trading brain** combines persistent strategies, source evidence, decisions, a journal, a graph and optional recall. Chat tools include save_trading_strategy, trading_brain, trading_journal and monitor_trading_strategy.
@@ -294,18 +319,18 @@ Eligible decisions require fresh priced liquidity evidence and saved thresholds.
 
 Later paper outcomes compare actual observed prices, excluding fees, slippage and execution. Sufficient observed losses may raise the confidence threshold, up to 0.99; it does not lower it. This is policy adaptation, not model training or realized profit.
 
-## Claude, OpenRouter and batches
+## Muse Wonder, OpenRouter and Claude batches
 
-The source default is OpenRouter with anthropic/claude-haiku-5.5. Use the exact model required by your provider account; a local default does not prove provider availability.
+The source default is OpenRouter with [Muse Wonder](https://openrouter.ai/meta/muse-wonder) (`meta/muse-wonder`). Use the exact model required by your provider account; a local default does not prove provider availability.
 
 ```dotenv
 MODEL_PROVIDER=openrouter
 OPENROUTER_API_KEY=REPLACE_ON_THE_SERVER
-OPENROUTER_MODEL=anthropic/claude-haiku-5.5
+OPENROUTER_MUSEMODEL=meta/muse-wonder
 OPENROUTER_CLAUDE_MODEL=anthropic/claude-haiku-5.5
 ```
 
-OPENROUTER_MODEL controls synchronous chat; OPENROUTER_CLAUDE_MODEL controls batches and is a live fallback only when a separate live model is absent. A :batch slug cannot power interactive chat and is rejected for that setting.
+`OPENROUTER_MUSEMODEL` controls synchronous chat. After trimming whitespace, the server uses that setting, then the legacy `OPENROUTER_MODEL`, then `meta/muse-wonder`. `OPENROUTER_CLAUDE_MODEL` controls batches only. A `:batch` slug cannot power interactive chat and is rejected for that setting. Keep `OPENROUTER_API_KEY` on the server; it is never a browser variable.
 
 **Claude batches** accepts up to 50 prompts, separated by blank lines, with a provider completion window of 24 hours. Up to three local jobs can be active. Jobs persist in the user's database; closing/reopening resumes polling. Provider retention follows the Batch API contract.
 
@@ -362,6 +387,7 @@ All credential values below belong in the server environment or native encrypted
 | Mem0                    | MEM0_API_KEY, MEM0_BASE_URL, MEM0_ORG_ID, MEM0_PROJECT_ID                                                    |
 | Solana                  | SOLANA_RPC_URL, JUPITER_API_KEY and optional DFLOW_API_KEY/configuration                                     |
 | OpenMarket              | OPENMARKET_API_KEY and provider entitlements                                                                 |
+| Birdeye                 | BIRDEYE_API_KEY for official Beta MCP and Solana Data API research                                           |
 | Trading Brain           | SUPERMEMORY_API_KEY, TYPESAFE_API_KEY and configured market services                                         |
 | Spectrum messaging      | SPECTRUM_MESSAGING_ENABLED, project, selected bot/line credentials and explicit activation flags             |
 

@@ -22,12 +22,12 @@ try {
   if (process.argv.includes('--import-workspace-config') || process.argv.includes('--import-local-config')) {
     const env = parseEnv(readFileSync(process.argv.includes('--import-workspace-config') ? '../.env' : '.env', 'utf8'));
     const secretNames = ['OPENROUTER_API_KEY','XAI_API_KEY','OPENAI_API_KEY','E2B_API_KEY','VOICE_API_KEY','BROWSER_USE_API_KEY','PARALLEL_API_KEY','MEM0_API_KEY','COPILOTKIT_INTELLIGENCE_API_KEY'];
-    const names = [...secretNames,'VOICE_MODEL','VOICE_NAME','BROWSER_USE_MODEL','OPENAI_MODEL','XAI_IMAGE_MODEL','OPENROUTER_CLAUDE_MODEL','MEM0_BASE_URL','MEM0_ORG_ID','MEM0_PROJECT_ID'];
+    const names = [...secretNames,'VOICE_MODEL','VOICE_NAME','BROWSER_USE_MODEL','OPENAI_MODEL','XAI_IMAGE_MODEL','OPENROUTER_MUSEMODEL','OPENROUTER_MODEL','OPENROUTER_CLAUDE_MODEL','MEM0_BASE_URL','MEM0_ORG_ID','MEM0_PROJECT_ID'];
     const values = Object.fromEntries(names.filter(k => env[k]?.trim()).map(k => [k, env[k].trim()]));
     if (env.BROWSER_USE_API_KEY || env.BROWSERUSE_API_KEY) values.BROWSER_USE_API_KEY = env.BROWSER_USE_API_KEY || env.BROWSERUSE_API_KEY;
-    values.MODEL_PROVIDER = env.MODEL_PROVIDER || 'openrouter';
-    values.OPENROUTER_MODEL = env.OPENROUTER_MODEL || env.OPENROUTER_CLAUDE_MODEL || 'anthropic/claude-haiku-5.5';
-    values.XAI_MODEL = env.XAI_MODEL || 'grok-4.7';
+    values.MODEL_PROVIDER = env.MODEL_PROVIDER?.trim() || 'openrouter';
+    values.OPENROUTER_MUSEMODEL = env.OPENROUTER_MUSEMODEL?.trim() || env.OPENROUTER_MODEL?.trim() || 'meta/muse-wonder';
+    values.XAI_MODEL = env.XAI_MODEL?.trim() || 'grok-4.7';
     // Explicit local setup: move the existing provider configuration into OS encryption.
     await page.evaluate(values => window.solanaDots.saveSettings(values), values).catch(() => {});
     await page.waitForSelector('.wordmark', { timeout: 30000 });

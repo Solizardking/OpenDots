@@ -1,4 +1,5 @@
 import { tradingRoutes } from './trading-routes.js';
+import { birdeyeRoutes } from './birdeye-routes.js';
 import { computerRoutes } from './computer-routes.js';
 import { browserUseRoutes } from './browser-use-routes.js';
 import { connectionRoutes } from './connection-routes.js';
@@ -6,6 +7,7 @@ import { walletRoutes } from './wallet-routes.js';
 import { pumpRoutes } from './pump-routes.js';
 import { dflowRoutes } from './dflow-routes.js';
 import { openMarketRoutes } from './openmarket-routes.js';
+import { birdeyeMcpRoutes } from './birdeye-mcp-routes.js';
 import { jupiterRoutes } from './jupiter-routes.js';
 import { Hono } from 'hono';
 import { bodyLimit } from 'hono/body-limit';
@@ -119,6 +121,8 @@ export function createApp({
     app.route('/api', tradingRoutes(platform.trading, platform.pump));
   if (platform) app.route('/api', pumpRoutes(platform.pump));
   if (platform) app.route('/api', jupiterRoutes(platform.jupiter));
+  if (platform) app.route('/api', birdeyeRoutes(platform));
+  if (platform) app.route('/api', birdeyeMcpRoutes(platform));
   app.route('/api', dflowRoutes());
   app.route('/api', openMarketRoutes(platform?.config.openMarket));
   if (platform)
@@ -234,6 +238,8 @@ export function createApp({
       runner.abortAll();
     if (settings.paused) voice?.abortAll();
     if (settings.paused) await platform?.browserUse.stopAll();
+    if (settings.paused || !settings.researchAllowed)
+      platform?.stopBirdeyeSubscriptions();
     else void voice?.resumePending();
     return c.json(settings);
   });

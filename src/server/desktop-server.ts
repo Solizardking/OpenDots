@@ -17,6 +17,10 @@ import { Runner } from './runner.js';
 import { createApp } from './app.js';
 import { modelConfigFromEnv } from './model-config.js';
 import { createOpenMarketService } from './openmarket-service.js';
+import { BirdeyeService } from './birdeye-service.js';
+import { BirdeyeStream } from './birdeye-stream.js';
+import { BirdeyeMcpService } from './birdeye-mcp.js';
+import { createBirdeyeMemeService } from './birdeye-meme.js';
 import { browserUseConfigFromEnv } from './browser-use-config.js';
 import { mem0ConfigFromEnv } from './dot-memory.js';
 import { CompanionRegistry, companionAllows } from './companion.js';
@@ -66,7 +70,10 @@ export async function startDesktopServer(options: {
     join(options.dataPath, 'paired-devices.json'),
   );
   const config: PlatformConfig = {
+    birdeyeMcp: new BirdeyeMcpService({ env }),
+    birdeyeMeme: createBirdeyeMemeService({ env }),
     openMarket: createOpenMarketService({ env }),
+    birdeye: new BirdeyeService({ env }),
     ...mem0ConfigFromEnv(env),
     ...modelConfigFromEnv(env),
     ...browserUseConfigFromEnv(env),
@@ -93,6 +100,7 @@ export async function startDesktopServer(options: {
     tradingEnv: env,
     solanaRpcUrl: env.SOLANA_RPC_URL,
   };
+  config.birdeyeStream = new BirdeyeStream({ env, service: config.birdeye });
   const platform = new Platform(store, workspace, config);
   const research = {
     mode: 'live' as const,
@@ -345,6 +353,7 @@ export async function startDesktopServer(options: {
       runner.stop();
       await stopPhone();
       await platform.stop();
+      await config.birdeyeStream?.stop();
       if ('closeAllConnections' in server) server.closeAllConnections();
       await new Promise<void>((resolve) => server.close(() => resolve()));
       workspace.close();

@@ -27,11 +27,14 @@ for (const path of [
 ])
   if (existsSync(path))
     Object.assign(values, parseEnv(readFileSync(path, 'utf8')));
-const provider = values.OPENROUTER_API_KEY
-  ? 'openrouter'
-  : values.XAI_API_KEY
-    ? 'xai'
-    : 'openai';
+const provider =
+  values.MODEL_PROVIDER?.trim() ||
+  (values.OPENROUTER_API_KEY
+    ? 'openrouter'
+    : values.XAI_API_KEY
+      ? 'xai'
+      : 'openai');
+assert(['openrouter', 'xai', 'openai'].includes(provider));
 const keyName =
   provider === 'openrouter'
     ? 'OPENROUTER_API_KEY'
@@ -40,14 +43,14 @@ const keyName =
       : 'OPENAI_API_KEY';
 const modelName =
   provider === 'openrouter'
-    ? 'OPENROUTER_MODEL'
+    ? 'OPENROUTER_MUSEMODEL'
     : provider === 'xai'
       ? 'XAI_MODEL'
       : 'OPENAI_MODEL';
 const model =
-  values[modelName] ||
+  values[modelName]?.trim() ||
   (provider === 'openrouter'
-    ? 'anthropic/claude-haiku-5.5'
+    ? values.OPENROUTER_MODEL?.trim() || 'meta/muse-wonder'
     : provider === 'xai'
       ? 'grok-4.7'
       : 'gpt-5-mini');

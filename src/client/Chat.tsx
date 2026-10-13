@@ -1,5 +1,7 @@
 import { PageReviewCard } from './PageReviewCard';
 import { PumpPanel } from './PumpPanel';
+import { BirdeyePanel } from './BirdeyePanel';
+import { BirdeyeToolCard } from './BirdeyeToolCard';
 import { DflowQuoteCard } from './DflowQuoteCard';
 import { JupiterQuoteCard } from './JupiterQuoteCard';
 import { JupiterTransactionCard } from './JupiterTransactionCard';
@@ -31,7 +33,15 @@ import {
   useCopilotKit,
   useAgentContext,
 } from '@copilotkit/react-core/v2';
-import { FilePlus, ArrowUp, Clock3, Link2, Square, X } from 'lucide-react';
+import {
+  FilePlus,
+  ArrowUp,
+  Bird,
+  Clock3,
+  Link2,
+  Square,
+  X,
+} from 'lucide-react';
 import {
   ComputerToolCard,
   type ComputerToolRenderProps,
@@ -112,6 +122,7 @@ export function Chat({
   }, [thread.id, contextAttempt]);
   const [draft, setDraft] = useState('');
   const [pumpOpen, setPumpOpen] = useState(false);
+  const [birdeyeOpen, setBirdeyeOpen] = useState(false);
   const [source, setSource] = useState('');
   const [sourceOpen, setSourceOpen] = useState(false);
   const [error, setError] = useState('');
@@ -264,6 +275,8 @@ export function Chat({
             showScreen={props.toolCallId === latestBrowserCall?.id}
             onExpand={onComputer}
           />
+        ) : props.name.startsWith('birdeye_') ? (
+          <BirdeyeToolCard {...props} />
         ) : props.name === 'dflow_quote' ? (
           <DflowQuoteCard {...props} />
         ) : props.name === 'jupiter_quote' ? (
@@ -281,6 +294,7 @@ export function Chat({
           message.toolCalls?.some(
             (call) =>
               call.function.name.startsWith('computer_') ||
+              call.function.name.startsWith('birdeye_') ||
               call.function.name === 'dflow_quote' ||
               call.function.name === 'jupiter_quote' ||
               call.function.name === pageReviewTool.name ||
@@ -312,6 +326,15 @@ export function Chat({
           </span>
         </div>
         <div className="chat-persona-actions">
+          <button
+            type="button"
+            className="icon-button birdeye-chat-button"
+            aria-label="Open Birdeye research"
+            aria-expanded={birdeyeOpen}
+            onClick={() => setBirdeyeOpen((value) => !value)}
+          >
+            <Bird size={16} /> Research
+          </button>
           {window.solanaDots && (
             <button
               type="button"
@@ -440,6 +463,21 @@ export function Chat({
           walletId={dot.walletId}
           paused={paused}
           onClose={() => setPumpOpen(false)}
+        />
+      )}
+      {birdeyeOpen && (
+        <BirdeyePanel
+          key={thread.id}
+          threadId={thread.id}
+          connectedAddress={connected ? publicKey?.toBase58() : undefined}
+          paused={paused}
+          onClose={() => setBirdeyeOpen(false)}
+          onAskDot={(text) => {
+            setDraft((current) =>
+              `${current ? `${current}\n\n` : ''}${text}`.slice(0, 4000),
+            );
+            setBirdeyeOpen(false);
+          }}
         />
       )}
       <form

@@ -88,6 +88,18 @@ const modules = [
     'Workspace session; Data API entitlement',
   ],
   [
+    'src/server/birdeye-routes.ts',
+    '/api',
+    'Birdeye market research and alerts',
+    'Workspace session plus conversation research permission; Birdeye entitlement',
+  ],
+  [
+    'src/server/birdeye-mcp-routes.ts',
+    '/api',
+    'Birdeye MCP and meme token data',
+    'Workspace session plus conversation research permission; Birdeye entitlement',
+  ],
+  [
     'src/server/trading-routes.ts',
     '/api',
     'Trading Brain',

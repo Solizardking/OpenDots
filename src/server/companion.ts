@@ -146,6 +146,12 @@ export class CompanionRegistry {
 
 /** Phone access is deliberate. Keys, wallet signing, connection writes and settings stay on the Mac. */
 export function companionAllows(method: string, path: string) {
+  // Paired phones may perform scoped market reads; durable alert changes stay
+  // in the owner's desktop workspace alongside provider credentials.
+  if (method === 'GET' && /^\/api\/birdeye\/(?:status|alerts)$/.test(path))
+    return true;
+  if (method === 'POST' && /^\/api\/birdeye\/(?:query|stream)$/.test(path))
+    return true;
   if (method === 'GET' && path.startsWith('/api/copilotkit/')) return true;
   if (method === 'GET')
     return /^\/api\/(?:state|workspace|memories|tasks(?:\/[\w-]+)?|conversations\/[\w-]+\/(?:capture|page-context|reviewed-page\/[\w-]+)|spaces(?:\/[\w-]+(?:\/pages(?:\/[\w-]+(?:\/history)?)?)?)|avatars\/[\w.-]+|auth\/(?:config|session))$/.test(

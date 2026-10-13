@@ -10,7 +10,7 @@ Verification passed: 428 tests (8 skipped), TypeScript, ESLint, 9 download servi
 
 Detailed evidence is in `artifacts/solana-dots/verification-summary.json`, `native-verification.json`, `installed-verification.json`, `installed-normal-launch.json`, `bundle-audit.json`, and `../clawd/artifacts/solana-dots-release/live-verification.json`.
 
-The Mac app's existing local provider configuration is encrypted through Electron safeStorage and macOS Keychain. OpenRouter defaults to `anthropic/claude-haiku-5.5` and passed visible desktop and paired-browser chat. The existing working CLAWD Computer xAI configuration was also validated and saved securely. Mem0 is configured; its memory controls are included. Provider credentials are excluded from the distributed app. Each downloaded installation starts its own workspace and provider setup.
+The Mac app's existing local provider configuration is encrypted through Electron safeStorage and macOS Keychain. This frozen candidate defaulted OpenRouter to `anthropic/claude-haiku-5.5` and passed visible desktop and paired-browser chat with that model. Current source defaults to `meta/muse-wonder`; see [OpenRouter setup](OPENROUTER.md). The candidate's historical checks do not establish Muse behavior in a newly packaged app. The existing working CLAWD Computer xAI configuration was also validated and saved securely. Mem0 is configured; its memory controls are included. Provider credentials are excluded from the distributed app. Each downloaded installation starts its own workspace and provider setup.
 
 ## Remaining step
 

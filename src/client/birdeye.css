@@ -1,0 +1,439 @@
+.birdeye-panel,
+.birdeye-tool-card {
+  --be-blue: #568ad4;
+  --be-lavender: #9b91da;
+  --be-up: #4caa95;
+  --be-down: #cd797b;
+  --be-warning: #c99b56;
+  color: var(--sd-text, var(--ink, #e6e6ed));
+  background: var(--sd-surface, var(--surface, #181a23));
+  border: 1px solid var(--sd-line, var(--line, #30323c));
+  border-radius: 14px;
+  min-width: 0;
+  font-size: 12px;
+}
+.birdeye-panel {
+  margin: 0 12px 10px;
+  padding: 16px;
+  flex: 0 1 auto;
+  max-height: 62vh;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+.birdeye-panel-header,
+.birdeye-result-heading,
+.birdeye-tool-card > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+.birdeye-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--be-lavender);
+  letter-spacing: 0.09em;
+  font: 10px var(--font-mono, monospace);
+}
+.birdeye-panel h2 {
+  font-size: 23px;
+  font-weight: 500;
+  letter-spacing: -0.7px;
+  margin: 6px 0;
+}
+.birdeye-panel h3,
+.birdeye-panel h4 {
+  margin: 10px 0;
+  font-weight: 600;
+  font-size: 13px;
+}
+.birdeye-panel-header p,
+.birdeye-note,
+.birdeye-empty,
+.birdeye-result-stamp,
+.birdeye-chart-scale,
+.birdeye-watch-toggle > span {
+  color: var(--sd-muted, var(--muted, #999ba8));
+  font-size: 11px;
+  line-height: 1.55;
+}
+.birdeye-provider {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+  padding: 9px 0;
+  margin: 8px 0 14px;
+  border-block: 1px solid var(--sd-line, var(--line));
+  font-size: 11px;
+}
+.birdeye-provider-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--be-warning);
+  flex-shrink: 0;
+}
+.birdeye-provider-dot.configured {
+  background: var(--be-blue);
+}
+.birdeye-credit-label {
+  margin-left: auto;
+  font-family: var(--font-mono, monospace);
+}
+.birdeye-panel button,
+.birdeye-panel a,
+.birdeye-tool-card button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 7px 10px;
+  color: inherit;
+  border: 1px solid var(--sd-line, var(--line, #30323c));
+  background: var(--sd-canvas, var(--canvas, #14161e));
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 11px;
+  text-decoration: none;
+}
+.birdeye-panel button:hover,
+.birdeye-panel a:hover {
+  border-color: var(--be-blue);
+}
+.birdeye-panel button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.birdeye-panel :is(button, a, input, select, textarea):focus-visible {
+  outline: 2px solid var(--be-blue);
+  outline-offset: 2px;
+}
+.birdeye-panel button.birdeye-primary {
+  background: var(--be-blue);
+  color: #fff;
+  border-color: transparent;
+}
+.birdeye-query,
+.birdeye-panel form {
+  display: grid;
+  gap: 10px;
+}
+.birdeye-panel label {
+  display: grid;
+  gap: 5px;
+  font-size: 11px;
+}
+.birdeye-panel :is(input:not([type='checkbox']), select, textarea) {
+  padding: 8px 10px;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  border: 1px solid var(--sd-line, var(--line, #30323c));
+  border-radius: 7px;
+  color: inherit;
+  background: var(--sd-canvas, var(--canvas, #14161e));
+  font: inherit;
+}
+.birdeye-panel textarea {
+  resize: vertical;
+}
+.birdeye-workflow-label select {
+  font-weight: 600;
+}
+.birdeye-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
+}
+.birdeye-address-input {
+  display: flex;
+  gap: 6px;
+}
+.birdeye-address-input input {
+  flex: 1;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+}
+.birdeye-address-input button {
+  flex-shrink: 0;
+  max-width: 115px;
+}
+.birdeye-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.birdeye-result-heading {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--sd-line, var(--line));
+  flex-wrap: wrap;
+}
+.birdeye-result-stamp {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 8px 0;
+}
+.birdeye-warnings {
+  color: var(--be-warning);
+  background: color-mix(in srgb, var(--be-warning) 8%, transparent);
+  padding: 8px 10px;
+  border-left: 2px solid var(--be-warning);
+  border-radius: 3px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.birdeye-warnings p {
+  margin: 3px 0;
+}
+.birdeye-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(115px, 1fr));
+  gap: 1px;
+  background: var(--sd-line, var(--line));
+  border-radius: 8px;
+  overflow: hidden;
+}
+.birdeye-metrics > div {
+  background: var(--sd-surface, var(--surface, #181a23));
+  padding: 9px 10px;
+  min-width: 0;
+}
+.birdeye-metrics dt {
+  color: var(--sd-muted, var(--muted));
+  font-size: 10px;
+}
+.birdeye-metrics dd {
+  margin: 4px 0 0;
+  font: 13px var(--font-mono, monospace);
+  overflow-wrap: anywhere;
+}
+.birdeye-chart {
+  margin: 14px 0;
+  padding: 12px;
+  border: 1px solid var(--sd-line, var(--line));
+  border-radius: 8px;
+}
+.birdeye-chart figcaption {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.birdeye-chart figcaption span {
+  font-family: var(--font-mono, monospace);
+  color: var(--be-blue);
+}
+.birdeye-chart svg {
+  display: block;
+  width: 100%;
+  max-height: 210px;
+}
+.birdeye-chart-line {
+  fill: none;
+  stroke: var(--be-blue);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+.birdeye-chart-grid {
+  stroke: var(--sd-line, var(--line));
+  stroke-dasharray: 3 5;
+}
+.birdeye-candle-up {
+  stroke: var(--be-up);
+  fill: var(--be-up);
+}
+.birdeye-candle-down {
+  stroke: var(--be-down);
+  fill: var(--be-down);
+}
+.birdeye-chart-scale {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font: 9px var(--font-mono, monospace);
+}
+.birdeye-table-wrap {
+  overflow-x: auto;
+  margin: 8px 0;
+  max-width: 100%;
+  border: 1px solid var(--sd-line, var(--line));
+  border-radius: 8px;
+}
+.birdeye-table-wrap table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 10px;
+  text-align: left;
+}
+.birdeye-table-wrap :is(th, td) {
+  padding: 8px;
+  border-bottom: 1px solid var(--sd-line, var(--line));
+  vertical-align: top;
+  white-space: nowrap;
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.birdeye-table-wrap th {
+  font-size: 10px;
+  color: var(--sd-muted, var(--muted));
+  font-weight: 500;
+}
+.birdeye-table-wrap td {
+  font-family: var(--font-mono, monospace);
+}
+.birdeye-table-wrap .birdeye-address {
+  max-width: 120px;
+}
+.birdeye-result-section {
+  margin-top: 14px;
+}
+.birdeye-details {
+  font-size: 10px;
+  margin: 10px 0;
+}
+.birdeye-details summary {
+  cursor: pointer;
+  color: var(--sd-muted, var(--muted));
+}
+.birdeye-holding-history {
+  padding: 7px 8px;
+  border-bottom: 1px solid var(--sd-line, var(--line));
+  font-size: 11px;
+}
+.birdeye-holding-history summary {
+  cursor: pointer;
+  color: var(--be-blue);
+}
+.birdeye-observed-address {
+  display: grid;
+  gap: 4px;
+  font-size: 10px;
+  color: var(--sd-muted, var(--muted));
+}
+.birdeye-observed-address code {
+  overflow-wrap: anywhere;
+  color: var(--sd-ink, var(--ink));
+}
+.birdeye-details pre {
+  max-height: 200px;
+  overflow: auto;
+  font-size: 10px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background: var(--sd-canvas, var(--canvas, #14161e));
+  padding: 10px;
+  border-radius: 6px;
+}
+.birdeye-gate {
+  margin: 8px 0;
+  padding: 8px;
+  border: 1px solid var(--be-warning);
+  border-radius: 6px;
+  color: var(--be-warning);
+}
+.birdeye-gate.rejected {
+  border-color: var(--be-down);
+  color: var(--be-down);
+}
+.birdeye-gate.passed {
+  border-color: var(--be-up);
+  color: var(--be-up);
+}
+.birdeye-share {
+  padding: 10px;
+  border: 1px solid var(--be-lavender);
+  border-radius: 7px;
+  margin: 10px 0;
+}
+.birdeye-share p {
+  margin: 0 0 8px;
+  line-height: 1.5;
+}
+.birdeye-watch-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+}
+.birdeye-watch {
+  border-top: 1px solid var(--sd-line, var(--line));
+  margin-top: 12px;
+  padding-top: 8px;
+}
+.birdeye-panel label.birdeye-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 12px 0;
+}
+.birdeye-alert-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--sd-line, var(--line));
+}
+.birdeye-alert-row > div {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+.birdeye-alert-row strong {
+  font: 10px var(--font-mono, monospace);
+  overflow-wrap: anywhere;
+}
+.birdeye-alert-row span {
+  font-size: 10px;
+  color: var(--sd-muted, var(--muted));
+}
+.birdeye-tool-card {
+  padding: 12px;
+  margin: 8px 0;
+}
+.birdeye-tool-card > header {
+  align-items: center;
+  font-size: 12px;
+}
+.birdeye-tool-card > header > span {
+  margin-left: auto;
+  color: var(--sd-muted, var(--muted));
+  font-size: 10px;
+}
+.birdeye-chat-button {
+  gap: 5px;
+  white-space: nowrap;
+}
+@media (max-width: 600px) {
+  .birdeye-panel {
+    margin: 0 6px 6px;
+    padding: 12px;
+    max-height: 55dvh;
+  }
+  .birdeye-panel h2 {
+    font-size: 20px;
+  }
+  .birdeye-address-input {
+    flex-wrap: wrap;
+  }
+  .birdeye-result-heading {
+    display: block;
+  }
+  .birdeye-watch-toggle {
+    flex-wrap: wrap;
+  }
+  .birdeye-chat-button {
+    font-size: 10px;
+    padding-inline: 5px;
+  }
+  .birdeye-chart-scale {
+    font-size: 8px;
+  }
+}

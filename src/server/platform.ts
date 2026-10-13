@@ -1,4 +1,6 @@
 import { TradingService } from './trading-service.js';
+import { BirdeyeService } from './birdeye-service.js';
+import { BirdeyeMonitor } from './birdeye-monitor.js';
 import { ComputerService } from './computer-service.js';
 import { BrowserUseService } from './browser-use-service.js';
 import { WalletService } from './wallet-service.js';
@@ -38,6 +40,9 @@ export class Platform {
   readonly connections: ConnectionService;
   readonly memory: DotMemoryService;
   readonly trading: TradingService;
+  readonly birdeye: BirdeyeService;
+  readonly birdeyeMonitor: BirdeyeMonitor;
+  readonly birdeyeSubscriptions = new Set<() => void>();
   readonly intelligence?: CopilotKitIntelligence;
   readonly localRunner?: LocalConversationRunner;
   readonly handler?: CopilotHonoApp;
@@ -49,6 +54,13 @@ export class Platform {
     this.setupTelemetry = new SetupTelemetry(store);
     this.memory = new DotMemoryService(store, workspace, config);
     this.trading = new TradingService(store, workspace, config.tradingEnv);
+    this.birdeye =
+      config.birdeye ?? new BirdeyeService({ env: config.tradingEnv ?? {} });
+    this.birdeyeMonitor = new BirdeyeMonitor({
+      service: this.birdeye,
+      database: store.database,
+      enabled: (threadId) => this.birdeyeAllowed(threadId),
+    });
     this.wallets = new WalletService(config.owsVaultPath || 'data/ows');
     this.pump = new PumpService(
       store.database,
@@ -125,6 +137,8 @@ export class Platform {
             this.setupTelemetry,
             this.memory,
             this.trading,
+            this.birdeye,
+            this.birdeyeMonitor,
           ),
       });
       channels.push(slack);
@@ -144,6 +158,8 @@ export class Platform {
               this.setupTelemetry,
               this.memory,
               this.trading,
+              this.birdeye,
+              this.birdeyeMonitor,
             ),
           ]),
       );
@@ -183,9 +199,24 @@ export class Platform {
     if (missing.length)
       throw new Error(`Setup required: ${missing.join(', ')}.`);
   }
+  birdeyeAllowed(threadId: string) {
+    const settings = this.store.settings();
+    if (settings.paused || !settings.researchAllowed) return false;
+    try {
+      const thread = this.workspace.requireThread(threadId);
+      return !!this.workspace.dot(thread.dotId)?.researchAllowed;
+    } catch {
+      return false;
+    }
+  }
+  stopBirdeyeSubscriptions() {
+    for (const stop of this.birdeyeSubscriptions) stop();
+    this.birdeyeSubscriptions.clear();
+  }
   async start() {
     this.memory.start();
     this.trading.start();
+    this.birdeyeMonitor.start();
     this.setupTelemetry.start();
     if (this.handler?.channels) {
       try {
@@ -203,6 +234,8 @@ export class Platform {
     }
   }
   async stop() {
+    await this.birdeyeMonitor.stop();
+    this.stopBirdeyeSubscriptions();
     const results = await Promise.allSettled([
       this.browserUse.stopAll(),
       this.localRunner?.stopAll(),

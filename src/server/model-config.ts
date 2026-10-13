@@ -1,6 +1,6 @@
 export const DEFAULT_XAI_MODEL = 'grok-4.7';
 export const DEFAULT_XAI_IMAGE_MODEL = 'grok-imagine-image-2.0';
-export const DEFAULT_OPENROUTER_MODEL = 'anthropic/claude-haiku-5.5';
+export const DEFAULT_OPENROUTER_MODEL = 'meta/muse-wonder';
 
 /** Provider credentials are resolved once, on the server, for every specialist. */
 export function modelConfigFromEnv(env: Record<string, string | undefined>) {
@@ -9,12 +9,12 @@ export function modelConfigFromEnv(env: Record<string, string | undefined>) {
     throw new Error('MODEL_PROVIDER must be xai, openai, or openrouter.');
   if (provider === 'openrouter') {
     const model =
+      env.OPENROUTER_MUSEMODEL?.trim() ||
       env.OPENROUTER_MODEL?.trim() ||
-      env.OPENROUTER_CLAUDE_MODEL?.trim() ||
       DEFAULT_OPENROUTER_MODEL;
     if (model.endsWith(':batch'))
       throw new Error(
-        'Live chat requires a model without :batch. Set OPENROUTER_MODEL for live chat; use OPENROUTER_CLAUDE_MODEL for batches.',
+        'Live chat requires a model without :batch. Set OPENROUTER_MUSEMODEL (or OPENROUTER_MODEL) for live chat; use OPENROUTER_CLAUDE_MODEL for batches.',
       );
     return {
       modelProvider: 'openrouter' as const,

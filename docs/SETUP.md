@@ -28,7 +28,7 @@ Open http://127.0.0.1:4310. Keep the server running for background work.
 
 ## Conversation services
 
-Set `OPENROUTER_API_KEY` and restart to start conversations with the default `anthropic/claude-haiku-5.5` model. Keep `MODEL_PROVIDER=openrouter` and `OPENROUTER_MODEL=anthropic/claude-haiku-5.5`. Without an Intelligence project key, messages, tool calls, state, and the latest run events persist locally in `DATABASE_PATH`. The existing chat, page review, history reload, scheduled compute, and voice compute use this local conversation runtime.
+Set the server-only `OPENROUTER_API_KEY` and restart to start conversations with the default `meta/muse-wonder` model. Keep `MODEL_PROVIDER=openrouter` and `OPENROUTER_MUSEMODEL=meta/muse-wonder`. Live model selection trims values and uses `OPENROUTER_MUSEMODEL`, then the legacy `OPENROUTER_MODEL`, then the built-in Muse default; batch settings do not affect live chat. Without an Intelligence project key, messages, tool calls, state, and the latest run events persist locally in `DATABASE_PATH`. The existing chat, page review, history reload, scheduled compute, and voice compute use this local conversation runtime.
 
 CopilotKit Intelligence is optional for cloud conversation storage, Automatic Learning, and managed Slack channels. Choose local evaluation below, a licensed [self-hosted deployment](https://docs.copilotkit.ai/intelligence/self-hosting), or hosted Intelligence. Configuring an Intelligence key selects that storage mode; existing local history is not migrated. See [Data and privacy](../README.md#data-and-privacy).
 
@@ -58,7 +58,7 @@ npx copilotkit@latest local connect
 npx copilotkit@latest local connect --approve-connection
 ```
 
-`local connect` previews the changes; the approved command writes the local API URL, gateway WebSocket URL, and project key to `.env`. ChatGPTEE accepts these directly. Do not run `project select` afterward: it selects a hosted project. Add `OPENROUTER_API_KEY` for the app (Claude Haiku 5.5 is the default), then restart `npm run dev`. Setup's Learning model is separate from the app's model.
+`local connect` previews the changes; the approved command writes the local API URL, gateway WebSocket URL, and project key to `.env`. ChatGPTEE accepts these directly. Do not run `project select` afterward: it selects a hosted project. Add `OPENROUTER_API_KEY` for the app (Muse Wonder is the default), then restart `npm run dev`. Setup's Learning model is separate from the app's model.
 
 Send a message and verify it appears in the local dashboard (`npx copilotkit@latest local login`). Use `local status` to inspect service health. Threads, Automatic Learning, and Channels are included; User Memory and Product Analytics are not. Channels require a public HTTPS address reachable by Slack or Teams.
 
@@ -75,8 +75,10 @@ Edit `.env` on the server and restart after changes:
 | `INTELLIGENCE_API_KEY`                               | Optional project credential for cloud conversations, Learning and Slack |
 | `INTELLIGENCE_API_URL`                               | API endpoint override for your Intelligence deployment                  |
 | `INTELLIGENCE_GATEWAY_WS_URL`, `INTELLIGENCE_WS_URL` | Gateway WebSocket override (CLI name preferred; legacy name supported)  |
-| `OPENROUTER_API_KEY`, `OPENROUTER_MODEL`             | Default model credential; `anthropic/claude-haiku-5.5` for every Dot    |
-| `OPENROUTER_CLAUDE_MODEL`                            | Separate Claude batch model; live chat uses `OPENROUTER_MODEL`          |
+| `OPENROUTER_API_KEY`, `OPENROUTER_MUSEMODEL`         | Server-only chat credential; `meta/muse-wonder` for every Dot           |
+| `OPENROUTER_MODEL`                                   | Legacy live-model override when `OPENROUTER_MUSEMODEL` is empty         |
+| `OPENROUTER_CLAUDE_MODEL`                            | Separate Claude batch model; default `anthropic/claude-haiku-5.5`       |
+| `BIRDEYE_API_KEY`                                    | Server-only official Birdeye MCP and Solana Data API research           |
 | `XAI_API_KEY`, `XAI_MODEL`                           | Optional Grok chat alternative and separate X Search credential         |
 | `XAI_IMAGE_MODEL`                                    | Avatar generation and editing model; Grok Imagine 2.0                   |
 | `E2B_API_KEY`, `E2B_TEMPLATE`, `E2B_TIMEOUT_MS`      | Desktop credential, template, and automatic pause timeout               |
@@ -92,7 +94,13 @@ Edit `.env` on the server and restart after changes:
 
 A non-empty `INTELLIGENCE_GATEWAY_WS_URL` takes precedence over `INTELLIGENCE_WS_URL`. Without either WebSocket override, ChatGPTEE uses the hosted gateway. Set both the API and gateway endpoints when connecting a self-hosted deployment.
 
-Claude Haiku 5.5 through OpenRouter is the default model for all Dots. Set `OPENROUTER_API_KEY` for chat, an optional `XAI_API_KEY` for avatars and X Search, and `E2B_API_KEY` for the default computer provider. Set `MODEL_PROVIDER=xai` or `MODEL_PROVIDER=openai` to use an explicit alternative chat provider. See [Dot integrations](DOT-INTEGRATIONS.md) for avatars, OWS wallets, and E2B. Provider credentials belong in `.env`, not client-side variables or source code. Back up SQLite for local chats. When an Intelligence key is configured, back up its conversation history separately.
+Muse Wonder through OpenRouter is the default model for all Dots. Set `OPENROUTER_API_KEY` for chat, an optional `XAI_API_KEY` for avatars and X Search, and `E2B_API_KEY` for the default computer provider. Set `MODEL_PROVIDER=xai` or `MODEL_PROVIDER=openai` to use an explicit alternative chat provider. See [Dot integrations](DOT-INTEGRATIONS.md) for avatars, OWS wallets, and E2B. Provider credentials belong in `.env`, not client-side variables or source code. Back up SQLite for local chats. When an Intelligence key is configured, back up its conversation history separately.
+
+## Birdeye market research
+
+Set `BIRDEYE_API_KEY` in the ignored server `.env` and restart. Docker Compose forwards it to the app; native Mac users save it in **Provider connections → Birdeye**. The integration connects to the official Beta MCP at `https://mcp.birdeye.so/mcp` with an `x-api-key` header and uses the Solana Data API for direct read-only datasets. General MCP bearer-token settings use a different authentication scheme.
+
+Enable research for the workspace and the chosen Dot. Ask the Dot for token discovery, an exact mint's market/security evidence, or a public wallet's PnL history. Tools use the shared server credential and return data or explicit provider errors without returning the key. Provider configuration does not prove entitlement or remaining credits. See [official Birdeye MCP setup](BIRDEYE-MCP.md) for the task map and exact requested meme-detail request, and [Birdeye research](BIRDEYE.md) for existing workspace controls.
 
 ## Pages and page conversations
 

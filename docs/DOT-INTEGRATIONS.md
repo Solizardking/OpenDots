@@ -5,7 +5,8 @@ ChatGPTEE reads provider credentials on the server from its ignored `.env` file.
 ```dotenv
 MODEL_PROVIDER=openrouter
 OPENROUTER_API_KEY=
-OPENROUTER_MODEL=anthropic/claude-haiku-5.5
+OPENROUTER_MUSEMODEL=meta/muse-wonder
+BIRDEYE_API_KEY=
 # Optional xAI credentials for avatars and X Search.
 XAI_API_KEY=
 XAI_MODEL=grok-4.7
@@ -19,17 +20,23 @@ OWS_VAULT_PATH=data/ows
 
 Restart `npm run dev` after changing these values. The web app runs at http://127.0.0.1:5173; the API runs at http://127.0.0.1:4310. A built app uses `npm run build` followed by `npm start` on port 4310.
 
-## Claude for every Dot
+## Muse Wonder for every Dot
 
-All specialists use the same server configuration, including new Dots, page conversations, scheduled turns, and Slack compute turns. The default is `anthropic/claude-haiku-5.5` through OpenRouter's streaming Chat Completions API. Set the server-only `OPENROUTER_API_KEY`; `OPENROUTER_MODEL` selects the live model. Client messages cannot override the model or server instructions. See [OpenRouter setup](OPENROUTER.md) for live chat and separate batch jobs.
+All specialists use the same server configuration, including new Dots, page conversations, scheduled turns, and Slack compute turns. The default is [Muse Wonder](https://openrouter.ai/meta/muse-wonder) (`meta/muse-wonder`) through OpenRouter's streaming Chat Completions API. Set the server-only `OPENROUTER_API_KEY`; `OPENROUTER_MUSEMODEL` selects the live model, with the legacy `OPENROUTER_MODEL` used only when the Muse setting is empty. `OPENROUTER_CLAUDE_MODEL` configures separate batch jobs. Client messages cannot override the model or server instructions. See [OpenRouter setup](OPENROUTER.md) for live chat and separate batch jobs.
 
-Dots with public research permission and a separate `XAI_API_KEY` can use `search_x`, including while Claude powers their chat. It calls the xAI X Search tool using Grok and returns source URLs; it cannot post to X. Existing public-web tools and their permissions remain available.
+Dots with public research permission and a separate `XAI_API_KEY` can use `search_x`, including while Muse Wonder powers their chat. It calls the xAI X Search tool using Grok and returns source URLs; it cannot post to X. Existing public-web tools and their permissions remain available.
 
 Conversation history persists locally in SQLite. Optional cloud persistence uses `CPK_INTELLIGENCE_API_KEY` or `INTELLIGENCE_API_KEY`; model credentials are separate from CopilotKit project credentials. To use an existing hosted project, sign in with `npx copilotkit login`, list projects with `npx copilotkit project list`, and select it with `npx copilotkit project select`. Avatar generation, wallet settings, and computer controls do not require that project key. [Mem0 memory](DOT-MEMORY.md) provides separate long-term recall for permitted Dots.
 
 An explicit `MODEL_PROVIDER=xai` selects Grok using `XAI_API_KEY` and `XAI_MODEL` (default `grok-4.7`); its adapter uses the Responses API with streaming and `store: false`. An explicit `MODEL_PROVIDER=openai` retains the OpenAI-compatible alternative configured by `OPENAI_API_KEY`, `OPENAI_MODEL`, and `OPENAI_BASE_URL`.
 
 References: [Grok Responses](https://docs.x.ai/developers/model-capabilities/text/generate-text), [X Search](https://docs.x.ai/developers/tools/x-search).
+
+## Birdeye research
+
+Set the server-only `BIRDEYE_API_KEY` to make the official Birdeye Beta MCP and Data API available to Dots with workspace and Dot research permission. Native users save the same credential in **Provider connections → Birdeye**. The server supplies MCP `x-api-key` authentication; REST requests use `X-API-KEY` and `x-chain: solana`. Hosted users share the configured account's quota while retaining private scoped conversations.
+
+Ask for an exact public mint or wallet, discover the current MCP schemas with `birdeye_mcp_catalog`, then call an explicitly read-only discovered tool through `birdeye_mcp_call`. `birdeye_meme_detail` reads an exact mint directly from the Data API. Report provider errors and observation time. Token discovery, security signals, wallet PnL and pool spreads are research evidence. Existing wallet review and approval still control trades. See [official Birdeye MCP setup](BIRDEYE-MCP.md) for the endpoint catalog and the requested meme-token detail example.
 
 ## Generate and edit your avatar
 

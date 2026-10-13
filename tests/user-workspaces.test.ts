@@ -8,6 +8,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { UserWorkspaces } from '../src/server/user-workspaces.js';
+import { modelConfigFromEnv } from '../src/server/model-config.js';
 import type { SolanaUser } from '../src/shared/auth-types.js';
 const fixtures: { directory: string; workspaces: UserWorkspaces }[] = [];
 afterEach(async () => {
@@ -150,4 +151,136 @@ it('keeps pages, memories, agent identities, and encrypted wallet vaults separat
   );
   expect(existsSync(join(directory, aUser.id, 'ows'))).toBe(true);
   expect(existsSync(join(directory, bUser.id, 'ows'))).toBe(true);
+});
+
+it('streams the server-configured Muse Wonder default for isolated users and newly created Dots without exposing its key', async () => {
+  const directory = mkdtempSync(join(tmpdir(), 'opendots-muse-users-'));
+  const apiKey = 'fixture-server-only-openrouter-key';
+  const workspaces = new UserWorkspaces(directory, {
+    ...modelConfigFromEnv({
+      OPENROUTER_API_KEY: apiKey,
+      OPENROUTER_MUSEMODEL: 'meta/muse-wonder',
+      OPENROUTER_MODEL: 'legacy/live-model',
+      OPENROUTER_CLAUDE_MODEL: 'legacy/batch-model:batch',
+    }),
+    runtimeUrl: '',
+    voiceName: 'marin',
+    slackUsers: [],
+  });
+  fixtures.push({ directory, workspaces });
+  const provider = vi.spyOn(globalThis, 'fetch').mockImplementation((input) => {
+    expect(String(input)).toBe('https://openrouter.ai/api/v1/chat/completions');
+    return Promise.resolve(
+      completion({ role: 'assistant', content: 'Muse Wonder answered.' }),
+    );
+  });
+  const user = (): SolanaUser => ({
+    id: randomUUID(),
+    walletAddress: randomUUID(),
+    displayName: null,
+    createdAt: new Date().toISOString(),
+    lastLoginAt: new Date().toISOString(),
+  });
+  const a = workspaces.app(user()),
+    b = workspaces.app(user());
+  const json = (body: unknown) => ({
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  const workspace = async (app: typeof a) => {
+    const response = await app.request('/api/workspace');
+    expect(response.status).toBe(200);
+    const text = await response.text();
+    expect(text).not.toContain(apiKey);
+    const body = JSON.parse(text);
+    expect(body.setup).toMatchObject({
+      model: true,
+      modelName: 'meta/muse-wonder',
+      missing: [],
+    });
+    expect(JSON.stringify(body.setup)).not.toContain(apiKey);
+    return body;
+  };
+  const wa = await workspace(a),
+    wb = await workspace(b);
+  expect(wa.dots[0].id).not.toBe(wb.dots[0].id);
+  expect(wa.spaces[0].id).not.toBe(wb.spaces[0].id);
+  const createdDot = await a.request(
+    '/api/dots',
+    json({
+      spaceId: wa.spaces[0].id,
+      name: 'New Muse specialist',
+      instructions: 'Answer questions using the shared server model.',
+      researchAllowed: false,
+      memoryAllowed: false,
+    }),
+  );
+  expect(createdDot.status).toBe(201);
+  const dot = await createdDot.json();
+  const runs = [
+    { app: a, dotId: wa.dots[0].id, prompt: 'Private user A question' },
+    { app: b, dotId: wb.dots[0].id, prompt: 'Private user B question' },
+    { app: a, dotId: dot.id, prompt: 'New specialist question' },
+  ];
+  const threads: string[] = [];
+  for (const [index, run] of runs.entries()) {
+    const created = await run.app.request(
+      '/api/conversations',
+      json({ dotId: run.dotId, title: run.prompt }),
+    );
+    expect(created.status).toBe(201);
+    const thread = await created.json();
+    threads.push(thread.id);
+    const response = await run.app.request(
+      `/api/copilotkit/agent/${run.dotId}/run`,
+      json({
+        threadId: thread.id,
+        runId: `muse-run-${index}`,
+        messages: [{ id: `user-${index}`, role: 'user', content: run.prompt }],
+        state: {},
+        tools: [],
+        context: [],
+        forwardedProps: { model: 'client/override-model' },
+      }),
+    );
+    expect(response.status).toBe(200);
+    const stream = await response.text();
+    expect(stream).toContain('Muse Wonder answered.');
+    expect(stream).toContain('RUN_FINISHED');
+    expect(stream).not.toContain('RUN_ERROR');
+    expect(stream).not.toContain(apiKey);
+  }
+  expect(provider).toHaveBeenCalledTimes(3);
+  for (const [index, [input, init]] of provider.mock.calls.entries()) {
+    expect(String(input)).toBe('https://openrouter.ai/api/v1/chat/completions');
+    expect(init?.method).toBe('POST');
+    const headers = new Headers(init?.headers);
+    expect(headers.get('Authorization')).toBe(`Bearer ${apiKey}`);
+    expect(
+      [...headers.entries()].filter(([, value]) => value.includes(apiKey)),
+    ).toEqual([['authorization', `Bearer ${apiKey}`]]);
+    const body = String(init?.body);
+    expect(body).not.toContain(apiKey);
+    expect(body).not.toContain('client/override-model');
+    expect(JSON.parse(body)).toMatchObject({
+      model: 'meta/muse-wonder',
+      stream: true,
+      messages: expect.arrayContaining([
+        expect.objectContaining({ role: 'user', content: runs[index].prompt }),
+      ]),
+    });
+    for (const other of runs.filter((_, otherIndex) => otherIndex !== index))
+      expect(body).not.toContain(other.prompt);
+  }
+  const aWorkspace = await workspace(a),
+    bWorkspace = await workspace(b);
+  expect(
+    aWorkspace.conversations.map((thread: { id: string }) => thread.id),
+  ).toEqual(expect.arrayContaining([threads[0], threads[2]]));
+  expect(
+    bWorkspace.conversations.map((thread: { id: string }) => thread.id),
+  ).toEqual([threads[1]]);
+  expect(JSON.stringify(aWorkspace)).not.toContain(threads[1]);
+  expect(JSON.stringify(bWorkspace)).not.toContain(threads[0]);
 });

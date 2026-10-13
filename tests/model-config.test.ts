@@ -1,16 +1,16 @@
 import { expect, it } from 'vitest';
 import { modelConfigFromEnv } from '../src/server/model-config.js';
 import { setupStatus } from '../src/server/platform-config.js';
-it('routes Claude chat to OpenRouter and keeps its key out of setup status', () => {
+it('routes Muse chat to OpenRouter and keeps its key out of setup status', () => {
   const config = modelConfigFromEnv({
     MODEL_PROVIDER: 'openrouter',
     OPENROUTER_API_KEY: 'private-openrouter-key',
-    OPENROUTER_CLAUDE_MODEL: 'anthropic/claude-haiku-5.5',
+    OPENROUTER_MUSEMODEL: 'meta/muse-wonder',
   });
   expect(config).toEqual({
     modelProvider: 'openrouter',
     apiKey: 'private-openrouter-key',
-    model: 'anthropic/claude-haiku-5.5',
+    model: 'meta/muse-wonder',
     baseUrl: 'https://openrouter.ai/api/v1',
   });
   const status = setupStatus({
@@ -20,6 +20,7 @@ it('routes Claude chat to OpenRouter and keeps its key out of setup status', () 
     runtimeUrl: '',
   });
   expect(status.model).toBe(true);
+  expect(status.modelName).toBe('meta/muse-wonder');
   expect(JSON.stringify(status)).not.toContain('private-openrouter-key');
   expect(
     setupStatus({
@@ -31,13 +32,20 @@ it('routes Claude chat to OpenRouter and keeps its key out of setup status', () 
     }).missing,
   ).toContain('OPENROUTER_API_KEY');
 });
-it('prevents accidentally routing async batch models through live chat', () => {
-  expect(() =>
+it.each(['OPENROUTER_MUSEMODEL', 'OPENROUTER_MODEL'])(
+  'rejects an async batch model in the live %s setting',
+  (name) => {
+    expect(() =>
+      modelConfigFromEnv({ [name]: 'anthropic/claude-haiku-5.5:batch' }),
+    ).toThrow('Live chat requires');
+  },
+);
+it('keeps the Claude batch model independent of live chat', () => {
+  expect(
     modelConfigFromEnv({
-      MODEL_PROVIDER: 'openrouter',
       OPENROUTER_CLAUDE_MODEL: 'anthropic/claude-haiku-5.5:batch',
-    }),
-  ).toThrow('Live chat requires');
+    }).model,
+  ).toBe('meta/muse-wonder');
   expect(
     modelConfigFromEnv({
       MODEL_PROVIDER: 'openrouter',
@@ -69,7 +77,7 @@ it('uses Grok 4.7 for every Dot when an xAI key is configured', () => {
   expect(status.modelName).toBe('grok-4.7');
   expect(JSON.stringify(status)).not.toContain('private-xai-key');
 });
-it('defaults every Dot to Claude through OpenRouter and keeps alternative keys separate', () => {
+it('defaults every Dot to Muse through OpenRouter and keeps alternative keys separate', () => {
   const config = modelConfigFromEnv({
     OPENROUTER_API_KEY: 'private-router-key',
     XAI_API_KEY: 'different-provider-key',
@@ -77,7 +85,7 @@ it('defaults every Dot to Claude through OpenRouter and keeps alternative keys s
   });
   expect(config).toEqual({
     modelProvider: 'openrouter',
-    model: 'anthropic/claude-haiku-5.5',
+    model: 'meta/muse-wonder',
     apiKey: 'private-router-key',
     baseUrl: 'https://openrouter.ai/api/v1',
   });
@@ -86,7 +94,7 @@ it('reports an OpenRouter key requirement and preserves the explicit OpenAI alte
   const config = modelConfigFromEnv({});
   expect(config).toMatchObject({
     modelProvider: 'openrouter',
-    model: 'anthropic/claude-haiku-5.5',
+    model: 'meta/muse-wonder',
   });
   expect(
     setupStatus({
@@ -112,4 +120,47 @@ it('reports an OpenRouter key requirement and preserves the explicit OpenAI alte
   expect(() => modelConfigFromEnv({ MODEL_PROVIDER: 'other' })).toThrow(
     'MODEL_PROVIDER',
   );
+});
+
+it('prefers the trimmed Muse setting and retains legacy live model overrides', () => {
+  expect(
+    modelConfigFromEnv({
+      OPENROUTER_MUSEMODEL: ' meta/muse-wonder ',
+      OPENROUTER_MODEL: 'legacy-live-model',
+      OPENROUTER_CLAUDE_MODEL: 'batch-only-model:batch',
+      OPENROUTER_API_KEY: ' private-router-key ',
+    }),
+  ).toMatchObject({
+    model: 'meta/muse-wonder',
+    apiKey: 'private-router-key',
+  });
+  expect(
+    modelConfigFromEnv({
+      OPENROUTER_MUSEMODEL: '   ',
+      OPENROUTER_MODEL: ' legacy-live-model ',
+    }).model,
+  ).toBe('legacy-live-model');
+  expect(
+    modelConfigFromEnv({
+      OPENROUTER_MUSEMODEL: '   ',
+      OPENROUTER_MODEL: '   ',
+      OPENROUTER_CLAUDE_MODEL: 'anthropic/claude-haiku-5.5',
+    }).model,
+  ).toBe('meta/muse-wonder');
+});
+
+it('preserves explicit provider and model choices when Muse is configured', () => {
+  expect(
+    modelConfigFromEnv({
+      MODEL_PROVIDER: 'xai',
+      OPENROUTER_MUSEMODEL: 'meta/muse-wonder',
+      OPENROUTER_API_KEY: 'router-key',
+      XAI_API_KEY: 'xai-key',
+      XAI_MODEL: 'custom-xai-model',
+    }),
+  ).toMatchObject({
+    modelProvider: 'xai',
+    apiKey: 'xai-key',
+    model: 'custom-xai-model',
+  });
 });

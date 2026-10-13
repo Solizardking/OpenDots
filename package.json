@@ -23,7 +23,10 @@
     "desktop:package": "npm run desktop:build && node scripts/package-desktop.mjs",
     "desktop:notarize": "node scripts/notarize-desktop.mjs",
     "verify:openmarket": "vitest run tests/openmarket.test.mjs tests/openmarket-access.test.ts && node --import tsx scripts/verify-openmarket-ui.mjs",
-    "verify:openmarket-provider": "node --env-file-if-exists=.env --import tsx scripts/verify-openmarket-provider.mjs"
+    "verify:openmarket-provider": "node --env-file-if-exists=.env --import tsx scripts/verify-openmarket-provider.mjs",
+    "verify:birdeye-ui": "node --import tsx scripts/verify-birdeye-ui.mjs",
+    "verify:birdeye-provider": "node --env-file-if-exists=.env --import tsx scripts/verify-birdeye-provider.mjs",
+    "verify:birdeye-stream": "node --env-file-if-exists=.env --import tsx scripts/verify-birdeye-stream.mjs"
   },
   "keywords": [],
   "author": "Atai Barkai",

@@ -1,4 +1,8 @@
 import { webSearchProvider } from './parallel.js';
+import { BirdeyeService } from './birdeye-service.js';
+import { BirdeyeStream } from './birdeye-stream.js';
+import { BirdeyeMcpService } from './birdeye-mcp.js';
+import { createBirdeyeMemeService } from './birdeye-meme.js';
 import {
   pageAccessBoundary,
   missingPublicResource,
@@ -56,6 +60,9 @@ const workspace = new WorkspaceStore(
   process.env.OWNER_ID ?? 'opendots-owner',
 );
 const config: PlatformConfig = {
+  birdeye: new BirdeyeService({ env: process.env }),
+  birdeyeMcp: new BirdeyeMcpService({ env: process.env }),
+  birdeyeMeme: createBirdeyeMemeService({ env: process.env }),
   ...mem0ConfigFromEnv(process.env),
   intelligenceKey: intelligenceApiKeyFromEnv(process.env),
   intelligenceApiUrl: process.env.INTELLIGENCE_API_URL || undefined,
@@ -94,6 +101,10 @@ const config: PlatformConfig = {
   runtimeUrl: `http://${host === '::1' ? '[::1]' : '127.0.0.1'}:${port}/api/copilotkit`,
   ownerToken,
 };
+config.birdeyeStream = new BirdeyeStream({
+  env: process.env,
+  service: config.birdeye,
+});
 const platform = new Platform(store, workspace, config);
 const researchConfig = {
   mode: 'live' as const,
@@ -298,6 +309,7 @@ const shutdown = createShutdown({
     await messaging.stop();
     await messagingTransport.stop();
     await Promise.all([platform.stop(), workspaces.stop()]);
+    await config.birdeyeStream?.stop();
     await users.close();
   },
   closeServer: () =>

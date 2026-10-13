@@ -16,7 +16,7 @@ The Mac workspace is stored in `~/Library/Application Support/Solana Dots/worksp
 
 ## Provider setup
 
-Open **Settings & setup** and enter your OpenRouter key. The shared default is `anthropic/claude-haiku-5.5`; choose **OpenRouter** as the chat provider and keep that exact model ID. Explicit xAI and OpenAI alternatives remain available. Additional provider connections are optional:
+Open **Settings & setup** and enter your OpenRouter key. The shared default is `meta/muse-wonder`; choose **OpenRouter** as the chat provider and keep that exact model ID. The local server uses `OPENROUTER_MUSEMODEL` for live chat; `OPENROUTER_CLAUDE_MODEL` remains separate for Claude batches. Explicit xAI and OpenAI alternatives remain available. Additional provider connections are optional:
 
 | Connection                           | Feature                                         |
 | ------------------------------------ | ----------------------------------------------- |

@@ -3,6 +3,10 @@ import type { BrowserUseConfig } from './browser-use-config.js';
 import type { SetupStatus } from '../shared/types.js';
 import type { Mem0Config } from './dot-memory.js';
 import type { OpenMarketService } from './openmarket-service.js';
+import type { BirdeyeService } from './birdeye-service.js';
+import type { BirdeyeStream } from './birdeye-stream.js';
+import type { BirdeyeMcpService } from './birdeye-mcp.js';
+import type { BirdeyeMemeService } from './birdeye-meme.js';
 
 // `copilotkit project select` writes the CLI name and deletes the template name.
 const INTELLIGENCE_API_KEY_ENV_NAMES = [
@@ -56,6 +60,13 @@ export interface PlatformConfig
   e2bTimeoutMs?: number;
   intelligenceKey?: string;
   openMarket?: OpenMarketService;
+  /** Account-scoped provider cache and rate budgets. Never serialized. */
+  birdeye?: BirdeyeService;
+  /** Account-scoped upstream socket; consumers remain workspace-scoped. */
+  birdeyeStream?: BirdeyeStream;
+  /** Fixed server-authenticated MCP and REST data reads. Never serialized. */
+  birdeyeMcp?: BirdeyeMcpService;
+  birdeyeMeme?: BirdeyeMemeService;
   intelligenceApiUrl?: string;
   intelligenceWsUrl?: string;
   model?: string;
@@ -95,7 +106,7 @@ export function setupStatus(
       (config.modelProvider === 'xai'
         ? 'XAI_MODEL'
         : config.modelProvider === 'openrouter'
-          ? 'OPENROUTER_MODEL'
+          ? 'OPENROUTER_MUSEMODEL'
           : 'OPENAI_MODEL'),
   ].filter((item): item is string => !!item);
   const declaredSlack = !!(

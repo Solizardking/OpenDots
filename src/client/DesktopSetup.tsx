@@ -13,7 +13,7 @@ const providers = [
     'Jupiter',
     'Token intelligence and wallet-approved swaps',
   ],
-  ['OPENROUTER_API_KEY', 'OpenRouter', 'Claude Haiku 5.5 chat'],
+  ['OPENROUTER_API_KEY', 'OpenRouter', 'Muse Wonder chat'],
   ['XAI_API_KEY', 'xAI', 'Chat and avatar generation'],
   ['OPENAI_API_KEY', 'OpenAI', 'Alternative chat provider'],
   ['E2B_API_KEY', 'E2B', 'Agent desktop computers'],
@@ -25,6 +25,11 @@ const providers = [
     'OPENMARKET_API_KEY',
     'OpenMarket',
     'Crypto charts, orderbook heatmaps and Polymarket research',
+  ],
+  [
+    'BIRDEYE_API_KEY',
+    'Birdeye',
+    'Read-only token, wallet and market research through Birdeye MCP and Data API',
   ],
   [
     'SOLANA_RPC_URL',
@@ -54,13 +59,13 @@ export function DesktopSetup() {
   const modelProvider = field('MODEL_PROVIDER', 'openrouter');
   const modelKey =
     modelProvider === 'openrouter'
-      ? 'OPENROUTER_MODEL'
+      ? 'OPENROUTER_MUSEMODEL'
       : modelProvider === 'xai'
         ? 'XAI_MODEL'
         : 'OPENAI_MODEL';
   const defaultModel =
     modelProvider === 'openrouter'
-      ? field('OPENROUTER_CLAUDE_MODEL', 'anthropic/claude-haiku-5.5')
+      ? field('OPENROUTER_MODEL').trim() || 'meta/muse-wonder'
       : modelProvider === 'xai'
         ? 'grok-4.7'
         : '';
@@ -93,7 +98,10 @@ export function DesktopSetup() {
       </label>
       <input
         id="desktop-model"
-        value={field(modelKey, defaultModel)}
+        value={
+          changes[modelKey] ??
+          (settings?.values[modelKey]?.trim() || defaultModel)
+        }
         placeholder="Exact provider model ID"
         onChange={(event) =>
           setChanges({ ...changes, [modelKey]: event.target.value })

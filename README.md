@@ -12,6 +12,8 @@ Open **Solana workspace → Trading brain** for natural-language Pump.fun strate
 
 Open **OpenMarket** in the sidebar or Solana workspace for crypto charts, cross-exchange volume, 1,000-level orderbooks, Hyperliquid heatmaps and Polymarket analytics. Dots can research the same data through the read-only `openmarket_data` tool. Configure the server-only `OPENMARKET_API_KEY`; dataset permissions and quota errors are shown explicitly. See [OpenMarket setup](docs/OPENMARKET.md).
 
+Configure the server-only `BIRDEYE_API_KEY` for Birdeye token, wallet and market research. Permitted Dots discover official Beta MCP schemas with `birdeye_mcp_catalog`, call discovered read-only tools with `birdeye_mcp_call`, and read exact mint details with `birdeye_meme_detail`. The connection uses `https://mcp.birdeye.so/mcp`; provider access and shared credits remain visible. Native Mac users can save the key in encrypted **Provider connections → Birdeye** settings. See [official MCP setup and task catalog](docs/BIRDEYE-MCP.md) and the [Birdeye research workspace](docs/BIRDEYE.md).
+
 <img src="public/brand/solana-logomark.svg" alt="ChatGPTEE" width="64" />
 
 ### Your agents. Your workspace. Your Solana identity.
@@ -182,7 +184,7 @@ cp .env.example .env
 npm run dev
 ```
 
-Open **http://localhost:3460**. Set the server-only Supabase/PostgreSQL `DATABASE_URL` before starting, or use `POSTGRES_URL_NON_POOLING`. Configure the public Privy app/client IDs and server secret for Privy sign-in, and `OPENROUTER_API_KEY` to chat with `anthropic/claude-haiku-5.5`, the shared default for every Dot. Native wallet sign-in also works without Privy. Each account's history persists in its own SQLite workspace. See [authentication setup](docs/AUTHENTICATION.md) and [OpenRouter setup](docs/OPENROUTER.md).
+Open **http://localhost:3460**. Set the server-only Supabase/PostgreSQL `DATABASE_URL` before starting, or use `POSTGRES_URL_NON_POOLING`. Configure the public Privy app/client IDs and server secret for Privy sign-in, and the server-only `OPENROUTER_API_KEY` to chat with [Muse Wonder](https://openrouter.ai/meta/muse-wonder), the shared default for every Dot (`OPENROUTER_MUSEMODEL=meta/muse-wonder`). Native wallet sign-in also works without Privy. Each account's history persists in its own SQLite workspace. See [authentication setup](docs/AUTHENTICATION.md) and [OpenRouter setup](docs/OPENROUTER.md).
 
 For optional Intelligence services, follow [Local Intelligence evaluation](docs/SETUP.md#local-intelligence-evaluation), or select a hosted project in the `OpenDots` folder:
 
@@ -191,7 +193,7 @@ npx copilotkit@latest login
 npx copilotkit@latest project select
 ```
 
-`project select` writes a project key to `.env` as `CPK_INTELLIGENCE_API_KEY`. Keep the generated `CPK_TELEMETRY_ID` with that key so SDK usage can resolve to your Intelligence account. Add `OPENROUTER_API_KEY` to `.env`, keep `MODEL_PROVIDER=openrouter` and `OPENROUTER_MODEL=anthropic/claude-haiku-5.5`, then restart `npm run dev`. Explicit `MODEL_PROVIDER=xai` and `MODEL_PROVIDER=openai` configurations remain available. Add `E2B_API_KEY` for isolated desktop computers.
+`project select` writes a project key to `.env` as `CPK_INTELLIGENCE_API_KEY`. Keep the generated `CPK_TELEMETRY_ID` with that key so SDK usage can resolve to your Intelligence account. Add `OPENROUTER_API_KEY` to `.env`, keep `MODEL_PROVIDER=openrouter` and `OPENROUTER_MUSEMODEL=meta/muse-wonder`, then restart `npm run dev`. A non-empty `OPENROUTER_MUSEMODEL` takes precedence over the legacy `OPENROUTER_MODEL` live-model setting; Claude batch configuration stays separate. Explicit `MODEL_PROVIDER=xai` and `MODEL_PROVIDER=openai` configurations remain available. Add `E2B_API_KEY` for isolated desktop computers.
 
 Open a Dot's settings to generate or edit its avatar with Grok Imagine 2.0, create or select an encrypted OWS wallet, and review wallet signatures. Avatar generation uses a separate `XAI_API_KEY`; avatars and wallets work independently of CopilotKit Intelligence. Open the Computer panel, enable the permissions you want, and start that Dot's E2B desktop. See [models, avatars, wallets, and E2B](docs/DOT-INTEGRATIONS.md).
 
@@ -208,7 +210,7 @@ The Memories view shows extraction status and recalled facts. See
 
 Without an Intelligence key, conversation messages, tool calls, state, and the latest run events persist in the local SQLite database alongside pages and workspace metadata. Back up that database to retain local chats. With an Intelligence key, conversation history uses the configured Intelligence deployment; hosted Intelligence sends it to CopilotKit's cloud. Switching between these storage modes does not migrate existing history.
 
-The configured model provider receives conversation context, including authorized page content and tool results. Local Intelligence does not make a remote model local: configure the app's model and the Automatic Learning model separately. Public-web research sends queries and selected URLs to Parallel by default; set `WEB_SEARCH_PROVIDER=disabled` to disable those tools. Speech and messaging integrations send data to their configured providers when used.
+The configured model provider receives conversation context, including authorized page content and tool results. Local Intelligence does not make a remote model local: configure the app's model and the Automatic Learning model separately. Public-web research sends queries and selected URLs to Parallel by default; set `WEB_SEARCH_PROVIDER=disabled` to disable those tools. Birdeye research sends the requested public mint, pool or wallet and dataset arguments to Birdeye; returned evidence can enter the permitted Dot's model context. Speech and messaging integrations send data to their configured providers when used.
 
 CopilotKit SDK telemetry collects usage metadata separately from conversation persistence. ChatGPTEE also records bounded browser setup stages and first successful assistant activation with a random installation ID; the same opt-out flags disable this tracking and purge pending setup events. See [browser setup telemetry](docs/SETUP-TELEMETRY.md). Runtime events are tagged `OpenDots`; see [signup and usage tracking](docs/TELEMETRY.md). Set `COPILOTKIT_TELEMETRY_DISABLED=true` or `DO_NOT_TRACK=1` to opt out; see [CopilotKit telemetry](https://docs.copilotkit.ai/telemetry). Review [CopilotKit's privacy policy](https://www.copilotkit.ai/privacy-policy) and the policies and retention settings of each service you configure. Installing or renewing local Intelligence still requires CopilotKit sign-in and internet access.
 
@@ -224,9 +226,10 @@ CopilotKit SDK telemetry collects usage metadata separately from conversation pe
 | Background work            | Scheduled server-side turns in their original conversation, with pause and retry controls                                               |
 | Browser                    | Separate read-only public-page service with page capture and navigation limits                                                          |
 | Dot computers              | Per-Dot E2B desktops, browser profiles, files, shell, takeover, permissions, and action records; OpenBot alternative                    |
-| Model and avatars          | Claude Haiku 5.5 through OpenRouter for every Dot; optional xAI X Search and generated/editable Grok Imagine 2.0 avatars                |
+| Model and avatars          | Muse Wonder through OpenRouter for every Dot; optional xAI X Search and generated/editable Grok Imagine 2.0 avatars                     |
 | Wallets                    | Encrypted OWS wallets, receive addresses, reviewed signatures, policy-scoped tokens, and separate broadcast actions                     |
 | Connections                | Per-Dot MCP servers, per-tool access, and owner approval for non-read-only actions                                                      |
+| Birdeye                    | Official Beta MCP and Solana Data API research with server-only credentials and shared provider quota                                   |
 | Appearance                 | System, light, and dark themes; dark colors are derived at build time from the light styles                                             |
 | Memory                     | User-managed preferences that permitted Dots can use                                                                                    |
 | Automatic Learning         | Per-Dot Learning containers, conversation evidence routing, and published-skill delivery; see [setup](docs/SETUP.md#automatic-learning) |

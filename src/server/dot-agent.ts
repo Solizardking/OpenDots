@@ -1,5 +1,9 @@
 import { tradingTools } from './trading-tools.js';
 import type { TradingService } from './trading-service.js';
+import type { BirdeyeService } from './birdeye-service.js';
+import type { BirdeyeMonitor } from './birdeye-monitor.js';
+import { birdeyeTools } from './birdeye-tools.js';
+import { birdeyeMcpTools } from './birdeye-mcp-tools.js';
 import { parallelSources } from './parallel.js';
 import { pageReviewTool } from '../shared/page-review.js';
 import { ComputerService } from './computer-service.js';
@@ -59,6 +63,8 @@ export class DotAgent extends AbstractAgent {
     private setupTelemetry?: SetupTelemetry,
     private memory = new DotMemoryService(store, workspace, config),
     private trading?: TradingService,
+    private birdeye?: BirdeyeService,
+    private birdeyeMonitor?: BirdeyeMonitor,
   ) {
     super({ agentId: dotId });
   }
@@ -72,6 +78,8 @@ export class DotAgent extends AbstractAgent {
       this.setupTelemetry,
       this.memory,
       this.trading,
+      this.birdeye,
+      this.birdeyeMonitor,
     );
   }
   abortRun() {
@@ -359,6 +367,27 @@ export class DotAgent extends AbstractAgent {
             maxRetries: 1,
           });
           const serverTools = [
+            ...(dot.researchAllowed && initialSettings.researchAllowed
+              ? birdeyeMcpTools(
+                  {
+                    mcp: this.config.birdeyeMcp,
+                    meme: this.config.birdeyeMeme,
+                  },
+                  check,
+                  controller.signal,
+                )
+              : []),
+            ...(this.birdeye &&
+            dot.researchAllowed &&
+            initialSettings.researchAllowed
+              ? birdeyeTools(
+                  this.birdeye,
+                  check,
+                  controller.signal,
+                  this.birdeyeMonitor,
+                  input.threadId,
+                )
+              : []),
             ...(this.trading &&
             dot.memoryAllowed &&
             initialSettings.memoryAllowed &&
@@ -470,6 +499,11 @@ export class DotAgent extends AbstractAgent {
                 messages: converted.messages,
                 systemPrompts: [
                   prompt,
+                  ...(this.birdeye
+                    ? [
+                        'Birdeye provides Solana market intelligence through birdeye_research. Use an exact public mint or wallet address. Search symbols first and ask the user to select when ambiguous. Report source, observation time, unavailable panels and stale values. Rug and wash scores are heuristic signals; unknown fields never prove safety. Confirm spread and alert evidence on closed candles with meaningful volume. Discovery and smart-money results are research candidates. No Birdeye tool signs, swaps, or authorizes copying trades. Wallet research stays in this conversation unless the owner explicitly requests sharing.',
+                      ]
+                    : []),
                   ...(messaging
                     ? [
                         'This is a private Spectrum messaging conversation linked by its owner. Computer and browser automation are unavailable here. Wallet signing, trading, launches and approval-gated actions require the owner to continue in the ChatGPTEE website and review the transaction there. You can read quotes and answer questions using the available tools. Never claim a phone call was answered, or a transaction was signed, submitted or settled without evidence.',
