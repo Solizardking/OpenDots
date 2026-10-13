@@ -1,13 +1,24 @@
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
 import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
+import type { OAuthClientProvider } from '@modelcontextprotocol/sdk/client/auth.js';
 import { z } from 'zod';
 import type {
   Connection,
   ConnectionActionResult,
   ConnectionTool,
+  SupermemorySpaces,
 } from '../shared/connection-types.js';
 import type { ConnectionStore } from './connection-store.js';
+import {
+  SupermemoryOAuth,
+  SupermemoryAuthorizationRequired,
+  SUPERMEMORY_MCP_URL,
+  isSupermemoryMcpUrl,
+  supermemoryFetch,
+  supermemoryCallback,
+} from './supermemory-oauth.js';
+import { publicMcpTransport } from './public-mcp-transport.js';
 const MAX_TOOLS = 100;
 const MAX_SCHEMA_BYTES = 16_000;
 const MAX_RESULT_CHARS = 20_000;
@@ -29,19 +40,32 @@ export const connectionInput = z
       }, 'Use an http(s) MCP endpoint without embedded credentials.'),
     token: z.string().trim().max(4096).optional(),
   })
-  .strict();
+  .strict()
+  .refine(
+    (value) => !isSupermemoryMcpUrl(value.url) || !value.token,
+    'Supermemory uses OAuth. Do not supply an API key or bearer token.',
+  );
 export type ConnectionInput = z.infer<typeof connectionInput>;
 export type McpTransportFactory = (target: {
   url: string;
   token?: string;
   signal: AbortSignal;
+  authProvider?: OAuthClientProvider;
+  fetchPolicy?: (fetch: typeof globalThis.fetch) => typeof globalThis.fetch;
 }) => Transport;
-export const httpTransport: McpTransportFactory = ({ url, token, signal }) =>
+export const httpTransport: McpTransportFactory = ({
+  url,
+  token,
+  signal,
+  authProvider,
+  fetchPolicy,
+}) =>
   new StreamableHTTPClientTransport(new URL(url), {
+    authProvider,
     requestInit: token
       ? { headers: { Authorization: `Bearer ${token}` } }
       : undefined,
-    fetch: (input, init) =>
+    fetch: (fetchPolicy ?? ((value) => value))((input, init) =>
       fetch(input, {
         ...init,
         signal: AbortSignal.any([
@@ -49,6 +73,7 @@ export const httpTransport: McpTransportFactory = ({ url, token, signal }) =>
           ...(init?.signal ? [init.signal] : []),
         ]),
       }),
+    ),
   });
 const listedTool = z.object({
   name: z.string().min(1).max(128),
@@ -62,6 +87,7 @@ const listedTool = z.object({
     })
     .passthrough()
     .optional(),
+  _meta: z.record(z.string(), z.unknown()).optional(),
 });
 // Model-facing names must match ^[a-zA-Z0-9_-]{1,64}$ and stay unique across
 // every connection a Dot has, so they are derived here, deterministically.
@@ -91,7 +117,11 @@ export function exposedTools(connections: Connection[]): ExposedTool[] {
         return { name, connection, tool };
       }),
     )
-    .filter(({ tool }) => tool.enabled);
+    .filter(
+      ({ connection, tool }) =>
+        tool.enabled &&
+        (!connection.auth || connection.authStatus === 'connected'),
+    );
 }
 export function normalizeResult(result: unknown): ConnectionActionResult {
   const envelope = z
@@ -133,6 +163,7 @@ const failure = (error: unknown) => {
   if (error.name === 'AbortError' || error.name === 'TimeoutError')
     return 'The connected service did not respond in time.';
   const status = (error as { code?: unknown }).code;
+  if (error instanceof SupermemoryAuthorizationRequired) return error.message;
   // OAuth-only servers surface UnauthorizedError when no token is supplied.
   if (
     status === 401 ||
@@ -148,9 +179,10 @@ export class ConnectionService {
     readonly store: ConnectionStore,
     private transport: McpTransportFactory = httpTransport,
     private timeoutMs = 60_000,
+    readonly oauth: SupermemoryOAuth = new SupermemoryOAuth(store),
   ) {}
   private async session<T>(
-    target: { url: string; token?: string },
+    target: { url: string; token?: string; connectionId?: string },
     signal: AbortSignal | undefined,
     use: (client: Client, signal: AbortSignal) => Promise<T>,
   ) {
@@ -159,17 +191,37 @@ export class ConnectionService {
       ...(signal ? [signal] : []),
     ]);
     const client = new Client({ name: 'opendots', version: '0.1.0' });
+    const oauth =
+      target.connectionId &&
+      this.store.get(target.connectionId)?.auth === 'oauth';
     try {
-      await client.connect(this.transport({ ...target, signal: bounded }), {
-        signal: bounded,
-      });
+      const factory =
+        oauth && this.transport === httpTransport
+          ? publicMcpTransport
+          : this.transport;
+      await client.connect(
+        factory({
+          ...target,
+          token: oauth ? undefined : target.token,
+          signal: bounded,
+          ...(oauth
+            ? {
+                authProvider: this.oauth.provider(target.connectionId!),
+                fetchPolicy: supermemoryFetch,
+              }
+            : {}),
+        }),
+        {
+          signal: bounded,
+        },
+      );
       return await use(client, bounded);
     } finally {
       await client.close().catch(() => {});
     }
   }
   private async discover(
-    target: { url: string; token?: string },
+    target: { url: string; token?: string; connectionId?: string },
     previous: ConnectionTool[] = [],
   ) {
     return this.session(target, undefined, async (client, signal) => {
@@ -183,6 +235,15 @@ export class ConnectionService {
           const parsed = listedTool.safeParse(raw);
           if (!parsed.success || tools.length >= MAX_TOOLS) continue;
           const tool = parsed.data;
+          const ui = tool._meta?.ui;
+          if (
+            ui &&
+            typeof ui === 'object' &&
+            'visibility' in ui &&
+            Array.isArray(ui.visibility) &&
+            !ui.visibility.includes('model')
+          )
+            continue;
           if (JSON.stringify(tool.inputSchema).length > MAX_SCHEMA_BYTES)
             continue;
           const readOnly = tool.annotations?.readOnlyHint === true;
@@ -205,6 +266,8 @@ export class ConnectionService {
   }
   async add(dotId: string, input: ConnectionInput) {
     const value = connectionInput.parse(input);
+    if (isSupermemoryMcpUrl(value.url))
+      throw new Error('Connect Supermemory with OAuth.');
     let tools: ConnectionTool[];
     try {
       tools = await this.discover({ url: value.url, token: value.token });
@@ -212,6 +275,25 @@ export class ConnectionService {
       throw new Error(failure(error), { cause: error });
     }
     return this.store.create(dotId, value, tools);
+  }
+  async addSupermemory(dotId: string, origin: string) {
+    const redirectUrl = supermemoryCallback(origin);
+    let connection = this.store
+      .list(dotId)
+      .find((item) => isSupermemoryMcpUrl(item.url));
+    if (!connection)
+      connection = this.store.create(
+        dotId,
+        { name: 'Supermemory', url: SUPERMEMORY_MCP_URL },
+        [],
+      );
+    if (!connection.auth)
+      this.store.saveOAuth(connection.id, { redirectUrl }, 'pending');
+    return this.oauth.start(connection.id, origin);
+  }
+  async finishSupermemory(code: string, state: string, iss?: string) {
+    const connection = await this.oauth.finish(code, state, iss);
+    return this.refresh(connection.id);
   }
   async refresh(id: string) {
     const connection = this.store.get(id);
@@ -236,6 +318,17 @@ export class ConnectionService {
         }),
       );
     } catch (error) {
+      if (connection.auth) {
+        if (
+          error instanceof SupermemoryAuthorizationRequired ||
+          (error instanceof Error && error.name === 'UnauthorizedError')
+        )
+          this.oauth.expired(id);
+        return this.store.setError(
+          id,
+          'Supermemory tools could not be loaded. Reconnect Supermemory or retry.',
+        );
+      }
       return this.store.setError(id, failure(error));
     }
   }
@@ -297,7 +390,107 @@ export class ConnectionService {
           ),
       );
     } catch (error) {
+      if (exposed.connection.auth) {
+        if (
+          error instanceof SupermemoryAuthorizationRequired ||
+          (error instanceof Error && error.name === 'UnauthorizedError')
+        )
+          this.oauth.expired(exposed.connection.id);
+        return {
+          isError: true,
+          text: 'Supermemory request failed. Reconnect Supermemory or retry.',
+        };
+      }
       return { isError: true, text: failure(error) };
     }
+  }
+  private supermemory(id: string) {
+    const connection = this.store.get(id);
+    if (
+      !connection ||
+      connection.provider !== 'supermemory' ||
+      !isSupermemoryMcpUrl(connection.url)
+    )
+      throw new Error('Supermemory connection not found.');
+    if (connection.authStatus !== 'connected')
+      throw new SupermemoryAuthorizationRequired();
+    return connection;
+  }
+  async supermemorySpaces(id: string): Promise<SupermemorySpaces> {
+    this.supermemory(id);
+    return this.session(
+      this.store.credentials(id),
+      undefined,
+      async (client, signal) => {
+        const [listed, identity] = await Promise.all([
+          client.callTool({ name: 'list_spaces', arguments: {} }, undefined, {
+            signal,
+          }),
+          client.callTool({ name: 'who_am_i', arguments: {} }, undefined, {
+            signal,
+          }),
+        ]);
+        if (listed.isError || identity.isError)
+          throw new Error(
+            'Supermemory could not load spaces or account access.',
+          );
+        const output = z
+          .object({
+            spaces: z
+              .array(
+                z.object({
+                  namespace: z.string().min(1).max(256),
+                  name: z.string().max(256).optional(),
+                  description: z.string().nullable().optional(),
+                }),
+              )
+              .max(1000),
+          })
+          .parse(listed.structuredContent);
+        const who = z
+          .object({
+            activeSpace: z.string().max(256).nullable().optional(),
+            userId: z.string().max(256).optional(),
+            name: z.string().max(256).optional(),
+            email: z.string().max(256).optional(),
+            role: z.string().max(256).optional(),
+            accessType: z.string().max(256).optional(),
+            scope: z.string().max(2048).optional(),
+          })
+          .parse(identity.structuredContent);
+        return {
+          spaces: output.spaces.map((space) => ({
+            namespace: space.namespace,
+            ...(space.name ? { name: space.name } : {}),
+            ...(space.description
+              ? { description: space.description.slice(0, 2000) }
+              : {}),
+          })),
+          ...(who.activeSpace ? { activeNamespace: who.activeSpace } : {}),
+          identity: { text: JSON.stringify(who) },
+        };
+      },
+    );
+  }
+  async setSupermemorySpace(id: string, namespace: string) {
+    const spaces = await this.supermemorySpaces(id);
+    if (!spaces.spaces.some((space) => space.namespace === namespace))
+      throw new Error('Choose an accessible Supermemory space.');
+    return this.session(
+      this.store.credentials(id),
+      undefined,
+      async (client, signal) => {
+        const result = normalizeResult(
+          await client.callTool(
+            { name: 'set-active-tag', arguments: { namespace } },
+            undefined,
+            { signal },
+          ),
+        );
+        if (result.isError)
+          throw new Error('Supermemory could not change the active space.');
+        return { activeNamespace: namespace, result };
+      },
+    );
   }
 }

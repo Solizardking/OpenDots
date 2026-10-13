@@ -18,22 +18,27 @@ export function captureSupermemoryCallback(
   cleanUrl();
   if (params.has('error'))
     return {
-      error: params.get('error') === 'access_denied'
-        ? 'Supermemory authorization was declined. Return to your Dot’s settings to connect again.'
-        : 'Supermemory could not authorize this connection. Return to your Dot’s settings and try again.',
+      error:
+        params.get('error') === 'access_denied'
+          ? 'Supermemory authorization was declined. Return to your Dot’s settings to connect again.'
+          : 'Supermemory could not authorize this connection. Return to your Dot’s settings and try again.',
     };
   const code = params.get('code');
   const state = params.get('state');
   const iss = params.get('iss');
   if (
-    !code || !state || code.length > 4096 || state.length > 512 ||
+    !code ||
+    !state ||
+    code.length > 4096 ||
+    state.length > 512 ||
     params.getAll('code').length !== 1 ||
     params.getAll('state').length !== 1 ||
     params.getAll('iss').length > 1 ||
     (iss !== null && (!iss || iss.length > 2048))
   )
     return {
-      error: 'This Supermemory authorization is missing or invalid. Return to your Dot’s settings and start a new connection.',
+      error:
+        'This Supermemory authorization is missing or invalid. Return to your Dot’s settings and start a new connection.',
     };
   return { code, state, ...(iss ? { iss } : {}) };
 }
@@ -53,30 +58,63 @@ export default function SupermemoryCallback({
     pending.current ??= api<Connection>(
       '/connections/supermemory/oauth/finish',
       'POST',
-      { code: request.code, state: request.state, ...(request.iss ? { iss: request.iss } : {}) },
+      {
+        code: request.code,
+        state: request.state,
+        ...(request.iss ? { iss: request.iss } : {}),
+      },
     );
     void pending.current
       .then((result) => active && setConnection(result))
-      .catch((cause) => active && setError(
-        cause instanceof Error ? cause.message : 'Could not finish the Supermemory connection.',
-      ));
-    return () => { active = false; };
+      .catch(
+        (cause) =>
+          active &&
+          setError(
+            cause instanceof Error
+              ? cause.message
+              : 'Could not finish the Supermemory connection.',
+          ),
+      );
+    return () => {
+      active = false;
+    };
   }, [request]);
   return (
     <AuthFrame>
       <ShieldCheck size={28} aria-hidden="true" />
-      <h2>{connection ? 'Supermemory connected.' : error ? 'Connection needs attention.' : 'Connecting Supermemory…'}</h2>
+      <h2>
+        {connection
+          ? 'Supermemory connected.'
+          : error
+            ? 'Connection needs attention.'
+            : 'Connecting Supermemory…'}
+      </h2>
       {connection ? (
-        <p>Supermemory is ready for your Dot. Open the Dot’s settings to choose a space and review its tools.</p>
+        <p>
+          Supermemory is ready for your Dot. Open the Dot’s settings to choose a
+          space and review its tools.
+        </p>
       ) : error ? (
         <>
-          <p className="auth-error" role="alert">{error}</p>
-          <p>Open your Dot’s settings and select Connect Supermemory or Continue authorization to start again.</p>
+          <p className="auth-error" role="alert">
+            {error}
+          </p>
+          <p>
+            Open your Dot’s settings and select Connect Supermemory or Continue
+            authorization to start again.
+          </p>
         </>
       ) : (
-        <p role="status">Finishing the connection for your signed-in workspace. Your Supermemory credentials stay on the server.</p>
+        <p role="status">
+          Finishing the connection for your signed-in workspace. Your
+          Supermemory credentials stay on the server.
+        </p>
       )}
-      {(connection || error) && <a className="auth-primary" href="/">Return to workspace</a>}
+      {(connection || error) && (
+        <a className="auth-primary" href="/">
+          Return to workspace
+        </a>
+      )}
     </AuthFrame>
   );
 }

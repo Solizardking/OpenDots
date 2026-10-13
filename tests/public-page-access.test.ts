@@ -153,6 +153,24 @@ describe('only four public product pages', () => {
     ).toBe(401);
     expect((await app.request('/api/workspace')).status).toBe(401);
   });
+  it('allows only the Supermemory callback entry shell without opening private workspace pages', async () => {
+    const { app } = fixture();
+    expect(
+      (
+        await app.request(
+          '/supermemory/callback?code=test-only-code&state=test-only-state',
+        )
+      ).status,
+    ).toBe(200);
+    expect(
+      (await app.request('/supermemory/callback', { method: 'POST' })).status,
+    ).toBe(405);
+    expect((await app.request('/supermemory/settings')).status).toBe(302);
+    expect((await app.request('/supermemory/callback/private')).status).toBe(
+      302,
+    );
+    expect((await app.request('/api/workspace')).status).toBe(401);
+  });
   it('returns404 for unknown public-directory/download files rather than a private SPA shell', async () => {
     const { app } = fixture();
     for (const path of [

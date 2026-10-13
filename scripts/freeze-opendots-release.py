@@ -47,7 +47,7 @@ RAILWAY_IGNORE = "\n".join([
 ]).encode()
 SECRET_PATTERN = re.compile(
     rb"(?:sk-or-v1-[A-Za-z0-9]{32,}|privy_app_secret_[A-Za-z0-9]{32,}|"
-    rb"npg_[A-Za-z0-9]{12,}|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----)"
+    rb"sm_[A-Za-z0-9_-]{60,}|npg_[A-Za-z0-9]{12,}|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----)"
 )
 
 

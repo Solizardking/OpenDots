@@ -14,6 +14,7 @@ let feedUsers = 0;
 export class TradingService {
   readonly engine: BrainService;
   private started = false;
+  private feedStarted = false;
   private context = new AsyncLocalStorage<string>();
   constructor(
     private store: Store,
@@ -173,14 +174,13 @@ export class TradingService {
     return review;
   }
   start() {
-    if (
-      this.started ||
-      !this.config().memoryConfigured ||
-      !this.config().decisionsConfigured
-    )
-      return;
+    if (this.started || !this.config().memoryConfigured) return;
     this.started = true;
-    if (feedUsers++ === 0) void sharedFeed.start();
+    // The durable memory outbox works independently of optional decisions.
+    if (this.config().decisionsConfigured) {
+      this.feedStarted = true;
+      if (feedUsers++ === 0) void sharedFeed.start();
+    }
     // Monitoring needs a scope for TypeSafe even when the page is closed.
     const decide = this.engine.evaluate.bind(this.engine);
     this.engine.evaluate = (scope, input) =>
@@ -191,7 +191,10 @@ export class TradingService {
     await this.engine.stop();
     if (this.started) {
       this.started = false;
-      if (--feedUsers === 0) sharedFeed.stop();
+      if (this.feedStarted) {
+        this.feedStarted = false;
+        if (--feedUsers === 0) sharedFeed.stop();
+      }
     }
   }
 }

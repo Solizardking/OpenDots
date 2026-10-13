@@ -7,6 +7,7 @@ import {
 } from '../shared/connection-types.js';
 import type { WorkspaceStore } from './workspace.js';
 import { connectionInput, type ConnectionService } from './connections.js';
+import { isSupermemoryMcpUrl } from './supermemory-oauth.js';
 export function connectionRoutes(
   workspace: WorkspaceStore,
   connections: ConnectionService,
@@ -35,15 +36,67 @@ export function connectionRoutes(
   app.get('/dots/:id/connections', (c) =>
     c.json(connections.store.list(requireDot(c.req.param('id')))),
   );
-  app.post('/dots/:id/connections', async (c) =>
-    c.json(
-      await connections.add(
+  const origin = (c: {
+    req: { header(name: string): string | undefined; url: string };
+  }) => c.req.header('origin') ?? new URL(c.req.url).origin;
+  app.post('/dots/:id/connections', async (c) => {
+    const dotId = requireDot(c.req.param('id'));
+    const input = connectionInput.parse(await c.req.json());
+    return c.json(
+      isSupermemoryMcpUrl(input.url)
+        ? await connections.addSupermemory(dotId, origin(c))
+        : await connections.add(dotId, input),
+      201,
+    );
+  });
+  app.post('/dots/:id/connections/supermemory', async (c) => {
+    z.object({})
+      .strict()
+      .parse(await c.req.json());
+    return c.json(
+      await connections.addSupermemory(
         requireDot(c.req.param('id')),
-        connectionInput.parse(await c.req.json()),
+        origin(c),
       ),
       201,
-    ),
+    );
+  });
+  app.post('/connections/:id/oauth/start', async (c) => {
+    z.object({})
+      .strict()
+      .parse(await c.req.json());
+    return c.json(
+      await connections.oauth.start(owned(c.req.param('id')).id, origin(c)),
+    );
+  });
+  app.post('/connections/supermemory/oauth/finish', async (c) => {
+    const body = z
+      .object({
+        code: z.string().min(1).max(4096),
+        state: z.string().min(32).max(256),
+        iss: z.string().url().max(2048).optional(),
+      })
+      .strict()
+      .parse(await c.req.json());
+    return c.json(
+      await connections.finishSupermemory(body.code, body.state, body.iss),
+    );
+  });
+  app.get('/connections/:id/supermemory/spaces', async (c) =>
+    c.json(await connections.supermemorySpaces(owned(c.req.param('id')).id)),
   );
+  app.post('/connections/:id/supermemory/space', async (c) => {
+    const body = z
+      .object({ namespace: z.string().trim().min(1).max(256) })
+      .strict()
+      .parse(await c.req.json());
+    return c.json(
+      await connections.setSupermemorySpace(
+        owned(c.req.param('id')).id,
+        body.namespace,
+      ),
+    );
+  });
   app.post('/connections/:id/refresh', async (c) =>
     c.json(await connections.refresh(owned(c.req.param('id')).id)),
   );

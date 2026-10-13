@@ -186,24 +186,39 @@ export function createPublicMcpFetch(signal: AbortSignal) {
       throw error;
     }
   };
-  return { fetch: pinnedFetch, close: async () => {
-    closed.abort(new Error('MCP connection closed.'));
-    // destroy(), unlike graceful close(), also terminates unfinished SSE streams.
-    await Promise.allSettled([...agents].map((agent) => agent.destroy()));
-    agents.clear();
-  }};
+  return {
+    fetch: pinnedFetch,
+    close: async () => {
+      closed.abort(new Error('MCP connection closed.'));
+      // destroy(), unlike graceful close(), also terminates unfinished SSE streams.
+      await Promise.allSettled([...agents].map((agent) => agent.destroy()));
+      agents.clear();
+    },
+  };
 }
 
-export const publicMcpTransport: McpTransportFactory = ({url, token, signal, authProvider}) => {
+export const publicMcpTransport: McpTransportFactory = ({
+  url,
+  token,
+  signal,
+  authProvider,
+  fetchPolicy,
+}) => {
   const network = createPublicMcpFetch(signal);
   const transport = new StreamableHTTPClientTransport(new URL(url), {
     authProvider,
-    requestInit: token ? { headers: { Authorization: `Bearer ${token}` } } : undefined,
-    fetch: network.fetch,
+    requestInit: token
+      ? { headers: { Authorization: `Bearer ${token}` } }
+      : undefined,
+    fetch: fetchPolicy ? fetchPolicy(network.fetch) : network.fetch,
   });
   const close = transport.close.bind(transport);
   transport.close = async () => {
-    try { await close(); } finally { await network.close(); }
+    try {
+      await close();
+    } finally {
+      await network.close();
+    }
   };
   return transport;
 };

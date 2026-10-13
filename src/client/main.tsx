@@ -13,14 +13,17 @@ import type {} from '../shared/desktop-types';
 import { watchSystemTheme } from './theme';
 import { lazy, Suspense } from 'react';
 import { publicProductPage, normalizePagePath } from '../shared/public-pages';
-import SupermemoryCallback, { captureSupermemoryCallback } from './SupermemoryCallback';
+import SupermemoryCallback, {
+  captureSupermemoryCallback,
+} from './SupermemoryCallback';
 const publicPage = publicProductPage(location.pathname);
 const pagePath = normalizePagePath(location.pathname);
-const supermemoryCallback = pagePath === '/supermemory/callback'
-  ? captureSupermemoryCallback(location.search, () =>
-      history.replaceState(null, '', '/supermemory/callback'),
-    )
-  : undefined;
+const supermemoryCallback =
+  pagePath === '/supermemory/callback'
+    ? captureSupermemoryCallback(location.search, () =>
+        history.replaceState(null, '', '/supermemory/callback'),
+      )
+    : undefined;
 const PolicyPage = lazy(() => import('./PolicyPage'));
 const DocsPage = lazy(() => import('./DocsPage'));
 const AgentAuthorization = lazy(() => import('./AgentAuthorization'));
@@ -55,7 +58,11 @@ createRoot(document.getElementById('root')!).render(
           <PairPhone />
         ) : (
           <AuthGate>
-            {supermemoryCallback ? <SupermemoryCallback request={supermemoryCallback} /> : <App />}
+            {supermemoryCallback ? (
+              <SupermemoryCallback request={supermemoryCallback} />
+            ) : (
+              <App />
+            )}
           </AuthGate>
         )}
       </SolanaProvider>
