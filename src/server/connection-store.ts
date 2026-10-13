@@ -1,5 +1,8 @@
 import type { DatabaseSync } from 'node:sqlite';
-import { randomUUID } from 'node:crypto';
+import { randomUUID, randomBytes, createHash, createCipheriv, createDecipheriv } from 'node:crypto';
+import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { dirname } from 'node:path';
+import type { SupermemoryOAuthCredentials } from './supermemory-oauth.js';
 import type {
   Connection,
   ConnectionActionResult,
@@ -10,10 +13,13 @@ type Row = Omit<Connection, 'hasToken' | 'tools'> & {
   tools: string;
 };
 export class ConnectionStore {
-  constructor(private db: DatabaseSync) {
+  private oauthKey?: Buffer;
+  constructor(private db: DatabaseSync, readonly ownerId = 'local-owner') {
     db.exec(`CREATE TABLE IF NOT EXISTS mcp_connections(id TEXT PRIMARY KEY, dotId TEXT NOT NULL, name TEXT NOT NULL, url TEXT NOT NULL, token TEXT, tools TEXT NOT NULL, error TEXT, createdAt INTEGER NOT NULL, updatedAt INTEGER NOT NULL);
       CREATE TABLE IF NOT EXISTS mcp_approvals(id TEXT PRIMARY KEY, threadId TEXT NOT NULL, dotId TEXT NOT NULL, connectionId TEXT NOT NULL, tool TEXT NOT NULL, arguments TEXT NOT NULL, createdAt INTEGER NOT NULL);
       CREATE TABLE IF NOT EXISTS mcp_actions(threadId TEXT NOT NULL, toolCallId TEXT NOT NULL, connectionId TEXT NOT NULL, tool TEXT NOT NULL, status TEXT NOT NULL, result TEXT, createdAt INTEGER NOT NULL, PRIMARY KEY(threadId, toolCallId));`);
+    db.exec(`CREATE TABLE IF NOT EXISTS mcp_oauth_credentials(connectionId TEXT PRIMARY KEY, encrypted TEXT NOT NULL, status TEXT NOT NULL);
+      CREATE TABLE IF NOT EXISTS mcp_oauth_attempts(stateHash TEXT PRIMARY KEY, connectionId TEXT NOT NULL UNIQUE, dotId TEXT NOT NULL, ownerId TEXT NOT NULL, callbackUrl TEXT NOT NULL, expiresAt INTEGER NOT NULL);`);
     // A receipt belongs to the approval that produced it.
     if (
       !db
@@ -31,7 +37,9 @@ export class ConnectionStore {
       .all(...(dotId ? [dotId] : [])) as unknown as Row[];
   }
   private view({ token, tools, ...row }: Row): Connection {
-    return { ...row, hasToken: !!token, tools: JSON.parse(tools) };
+    const oauth = this.db.prepare('SELECT status FROM mcp_oauth_credentials WHERE connectionId=?').get(row.id);
+    return { ...row, hasToken: oauth ? oauth.status === 'connected' : !!token, tools: JSON.parse(tools),
+      ...(oauth ? { provider: 'supermemory' as const, auth: 'oauth' as const, authStatus: oauth.status as 'pending'|'connected'|'expired' } : {}) };
   }
   list(dotId: string): Connection[] {
     return this.rows(dotId).map((row) => this.view(row));
@@ -84,10 +92,69 @@ export class ConnectionStore {
     return this.get(id)!;
   }
   remove(id: string) {
+    this.db.prepare('DELETE FROM mcp_oauth_attempts WHERE connectionId=?').run(id);
+    this.db.prepare('DELETE FROM mcp_oauth_credentials WHERE connectionId=?').run(id);
     return (
       this.db.prepare('DELETE FROM mcp_connections WHERE id=?').run(id)
         .changes > 0
     );
+  }
+  // OAuth credentials are encrypted with a mode-0600 key beside the workspace
+  // database. The private key survives releases on the same durable data volume.
+  // Memory-only test workspaces keep their key in memory.
+  private encryptionKey() {
+    if (this.oauthKey) return this.oauthKey;
+    const file = this.db.prepare('PRAGMA database_list').all().find((row) => row.name === 'main')?.file;
+    if (!file) return (this.oauthKey = randomBytes(32));
+    const keyPath = `${String(file)}.mcp-oauth.key`;
+    mkdirSync(dirname(keyPath), { recursive: true });
+    try { writeFileSync(keyPath, randomBytes(32), { flag: 'wx', mode: 0o600 }); }
+    catch (error) { if ((error as NodeJS.ErrnoException).code !== 'EEXIST') throw error; }
+    const key = readFileSync(keyPath);
+    if (key.length !== 32) throw new Error('OAuth credential storage is unavailable.');
+    return (this.oauthKey = key);
+  }
+  oauthCredentials(id: string): SupermemoryOAuthCredentials | undefined {
+    const row = this.db.prepare('SELECT encrypted FROM mcp_oauth_credentials WHERE connectionId=?').get(id);
+    if (!row) return undefined;
+    try {
+      const [iv, tag, data] = String(row.encrypted).split('.').map((part) => Buffer.from(part, 'base64url'));
+      const cipher = createDecipheriv('aes-256-gcm', this.encryptionKey(), iv);
+      cipher.setAAD(Buffer.from(id));
+      cipher.setAuthTag(tag);
+      return JSON.parse(Buffer.concat([cipher.update(data), cipher.final()]).toString());
+    } catch { throw new Error('OAuth credential storage is unavailable. Reconnect Supermemory.'); }
+  }
+  saveOAuth(id: string, credentials: SupermemoryOAuthCredentials, status?: 'pending'|'connected'|'expired') {
+    if (!this.get(id)) throw new Error('Connection not found.');
+    const previous = this.db.prepare('SELECT status FROM mcp_oauth_credentials WHERE connectionId=?').get(id);
+    const nextStatus = status ?? String(previous?.status ?? 'pending');
+    const iv = randomBytes(12);
+    const cipher = createCipheriv('aes-256-gcm', this.encryptionKey(), iv);
+    cipher.setAAD(Buffer.from(id));
+    const data = Buffer.concat([cipher.update(JSON.stringify(credentials)), cipher.final()]);
+    const encrypted = [iv, cipher.getAuthTag(), data].map((part) => part.toString('base64url')).join('.');
+    this.db.prepare('INSERT INTO mcp_oauth_credentials VALUES (?, ?, ?) ON CONFLICT(connectionId) DO UPDATE SET encrypted=excluded.encrypted,status=excluded.status').run(id, encrypted, nextStatus);
+    if (previous?.status !== nextStatus)
+      this.db.prepare('UPDATE mcp_connections SET updatedAt=? WHERE id=?').run(this.tick(id),id);
+  }
+  beginOAuth(id: string, callbackUrl: string, ttlMs: number) {
+    const connection = this.get(id);
+    if (!connection) throw new Error('Connection not found.');
+    const state = randomBytes(32).toString('base64url');
+    const hash = createHash('sha256').update(state).digest('hex');
+    this.db.prepare('DELETE FROM mcp_oauth_attempts WHERE connectionId=? OR expiresAt<=?').run(id,Date.now());
+    this.db.prepare('INSERT INTO mcp_oauth_attempts VALUES (?, ?, ?, ?, ?, ?)').run(hash,id,connection.dotId,this.ownerId,callbackUrl,Date.now()+ttlMs);
+    return state;
+  }
+  consumeOAuth(state: string) {
+    const hash = createHash('sha256').update(state).digest('hex');
+    const attempt = this.db.prepare('DELETE FROM mcp_oauth_attempts WHERE stateHash=? AND ownerId=? AND expiresAt>? RETURNING *').get(hash,this.ownerId,Date.now());
+    if (!attempt) throw new Error('Supermemory authorization expired or is not valid for this workspace. Reconnect Supermemory.');
+    const connection = this.get(String(attempt.connectionId));
+    if (!connection || connection.dotId !== attempt.dotId)
+      throw new Error('Supermemory connection no longer exists.');
+    return {connection, callbackUrl: String(attempt.callbackUrl)};
   }
   // Running turns compare this to stop as soon as the owner changes access.
   fingerprint(dotId: string) {

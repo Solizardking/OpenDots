@@ -88,11 +88,7 @@ export async function resolvePublicMcpDestination(
 }
 
 /** Public wallet users keep MCP features without access to the server's network. */
-export const publicMcpTransport: McpTransportFactory = ({
-  url,
-  token,
-  signal,
-}) => {
+export function createPublicMcpFetch(signal: AbortSignal) {
   const agents = new Set<Agent>();
   const closed = new AbortController();
   const pinnedFetch: typeof fetch = async (input, init) => {
@@ -190,22 +186,24 @@ export const publicMcpTransport: McpTransportFactory = ({
       throw error;
     }
   };
+  return { fetch: pinnedFetch, close: async () => {
+    closed.abort(new Error('MCP connection closed.'));
+    // destroy(), unlike graceful close(), also terminates unfinished SSE streams.
+    await Promise.allSettled([...agents].map((agent) => agent.destroy()));
+    agents.clear();
+  }};
+}
+
+export const publicMcpTransport: McpTransportFactory = ({url, token, signal, authProvider}) => {
+  const network = createPublicMcpFetch(signal);
   const transport = new StreamableHTTPClientTransport(new URL(url), {
-    requestInit: token
-      ? { headers: { Authorization: `Bearer ${token}` } }
-      : undefined,
-    fetch: pinnedFetch,
+    authProvider,
+    requestInit: token ? { headers: { Authorization: `Bearer ${token}` } } : undefined,
+    fetch: network.fetch,
   });
   const close = transport.close.bind(transport);
   transport.close = async () => {
-    closed.abort(new Error('MCP connection closed.'));
-    try {
-      await close();
-    } finally {
-      // destroy(), unlike graceful close(), also terminates unfinished SSE streams.
-      await Promise.allSettled([...agents].map((agent) => agent.destroy()));
-      agents.clear();
-    }
+    try { await close(); } finally { await network.close(); }
   };
   return transport;
 };

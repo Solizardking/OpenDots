@@ -11,6 +11,9 @@ in the server environment. Local development reads the ignored `.env`.
 Electron's provider setup stores these keys through its existing encrypted
 Keychain configuration. Keys are never embedded in the distributed app or
 returned in configuration responses. Mem0 conversation memory remains separate.
+The memory outbox runs with `SUPERMEMORY_API_KEY` alone; evaluation and market
+monitoring also require `TYPESAFE_API_KEY`. Missing decision credentials do not
+prevent saved journal entries from syncing or generate repeated monitor errors.
 
 The workspace SQLite database persists strategy versions, decisions, observed
 paper outcomes, monitor expiry, and a retryable Supermemory outbox in
@@ -18,7 +21,13 @@ paper outcomes, monitor expiry, and a retryable Supermemory outbox in
 Supermemory namespaces hash the owner/Dot identity as
 `opendots_trading_<sha256(scope)>`. Hybrid v5 search includes related documents;
 the graph shows strategy, token, decision, outcome, and recalled memory links.
-Queued documents become indexed only after Supermemory reports completion.
+The outbox accepts all v5 document processing stages: `unknown`, `queued`,
+`extracting`, `chunking`, `embedding`, `indexing`, `done`, and `failed`.
+Journal entries remain queued until a document read confirms both
+`system.status: "done"` and `system.dreamingStatus: "done"`. Document indexing
+can finish before learned memories under the default dynamic dreaming mode;
+an ingestion acceptance or unchanged duplicate response alone does not prove
+memory readiness. Failed ingestion or processing remains visible and retryable.
 
 The server connects to both requested sources:
 

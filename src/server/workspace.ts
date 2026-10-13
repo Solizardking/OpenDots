@@ -66,7 +66,7 @@ export class WorkspaceStore {
     this.localConversations = new LocalConversations(this.db);
     this.dotMemory = new DotMemoryStore(this.db, this.ownerId);
     this.browserUse = new BrowserUseStore(this.db);
-    this.connections = new ConnectionStore(this.db);
+    this.connections = new ConnectionStore(this.db, this.ownerId);
     this.pages = new Pages(this.db, (id) =>
       this.spaces().some((space) => space.id === id),
     );

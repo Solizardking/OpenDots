@@ -496,9 +496,14 @@ export class BrainService {
       if (!this.allowed(record.wallet)) continue;
       try {
         const result = await this.providers.remember(record.wallet, record);
+        // An accepted or duplicate document can finish indexing before dynamic
+        // memory generation. Only the document read exposes both pipelines.
         await this.store.synced(
           record.id,
-          result.status === 'done' ? 'indexed' : 'queued',
+          result.status === 'failed' ? 'failed' : 'queued',
+          result.status === 'failed'
+            ? 'Memory indexing failed; retry pending.'
+            : null,
         );
       } catch (error) {
         await this.store.synced(record.id, 'failed', error.message);
@@ -507,18 +512,20 @@ export class BrainService {
     for (const record of await this.store.processing()) {
       if (!this.allowed(record.wallet)) continue;
       try {
-        const status = await this.providers.memory_status(
+        const readiness = await this.providers.memory_status(
           record.wallet,
           record.id,
         );
         await this.store.synced(
           record.id,
-          status === 'done'
+          readiness.status === 'done' && readiness.dreamingStatus === 'done'
             ? 'indexed'
-            : status === 'failed'
+            : readiness.status === 'failed'
               ? 'failed'
               : 'queued',
-          status === 'failed' ? 'Memory indexing failed; retry pending.' : null,
+          readiness.status === 'failed'
+            ? 'Memory indexing failed; retry pending.'
+            : null,
         );
       } catch (error) {
         await this.store.synced(record.id, 'failed', error.message);
@@ -579,12 +586,16 @@ export class BrainService {
     if (this.workerBusy || !this.store) return;
     this.workerBusy = true;
     try {
-      await this.benchmark();
+      const config = this.providers.config();
+      const monitoringConfigured =
+        config.memoryConfigured && config.decisionsConfigured;
+      if (monitoringConfigured) await this.benchmark();
       for (const row of await this.store.active()) {
         if (!this.allowed(row.wallet)) {
           await this.store.monitoring(row.wallet, false);
           continue;
         }
+        if (!monitoringConfigured) continue;
         try {
           await this.evaluate(row.wallet);
         } catch (error) {

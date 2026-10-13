@@ -5,6 +5,16 @@ export const brain_error = (message, status = 400) =>
   Object.assign(new Error(message), { status });
 export const namespace_for = (wallet) =>
   `opendots_trading_${createHash('sha256').update(wallet).digest('hex')}`;
+const document_statuses = new Set([
+  'unknown',
+  'queued',
+  'extracting',
+  'chunking',
+  'embedding',
+  'indexing',
+  'done',
+  'failed',
+]);
 const probability = (value) =>
   typeof value === 'number' &&
   Number.isFinite(value) &&
@@ -285,11 +295,15 @@ export class BrainProviders {
       },
       'Supermemory',
     );
-    if (typeof result?.id !== 'string')
+    if (
+      typeof result?.id !== 'string' ||
+      !result.id ||
+      !document_statuses.has(result.status)
+    )
       throw brain_error('Supermemory did not accept the journal record.', 502);
     return {
       id: result.id,
-      status: String(result.status || 'queued').slice(0, 32),
+      status: result.status,
     };
   }
   async memory_status(wallet, id) {
@@ -313,10 +327,21 @@ export class BrainProviders {
         `Supermemory indexing returned HTTP ${response.status}.`,
         502,
       );
-    const payload = await response.json();
+    let payload;
+    try {
+      const text = await response.text();
+      if (text.length > 500000) throw Error();
+      payload = JSON.parse(text);
+    } catch {
+      throw brain_error('Supermemory returned invalid indexing data.', 502);
+    }
     const status = payload?.system?.status;
-    if (!['queued', 'processing', 'done', 'failed'].includes(status))
+    const dreamingStatus = payload?.system?.dreamingStatus;
+    if (
+      !document_statuses.has(status) ||
+      !['dreaming', 'done'].includes(dreamingStatus)
+    )
       throw brain_error('Supermemory indexing status is unknown.', 502);
-    return status;
+    return { status, dreamingStatus };
   }
 }

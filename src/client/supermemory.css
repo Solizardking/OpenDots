@@ -1,0 +1,70 @@
+.supermemory-connect {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  margin: 12px 0;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--lavender);
+}
+.supermemory-heading {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.supermemory-connect p,
+.supermemory-spaces p {
+  margin: 0;
+}
+.supermemory-connect .connection-connect {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.supermemory-connect > small {
+  font-size: 11px;
+}
+.supermemory-spaces {
+  display: grid;
+  gap: 9px;
+  padding-top: 10px;
+}
+.supermemory-active-space {
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+.supermemory-space-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 7px;
+}
+.supermemory-space-controls > label {
+  grid-column: 1 / -1;
+  font-size: 11px;
+  color: var(--muted);
+}
+.supermemory-space-controls > select {
+  width: 100%;
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  font-size: 12px;
+}
+.supermemory-reauthorize {
+  margin-top: 10px;
+}
+.supermemory-space-controls select:focus-visible,
+.supermemory-connect button:focus-visible,
+.supermemory-reauthorize:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+@media (max-width: 480px) {
+  .supermemory-space-controls {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

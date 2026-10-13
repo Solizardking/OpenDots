@@ -15,10 +15,22 @@ export interface Connection {
   name: string;
   url: string;
   hasToken: boolean;
+  provider?: 'supermemory';
+  auth?: 'oauth';
+  authStatus?: 'pending' | 'connected' | 'expired';
   tools: ConnectionTool[];
   error: string | null;
   createdAt: number;
   updatedAt: number;
+}
+export interface SupermemoryOAuthStart {
+  connection: Connection;
+  authorizationUrl: string;
+}
+export interface SupermemorySpaces {
+  spaces: { namespace: string; name?: string; description?: string }[];
+  activeNamespace?: string;
+  identity: { text: string };
 }
 export interface ConnectionActionResult {
   isError: boolean;

@@ -6,6 +6,7 @@ import { WorkspaceStore } from '../src/server/workspace.js';
 import { TradingService } from '../src/server/trading-service.js';
 import { BrainStore } from '../src/server/trading/brain-store.mjs';
 import {
+  BrainProviders,
   QUESTIONS,
   namespace_for,
   validate_answers,
@@ -204,8 +205,91 @@ it('persists the monitoring request and stops it when permissions are disabled',
   expect((await f.service.view(f.dot.id)).strategy.monitorUntil).toBeNull();
   expect(f.fetchImpl).not.toHaveBeenCalled();
 });
-it('keeps queued memory distinct from indexed memory until the provider confirms completion', async () => {
+it('syncs memory without decision providers and does not evaluate persisted monitoring requests', async () => {
+  const db = new DatabaseSync(':memory:');
+  cleanup.push(() => db.close());
+  const journal = new BrainStore(db, 'owner');
+  const providers = {
+    config: () => ({ memoryConfigured: true, decisionsConfigured: false }),
+    remember: vi.fn(async (_scope, row) => ({ id: row.id, status: 'queued' })),
+  };
+  const engine = new BrainService({
+    store: journal,
+    providers,
+    allowed: (scope) => scope === 'enabled',
+  });
+  await journal.save_strategy('enabled', strategy);
+  await journal.monitoring('enabled', true, Date.now() + 3600000);
+  await journal.save_strategy('disabled', strategy);
+  await journal.monitoring('disabled', true, Date.now() + 3600000);
+  engine.evaluate = vi.fn();
+  engine.benchmark = vi.fn();
+  await engine.tick();
+  expect(providers.remember).toHaveBeenCalledTimes(1);
+  expect(providers.remember.mock.calls[0][0]).toBe('enabled');
+  expect((await journal.recent('enabled'))[0].sync_status).toBe('queued');
+  expect(await journal.strategy('enabled')).toMatchObject({
+    monitorUntil: expect.any(Number),
+  });
+  expect((await journal.strategy('disabled')).monitorUntil).toBeNull();
+  expect(engine.evaluate).not.toHaveBeenCalled();
+  expect(engine.benchmark).not.toHaveBeenCalled();
+  expect((await journal.recent('enabled')).map((row) => row.type)).toEqual([
+    'strategy',
+  ]);
+});
+it('polls every v5 stage without re-ingesting and waits for dynamic memories after document indexing', async () => {
   const f = fixture();
+  await f.service.save(f.dot.id, strategy);
+  await f.service.engine.sync();
+  expect((await f.service.view(f.dot.id)).records[0].sync_status).toBe(
+    'queued',
+  );
+  for (const status of [
+    'unknown',
+    'queued',
+    'extracting',
+    'chunking',
+    'embedding',
+    'indexing',
+    'done',
+  ]) {
+    f.store.database.prepare('UPDATE trading_journal SET retry_at=0').run();
+    f.fetchImpl.mockImplementation(async () =>
+      Response.json({ system: { status, dreamingStatus: 'dreaming' } }),
+    );
+    await f.service.engine.sync();
+    expect((await f.service.view(f.dot.id)).records[0]).toMatchObject({
+      sync_status: 'queued',
+      sync_error: null,
+    });
+  }
+  f.store.database.prepare('UPDATE trading_journal SET retry_at=0').run();
+  f.fetchImpl.mockImplementation(async () =>
+    Response.json({ system: { status: 'indexing', dreamingStatus: 'done' } }),
+  );
+  await f.service.engine.sync();
+  expect((await f.service.view(f.dot.id)).records[0].sync_status).toBe(
+    'queued',
+  );
+  f.store.database.prepare('UPDATE trading_journal SET retry_at=0').run();
+  f.fetchImpl.mockImplementation(async () =>
+    Response.json({ system: { status: 'done', dreamingStatus: 'done' } }),
+  );
+  await f.service.engine.sync();
+  expect((await f.service.view(f.dot.id)).records[0].sync_status).toBe(
+    'indexed',
+  );
+  expect(
+    f.fetchImpl.mock.calls.filter(([, init]) => init.method === 'POST'),
+  ).toHaveLength(1);
+});
+it('checks memory generation after ingestion reports an unchanged document as done', async () => {
+  const f = fixture(
+    vi.fn(async (_url, init) =>
+      Response.json({ id: JSON.parse(init.body).id, status: 'done' }),
+    ),
+  );
   await f.service.save(f.dot.id, strategy);
   await f.service.engine.sync();
   expect((await f.service.view(f.dot.id)).records[0].sync_status).toBe(
@@ -213,12 +297,110 @@ it('keeps queued memory distinct from indexed memory until the provider confirms
   );
   f.store.database.prepare('UPDATE trading_journal SET retry_at=0').run();
   f.fetchImpl.mockImplementation(async () =>
-    Response.json({ system: { status: 'done' } }),
+    Response.json({ system: { status: 'done', dreamingStatus: 'dreaming' } }),
   );
   await f.service.engine.sync();
   expect((await f.service.view(f.dot.id)).records[0].sync_status).toBe(
-    'indexed',
+    'queued',
   );
+});
+it.each(['ingestion', 'processing'])(
+  'retries a failed %s response with the same private namespace and document ID',
+  async (stage) => {
+    const f = fixture(
+      vi.fn(async (_url, init) =>
+        Response.json({
+          id: JSON.parse(init.body).id,
+          status: stage === 'ingestion' ? 'failed' : 'queued',
+        }),
+      ),
+    );
+    await f.service.save(f.dot.id, strategy);
+    const saved = (await f.service.view(f.dot.id)).records[0];
+    await f.service.engine.sync();
+    if (stage === 'processing') {
+      f.store.database.prepare('UPDATE trading_journal SET retry_at=0').run();
+      f.fetchImpl.mockImplementation(async () =>
+        Response.json({
+          system: { status: 'failed', dreamingStatus: 'dreaming' },
+        }),
+      );
+      await f.service.engine.sync();
+    }
+    const failed = (await f.service.view(f.dot.id)).records[0];
+    expect(failed).toMatchObject({
+      id: saved.id,
+      sync_status: 'failed',
+      sync_error: 'Memory indexing failed; retry pending.',
+    });
+    expect(failed.retry_at).toBeGreaterThan(Date.now());
+    f.store.database.prepare('UPDATE trading_journal SET retry_at=0').run();
+    f.fetchImpl.mockImplementation(async (_url, init) =>
+      Response.json({ id: JSON.parse(init.body).id, status: 'queued' }),
+    );
+    await f.service.engine.sync();
+    expect((await f.service.view(f.dot.id)).records[0]).toMatchObject({
+      sync_status: 'queued',
+      sync_error: null,
+    });
+    const writes = f.fetchImpl.mock.calls.filter(
+      ([, init]) => init.method === 'POST',
+    );
+    expect(writes).toHaveLength(2);
+    for (const [url, init] of writes) {
+      expect(url).toBe(
+        `https://api.supermemory.ai/ns/${namespace_for(f.service.scope(f.dot.id))}/document`,
+      );
+      expect(JSON.parse(init.body)).toMatchObject({
+        id: saved.id,
+        metadata: { type: 'strategy', app: 'opendots-trading', mint },
+      });
+    }
+    f.store.database.prepare('UPDATE trading_journal SET retry_at=0').run();
+    f.fetchImpl.mockImplementation(async () =>
+      Response.json({ system: { status: 'done', dreamingStatus: 'done' } }),
+    );
+    await f.service.engine.sync();
+    expect((await f.service.view(f.dot.id)).records[0].sync_status).toBe(
+      'indexed',
+    );
+  },
+);
+it.each([
+  { status: 'done' },
+  { dreamingStatus: 'done' },
+  { status: 'processing', dreamingStatus: 'dreaming' },
+  { status: 'invented', dreamingStatus: 'done' },
+  { status: 'done', dreamingStatus: 'invented' },
+])(
+  'rejects malformed v5 readiness instead of declaring memory ready: %j',
+  async (system) => {
+    const providers = new BrainProviders({
+      env,
+      fetchImpl: vi.fn(async () => Response.json({ system })),
+    });
+    await expect(
+      providers.memory_status('private-scope', 'journal-id'),
+    ).rejects.toThrow('Supermemory indexing status is unknown.');
+  },
+);
+it.each([
+  { id: 'journal-id' },
+  { id: 'journal-id', status: 'processing' },
+  { id: 'journal-id', status: 'invented' },
+  { id: '', status: 'queued' },
+])('rejects malformed ingestion acceptance: %j', async (response) => {
+  const providers = new BrainProviders({
+    env,
+    fetchImpl: vi.fn(async () => Response.json(response)),
+  });
+  await expect(
+    providers.remember('private-scope', {
+      id: 'journal-id',
+      type: 'strategy',
+      data: { mint },
+    }),
+  ).rejects.toThrow('Supermemory did not accept the journal record.');
 });
 it('rejects stale/replayed/invalid launch events while retaining independently sourced mints', () => {
   const value = {
