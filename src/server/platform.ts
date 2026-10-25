@@ -167,6 +167,9 @@ export class Platform {
       telemetryId: this.setupTelemetry.identity,
       telemetryProperties: this.setupTelemetry.metadata,
       agents,
+      // Generative UI: the runtime wraps each Dot with OpenGenerativeUIMiddleware,
+      // which turns streamed generateSandboxedUi tool args into activity events.
+      openGenerativeUI: true,
     };
     const runtime = this.intelligence
       ? new CopilotRuntime({

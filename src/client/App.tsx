@@ -4,6 +4,15 @@ import { SpaceNav } from './SpaceNav';
 import { SpaceWorkspace } from './SpaceWorkspace';
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { CopilotKitProvider } from '@copilotkit/react-core/v2';
+import { OPEN_GEN_UI_ACTIVITY_RENDERER } from './generative-ui';
+import { SANDBOX_FUNCTIONS } from './sandbox/sandbox-functions';
+import { OPEN_GEN_UI_DESIGN_SKILL } from '../shared/generative-ui/design-system';
+
+const renderActivityMessages = [OPEN_GEN_UI_ACTIVITY_RENDERER];
+const openGenerativeUI = {
+  sandboxFunctions: [...SANDBOX_FUNCTIONS],
+  designSkill: OPEN_GEN_UI_DESIGN_SKILL,
+};
 import {
   ArrowUp,
   ArrowUpRight,
@@ -1184,7 +1193,12 @@ export function App() {
     </div>
   );
   return configured ? (
-    <CopilotKitProvider runtimeUrl="/api/copilotkit" headers={authHeaders()}>
+    <CopilotKitProvider
+      runtimeUrl="/api/copilotkit"
+      headers={authHeaders()}
+      renderActivityMessages={renderActivityMessages}
+      openGenerativeUI={openGenerativeUI}
+    >
       {content}
     </CopilotKitProvider>
   ) : (

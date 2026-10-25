@@ -37,10 +37,12 @@ export function ChatTranscript({
   messages,
   calls,
   renderTools,
+  renderActivity,
 }: {
   messages: Message[];
   calls: CallReceipt[];
   renderTools?: (message: AssistantMessage) => ReactNode;
+  renderActivity?: (message: Message) => ReactNode;
 }) {
   const ids = new Set(messages.map((message) => message.id));
   return (
@@ -88,6 +90,7 @@ export function ChatTranscript({
             </div>
           )}
           {message.role === 'assistant' && renderTools?.(message)}
+          {message.role === 'activity' && renderActivity?.(message)}
           {calls
             .filter((call) => call.anchorMessageId === message.id)
             .map((call) => (

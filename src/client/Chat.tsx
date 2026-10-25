@@ -32,6 +32,7 @@ import {
   useAgent,
   useCopilotKit,
   useAgentContext,
+  useRenderActivityMessage,
 } from '@copilotkit/react-core/v2';
 import {
   FilePlus,
@@ -47,6 +48,8 @@ import {
   type ComputerToolRenderProps,
 } from './ComputerToolCard';
 import { ChatTranscript, isInternalVoiceReceipt } from './ChatTranscript';
+import { OPEN_GENERATIVE_UI_ACTIVITY_TYPE } from './generative-ui';
+import { OpenGenUIPromptBridge } from './sandbox/prompt-bridge';
 import type { CallReceipt, Conversation, Dot } from '../shared/types';
 import { Mascot } from './Mascot';
 import { useVoice } from './useVoice';
@@ -83,6 +86,7 @@ export function Chat({
     threadId: thread.id,
   });
   const { copilotkit } = useCopilotKit();
+  const { renderActivityMessage } = useRenderActivityMessage();
   const { publicKey, connected } = useWallet();
   useAgentContext({
     description:
@@ -287,7 +291,9 @@ export function Chat({
   );
   const visible = agent.messages.filter(
     (message) =>
-      !isInternalVoiceReceipt(message) &&
+      (message.role === 'activity' &&
+        message.activityType === OPEN_GENERATIVE_UI_ACTIVITY_TYPE) ||
+      (!isInternalVoiceReceipt(message) &&
       ['user', 'assistant'].includes(message.role) &&
       ((typeof message.content === 'string' && message.content.trim()) ||
         (message.role === 'assistant' &&
@@ -301,7 +307,7 @@ export function Chat({
               call.function.name === connectionActionTool.name ||
               call.function.name === pumpActionTool.name ||
               call.function.name === jupiterActionTool.name,
-          ))),
+          )))),
   );
   return (
     <div className="live-chat">
@@ -394,6 +400,7 @@ export function Chat({
           </a>
         </div>
       )}
+      <OpenGenUIPromptBridge agent={agent} />
       <div className="chat-transcript">
         {!visible.length && (
           <div className="chat-welcome">
@@ -408,6 +415,13 @@ export function Chat({
         <ChatTranscript
           messages={visible}
           calls={calls}
+          renderActivity={(message) =>
+            message.role === 'activity' ? (
+              <div className="chat-generative-ui">
+                {renderActivityMessage(message)}
+              </div>
+            ) : null
+          }
           renderTools={(message) => (
             <CopilotChatToolCallsView
               message={message}

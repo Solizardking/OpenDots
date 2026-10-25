@@ -51,6 +51,8 @@ const channelError = () => ({
     'Solana Dots could not complete this request. Please check the app and try again.',
 });
 const TURN_TIME_LIMIT_MS = 90_000;
+const GENERATIVE_UI_TOOL = 'generateSandboxedUi';
+
 export class DotAgent extends AbstractAgent {
   private inner?: BuiltInAgent;
   private controller?: AbortController;
@@ -314,6 +316,7 @@ export class DotAgent extends AbstractAgent {
                   connectionActionTool.name,
                   pumpActionTool.name,
                   jupiterActionTool.name,
+                  GENERATIVE_UI_TOOL,
                 ].includes(tool.name),
               );
           const approvals = clientTools.some(
@@ -509,6 +512,13 @@ export class DotAgent extends AbstractAgent {
                         'This is a private Spectrum messaging conversation linked by its owner. Computer and browser automation are unavailable here. Wallet signing, trading, launches and approval-gated actions require the owner to continue in the ChatGPTEE website and review the transaction there. You can read quotes and answer questions using the available tools. Never claim a phone call was answered, or a transaction was signed, submitted or settled without evidence.',
                       ]
                     : []),
+                  ...(ctx.input.tools.some(
+                    (tool) => tool.name === GENERATIVE_UI_TOOL,
+                  )
+                    ? [
+                        'generateSandboxedUi renders an interactive answer (diagram, comparison, calculator, small tool) in a sandboxed iframe in this chat. Use it when an interactive or visual answer genuinely helps; answer in plain text otherwise. Label sample numbers as illustrations, never imply live data, and never put secrets, wallet keys or private user data in generated UI. Do not call it again just because it returned "UI generated".',
+                      ]
+                    : []),
                   ...converted.systemPrompts,
                   ...(ctx.learnedSkills.catalog
                     ? [ctx.learnedSkills.catalog]
@@ -557,6 +567,9 @@ export class DotAgent extends AbstractAgent {
                 )
                   ? [jupiterActionTool]
                   : []),
+                // Browser-rendered sandboxed UI; the client tool definition
+                // comes from CopilotKit and only ever returns "UI generated".
+                ...clientTools.filter((tool) => tool.name === GENERATIVE_UI_TOOL),
               ],
               forwardedProps: {},
             })

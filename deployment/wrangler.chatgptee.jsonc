@@ -12,7 +12,8 @@
     "run_worker_first": true,
   },
   "routes": [
-    { "pattern": "chatgptee.ai", "custom_domain": true },
+    // The apex chatgptee.ai custom domain belongs to the chatgptee-desktop
+    // worker; this worker only claims www to avoid the route clash.
     { "pattern": "www.chatgptee.ai", "custom_domain": true },
   ],
   "vars": {

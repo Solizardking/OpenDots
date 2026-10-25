@@ -37,6 +37,7 @@ import { MessagingStore } from './messaging-store.js';
 import { MessagingCoordinator } from './messaging-coordinator.js';
 import { messagingRoutes } from './messaging-routes.js';
 import { Platform } from './platform.js';
+import { sandboxFrameRoute } from './sandbox-frame.js';
 import { browserUseConfigFromEnv } from './browser-use-config.js';
 import {
   intelligenceApiKeyFromEnv,
@@ -221,10 +222,12 @@ app.use('*', async (c, next) => {
   c.header('Referrer-Policy', 'no-referrer');
   c.header(
     'Content-Security-Policy',
-    `default-src 'self'; script-src 'self' https://auth.privy.io/js/; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://auth.privy.io https://static.privy.io ${privyOrigin} https://explorer-api.walletconnect.com; connect-src 'self' wss://clawd-ws.fly.dev ${wsOrigin} https://auth.privy.io https://*.privy.io ${privyOrigin} https://*.privy.systems https://api.mainnet-beta.solana.com https://explorer-api.walletconnect.com; media-src 'self' blob:; frame-src https://live.browser-use.com https://auth.privy.io https://*.privy.io ${privyOrigin} https://oauth.telegram.org; frame-ancestors 'none'; base-uri 'self'; form-action 'self'`,
+    `default-src 'self'; script-src 'self' https://auth.privy.io/js/; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://auth.privy.io https://static.privy.io ${privyOrigin} https://explorer-api.walletconnect.com; connect-src 'self' wss://clawd-ws.fly.dev ${wsOrigin} https://auth.privy.io https://*.privy.io ${privyOrigin} https://*.privy.systems https://api.mainnet-beta.solana.com https://explorer-api.walletconnect.com; media-src 'self' blob:; frame-src 'self' https://live.browser-use.com https://auth.privy.io https://*.privy.io ${privyOrigin} https://oauth.telegram.org; frame-ancestors 'none'; base-uri 'self'; form-action 'self'`,
   );
   await next();
 });
+// Generated-UI sandbox document: static, no user data, its own strict CSP.
+app.route('/', sandboxFrameRoute());
 app.get('/healthz', async (c) => {
   c.header('Cache-Control', 'no-store');
   await users.pool.query('SELECT 1');
