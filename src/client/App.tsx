@@ -4,6 +4,15 @@ import { SpaceNav } from './SpaceNav';
 import { SpaceWorkspace } from './SpaceWorkspace';
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { CopilotKitProvider } from '@copilotkit/react-core/v2';
+import { OPEN_GEN_UI_ACTIVITY_RENDERER } from './generative-ui';
+import { SANDBOX_FUNCTIONS } from './sandbox/sandbox-functions';
+import { OPEN_GEN_UI_DESIGN_SKILL } from '../shared/generative-ui/design-system';
+
+const renderActivityMessages = [OPEN_GEN_UI_ACTIVITY_RENDERER];
+const openGenerativeUI = {
+  sandboxFunctions: [...SANDBOX_FUNCTIONS],
+  designSkill: OPEN_GEN_UI_DESIGN_SKILL,
+};
 import {
   ArrowUp,
   ArrowUpRight,
@@ -938,8 +947,8 @@ export function App() {
                     <h2>Dot memory</h2>
                     <p className="muted">
                       Each Dot remembers its own completed conversations through
-                      Mem0. History and pending uploads persist locally. Memory
-                      permissions control recall and uploads.
+                      Mem0 or Supermemory. History and pending uploads persist
+                      locally. Memory permissions control recall and uploads.
                     </p>
                     <div className="memory-grid">
                       {workspace.dotMemory.map((memory) => (
@@ -954,7 +963,7 @@ export function App() {
                           </strong>
                           <p>
                             {!memory.configured
-                              ? 'Mem0 is not connected'
+                              ? 'Memory is not connected (set MEM0_API_KEY or SUPERMEMORY_API_KEY)'
                               : !memory.enabled
                                 ? 'Memory is paused'
                                 : memory.error
@@ -962,7 +971,7 @@ export function App() {
                                   : memory.pending
                                     ? 'Saving memories…'
                                     : memory.lastRecallAt || memory.synced
-                                      ? 'Mem0 connected'
+                                      ? `${memory.provider === 'supermemory' ? 'Supermemory' : 'Mem0'} connected`
                                       : 'Ready for the first conversation'}
                           </p>
                           <small>
@@ -1184,7 +1193,12 @@ export function App() {
     </div>
   );
   return configured ? (
-    <CopilotKitProvider runtimeUrl="/api/copilotkit" headers={authHeaders()}>
+    <CopilotKitProvider
+      runtimeUrl="/api/copilotkit"
+      headers={authHeaders()}
+      renderActivityMessages={renderActivityMessages}
+      openGenerativeUI={openGenerativeUI}
+    >
       {content}
     </CopilotKitProvider>
   ) : (

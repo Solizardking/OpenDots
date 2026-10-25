@@ -4,7 +4,10 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { Store } from '../src/server/store.js';
 import { WorkspaceStore } from '../src/server/workspace.js';
-import { DotMemoryService } from '../src/server/dot-memory.js';
+import {
+  DotMemoryService,
+  supermemoryNamespace,
+} from '../src/server/dot-memory.js';
 import { Platform } from '../src/server/platform.js';
 import { createApp } from '../src/server/app.js';
 import { Runner } from '../src/server/runner.js';
@@ -21,10 +24,15 @@ const mem0 = {
   mem0OrgId: 'org-test',
   mem0ProjectId: 'project-test',
 };
-function fixture(path = ':memory:', owner = 'owner', bind = true) {
+function fixture(
+  path = ':memory:',
+  owner = 'owner',
+  bind = true,
+  config: object = mem0,
+) {
   const store = new Store(path);
   const workspace = new WorkspaceStore(path, owner);
-  const service = new DotMemoryService(store, workspace, mem0);
+  const service = new DotMemoryService(store, workspace, config);
   cleanup.push(async () => {
     await service.stop();
     workspace.close();
@@ -320,4 +328,88 @@ it('injects recall before a normal streamed reply and stores only the new comple
   expect((await app.request('/api/dots/other-users-dot/memory')).status).toBe(
     404,
   );
+});
+
+const supermemory = {
+  supermemoryApiKey: 'private-supermemory-key',
+  supermemoryBaseUrl: 'https://supermemory.invalid',
+};
+
+it('prefers Mem0 when both memory keys are set', async () => {
+  const f = fixture(':memory:', 'owner', true, { ...mem0, ...supermemory });
+  expect(f.service.status(f.dot.id)).toMatchObject({
+    configured: true,
+    provider: 'mem0',
+  });
+  const provider = vi
+    .spyOn(globalThis, 'fetch')
+    .mockResolvedValue(ok({ results: [] }));
+  await f.service.recall(f.dot.id, 'anything');
+  expect(String(provider.mock.calls[0][0])).toContain('memory.invalid');
+  expect(
+    (provider.mock.calls[0][1]?.headers as Record<string, string>)
+      .Authorization,
+  ).toBe('Token private-memory-key');
+});
+
+it('reports no backend when neither key is set', () => {
+  const f = fixture(':memory:', 'owner', true, {});
+  expect(f.service.status(f.dot.id)).toMatchObject({
+    configured: false,
+    provider: null,
+  });
+});
+
+it('falls back to Supermemory with one namespace per owner and Dot', async () => {
+  const f = fixture(':memory:', 'owner', true, supermemory);
+  expect(f.service.status(f.dot.id).provider).toBe('supermemory');
+  const namespace = supermemoryNamespace('owner', f.dot.id);
+  const calls: { url: string; body?: unknown; auth?: string }[] = [];
+  let state = 'queued';
+  vi.spyOn(globalThis, 'fetch').mockImplementation(async (url, options) => {
+    calls.push({
+      url: String(url),
+      body: options?.body ? JSON.parse(String(options.body)) : undefined,
+      auth: (options?.headers as Record<string, string>)?.Authorization,
+    });
+    if (String(url).endsWith('/search'))
+      return ok({
+        results: [{ id: 'mem', memory: 'Prefers amber dashboards.' }],
+      });
+    if (options?.method === 'POST') return ok({ id: 'doc-1', status: state });
+    return ok({ id: 'doc-1', system: { status: state } });
+  });
+  expect(await f.service.recall(f.dot.id, 'What dashboard color?')).toEqual([
+    { id: 'mem', text: 'Prefers amber dashboards.' },
+  ]);
+  expect(calls[0].url).toBe(
+    `https://supermemory.invalid/ns/${namespace}/search`,
+  );
+  expect(calls[0].auth).toBe('Bearer private-supermemory-key');
+  expect(calls[0].body).not.toHaveProperty('org_id');
+
+  f.service.record(f.dot.id, 'thread', 'run', user, 'I will use amber.');
+  await f.service.flush();
+  const add = calls.find(
+    (call) => call.url.endsWith('/document') && call.body,
+  )!;
+  expect(add.url).toBe(`https://supermemory.invalid/ns/${namespace}/document`);
+  expect(add.body).toMatchObject({
+    metadata: { dot_id: f.dot.id, thread_id: 'thread', run_id: 'run' },
+  });
+  expect(JSON.stringify(add.body)).toContain('amber dashboards');
+  expect(f.service.status(f.dot.id)).toMatchObject({ pending: 1, synced: 0 });
+
+  state = 'done';
+  for (const turn of f.workspace.dotMemory.due(Date.now() + 60000))
+    f.workspace.dotMemory.update(turn, 'pending', -1);
+  await f.service.flush();
+  expect(calls.at(-1)!.url).toBe(
+    `https://supermemory.invalid/ns/${namespace}/document/doc-1`,
+  );
+  expect(f.service.status(f.dot.id)).toMatchObject({ pending: 0, synced: 1 });
+  expect(JSON.stringify(f.service.status(f.dot.id))).not.toContain(
+    'private-supermemory-key',
+  );
+  expect(supermemoryNamespace('other-owner', f.dot.id)).not.toBe(namespace);
 });

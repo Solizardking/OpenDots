@@ -5,7 +5,7 @@ const providers = [
   [
     'SUPERMEMORY_API_KEY',
     'Supermemory',
-    'Private trading journal and memory graph',
+    'Trading journal, plus Dot memory when Mem0 is not set',
   ],
   ['TYPESAFE_API_KEY', 'TypeSafe', 'Typed trading decisions'],
   [
@@ -20,7 +20,11 @@ const providers = [
   ['BROWSER_USE_API_KEY', 'Browser Use', 'Agent browser sessions'],
   ['PARALLEL_API_KEY', 'Parallel', 'Web research'],
   ['VOICE_API_KEY', 'Voice', 'Live calls'],
-  ['MEM0_API_KEY', 'Mem0', 'Long-term memory for each permitted Dot'],
+  [
+    'MEM0_API_KEY',
+    'Mem0',
+    'Long-term memory for each permitted Dot (preferred over Supermemory)',
+  ],
   [
     'OPENMARKET_API_KEY',
     'OpenMarket',

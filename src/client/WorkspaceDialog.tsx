@@ -315,8 +315,9 @@ export function WorkspaceDialog({
                   <strong>Remember and use memories</strong>
                   <small>
                     Include saved preferences and recall this Dot’s past work.
-                    When Mem0 is connected, completed turns are sent there for
-                    long-term memory. Changing permission stops active work.
+                    When Mem0 (or, as a fallback, Supermemory) is connected,
+                    completed turns are sent there for long-term memory.
+                    Changing permission stops active work.
                   </small>
                 </span>
               </label>

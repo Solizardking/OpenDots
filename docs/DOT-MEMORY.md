@@ -14,6 +14,29 @@ MEM0_ORG_ID=
 MEM0_PROJECT_ID=
 ```
 
+`MEM0_API_KEY` alone makes the Mem0 card show **Mem0 connected**;
+`MEM0_ORG_ID` and `MEM0_PROJECT_ID` are optional and only sent when set (use
+them when the key belongs to a multi-project Mem0 organization).
+
+## Backend selection: Mem0 first, Supermemory fallback
+
+| Keys set                                     | Dot memory backend | Memories card           |
+| -------------------------------------------- | ------------------ | ----------------------- |
+| `MEM0_API_KEY` (with or without Supermemory) | Mem0               | Mem0 connected          |
+| only `SUPERMEMORY_API_KEY`                   | Supermemory        | Supermemory connected   |
+| neither                                      | local cache only   | Memory is not connected |
+
+With Supermemory, each owner and Dot gets its own namespace (formerly container
+tag) `opendots_dot_<sha256(owner:dot)>`, so recall never crosses Dots or users.
+Completed turns are added with `POST /ns/<namespace>/document` using the stable
+turn ID (retries append, never duplicate) and polled with
+`GET /ns/<namespace>/document/<id>` until `done`; recall uses
+`POST /ns/<namespace>/search` (hybrid, top 8). `SUPERMEMORY_BASE_URL` is optional
+(defaults to `https://api.supermemory.ai`, HTTPS only). The same key also powers
+the separate trading journal in `docs/SUPERMEMORY.md`, which uses different
+namespaces. Permissions, pause, outbox, retries and cache behave identically for
+both backends.
+
 Docker Compose forwards those values and stores the database on `opendots-data`.
 Preserve that volume, `DATABASE_PATH`, `USER_DATA_PATH`, and `OWNER_ID` across
 restarts. Signed-in users keep separate workspace databases under
@@ -65,11 +88,16 @@ npm run typecheck
 npm run build
 ```
 
-For a live Mem0 and configured-model check:
+For a live check of the active backend (Mem0 when its key is set, else
+Supermemory) and the configured model:
 
 ```sh
 node --env-file=.env --import tsx scripts/verify-dot-memory.ts
+# force a backend, synthetic turns only:
+node --env-file=.env --import tsx scripts/verify-dot-memory.ts --memory-only --provider=supermemory
 ```
+
+The script never prints keys; it reports only the provider name and results.
 
 That script creates an isolated temporary workspace, sends two model turns,
 restarts while Mem0 processing is pending, verifies recall in a new conversation

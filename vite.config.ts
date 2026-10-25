@@ -10,6 +10,9 @@ export default defineConfig({
     port: 3460,
     strictPort: true,
     host: '127.0.0.1',
-    proxy: { '/api': 'http://127.0.0.1:4310' },
+    proxy: {
+      '/api': 'http://127.0.0.1:4310',
+      '/sandbox': 'http://127.0.0.1:4310',
+    },
   },
 });
