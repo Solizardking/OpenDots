@@ -1,5 +1,7 @@
-// Uses real configured Mem0 and model APIs in an isolated temporary workspace.
+// Uses the real configured memory backend (Mem0 preferred, else Supermemory)
+// and model APIs in an isolated temporary workspace. Never prints keys.
 // Run: node --env-file=.env --import tsx scripts/verify-dot-memory.ts
+//   [--memory-only|--mem0-only] [--provider=mem0|supermemory]
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
@@ -10,7 +12,10 @@ import { Store } from '../src/server/store.js';
 import { WorkspaceStore } from '../src/server/workspace.js';
 import { Platform } from '../src/server/platform.js';
 import { Runner } from '../src/server/runner.js';
-import { mem0ConfigFromEnv } from '../src/server/dot-memory.js';
+import {
+  mem0ConfigFromEnv,
+  supermemoryNamespace,
+} from '../src/server/dot-memory.js';
 import { modelConfigFromEnv } from '../src/server/model-config.js';
 
 process.env.DO_NOT_TRACK = '1';
@@ -18,14 +23,33 @@ const directory = mkdtempSync(join(tmpdir(), 'opendots-memory-live-'));
 const path = join(directory, 'workspace.sqlite');
 const owner = `opendots-verification-${randomUUID()}`;
 const project = `Amber-${randomUUID().slice(0, 8)}`;
+const forced = process.argv
+  .find((arg) => arg.startsWith('--provider='))
+  ?.slice('--provider='.length);
+assert(
+  !forced || forced === 'mem0' || forced === 'supermemory',
+  '--provider must be mem0 or supermemory.',
+);
 const mem0 = mem0ConfigFromEnv(process.env);
-const memoryOnly = process.argv.includes('--mem0-only');
-assert(mem0.mem0ApiKey, 'MEM0_API_KEY is required.');
+// Forcing a backend hides the other key from this isolated service only.
+if (forced === 'supermemory') delete mem0.mem0ApiKey;
+if (forced === 'mem0') delete mem0.supermemoryApiKey;
+const provider = mem0.mem0ApiKey
+  ? 'mem0'
+  : mem0.supermemoryApiKey
+    ? 'supermemory'
+    : undefined;
+const memoryOnly =
+  process.argv.includes('--mem0-only') ||
+  process.argv.includes('--memory-only');
+assert(provider, 'MEM0_API_KEY or SUPERMEMORY_API_KEY is required.');
+console.log(JSON.stringify({ provider }));
 const model = modelConfigFromEnv(process.env);
 if (!memoryOnly)
   assert(model.apiKey && model.model, 'A configured chat model is required.');
 let active: Awaited<ReturnType<typeof open>> | undefined;
 let dotId: string | undefined;
+let otherDotId: string | undefined;
 let cleanupSucceeded = false;
 async function open() {
   const store = new Store(path);
@@ -114,7 +138,7 @@ async function ask(threadId: string, prompt: string) {
 }
 async function settle() {
   assert(active && dotId);
-  const deadline = Date.now() + 90000;
+  const deadline = Date.now() + 180000;
   while (
     active.platform.memory.status(dotId).pending &&
     Date.now() < deadline
@@ -125,7 +149,7 @@ async function settle() {
   assert.equal(
     active.platform.memory.status(dotId).pending,
     0,
-    'Mem0 processing did not complete.',
+    `${provider} processing did not complete.`,
   );
 }
 try {
@@ -162,7 +186,7 @@ try {
   );
   assert(
     recalled.some((memory) => /amber/i.test(memory.text)),
-    'Mem0 did not retrieve the remembered fact.',
+    `${provider} did not retrieve the remembered fact.`,
   );
   console.log(
     JSON.stringify({
@@ -188,6 +212,7 @@ try {
     false,
     true,
   );
+  otherDotId = otherDot.id;
   assert.deepEqual(
     await active.platform.memory.recall(
       otherDot.id,
@@ -197,7 +222,7 @@ try {
   );
   const report = {
     verifiedAt: new Date().toISOString(),
-    provider: 'mem0',
+    provider,
     model: model.model,
     normalChatApi: !memoryOnly,
     liveModelResponses: !memoryOnly,
@@ -218,7 +243,24 @@ try {
 } finally {
   await close();
   // Delete only this script's synthetic user/agent scope, never real owner data.
-  if (dotId) {
+  if (dotId && provider === 'supermemory') {
+    const base = mem0.supermemoryBaseUrl || 'https://api.supermemory.ai';
+    cleanupSucceeded = true;
+    // Deletes only this run's random-owner namespaces, never real owner data.
+    for (const id of [dotId, otherDotId].filter(Boolean) as string[]) {
+      const response = await fetch(
+        new URL(`/ns/${supermemoryNamespace(owner, id)}`, base),
+        {
+          method: 'DELETE',
+          redirect: 'error',
+          headers: { Authorization: `Bearer ${mem0.supermemoryApiKey}` },
+          signal: AbortSignal.timeout(15000),
+        },
+      );
+      cleanupSucceeded =
+        cleanupSucceeded && (response.ok || response.status === 404);
+    }
+  } else if (dotId) {
     cleanupSucceeded = true;
     for (const entity of ['user_id', 'agent_id']) {
       const url = new URL('/v1/memories/', mem0.mem0BaseUrl);

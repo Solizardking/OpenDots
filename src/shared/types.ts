@@ -130,6 +130,8 @@ export interface WorkspaceState {
 export interface DotMemoryStatus {
   dotId: string;
   configured: boolean;
+  /** Active long-term memory backend: Mem0 is preferred, Supermemory is the fallback. */
+  provider?: 'mem0' | 'supermemory' | null;
   enabled: boolean;
   pending: number;
   synced: number;
