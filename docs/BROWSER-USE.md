@@ -9,8 +9,13 @@ BROWSERUSE_API_KEY=
 CLAWD_PROFILE=
 CDP_URL=
 BROWSER_USE_WORKSPACE_ID=
+BROWSER_USE_LLM_PROVIDER=xai
+BROWSER_USE_XAI_MODEL=grok-4.7
+XAI_API_KEY=
 BROWSER_USE_MODEL=gpt-6-luna
 ```
+
+**Which model drives tasks.** By default (`BROWSER_USE_LLM_PROVIDER=xai`) tasks are driven by xAI `grok-4.7` through the xAI Responses API (`https://api.x.ai/v1/responses`), authenticated with `XAI_API_KEY`. The server creates a Browser Use cloud browser with `BROWSERUSE_API_KEY`, connects to it over CDP with Playwright, and runs the agent loop locally: encrypted reasoning items are passed back unchanged, `store` is false, and `prompt_cache_key` is the session id. Follow-ups reuse the conversation while the server stays up. Browser Use Cloud V4 runs do not accept grok-4.7 (their model list tops out at `grok-4.6`, billed by Browser Use) and do not take an xAI key (BYOK covers Anthropic, OpenAI and Google only). Set `BROWSER_USE_LLM_PROVIDER=browser-use` to use the hosted V4 agent with `BROWSER_USE_MODEL` instead (for example `gpt-6-luna` or `grok-4.6`). The rest of this page describes both modes; the run settings below apply to the hosted mode.
 
 `BROWSER_USE_API_KEY` is accepted as an alias; a non-empty `BROWSERUSE_API_KEY` takes precedence. In the existing owner workspace, `CLAWD_PROFILE` is passed as `profileId` to standalone browsers and task browsers, and the configured file workspace is shared by its Dots. Wallet accounts receive a separate cloud file workspace on their first task; that namespace persists across their Dots, sessions, and restarts. They do not inherit the owner's browser profile or supplied CDP connection. Cloud browser and run IDs remain scoped to each Dot. Keep provider credentials and the CDP connection on the server. Restart the app after changing `.env`.
 

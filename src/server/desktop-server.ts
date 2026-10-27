@@ -8,7 +8,14 @@ import {
 import { serve } from '@hono/node-server';
 import { serveStatic } from '@hono/node-server/serve-static';
 import { networkInterfaces } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
+import {
+  mkdirSync,
+  readFileSync,
+  renameSync,
+  unlinkSync,
+  writeFileSync,
+} from 'node:fs';
 import { timingSafeEqual } from 'node:crypto';
 import { Store } from './store.js';
 import { WorkspaceStore } from './workspace.js';
@@ -24,6 +31,12 @@ import { createBirdeyeMemeService } from './birdeye-meme.js';
 import { browserUseConfigFromEnv } from './browser-use-config.js';
 import { mem0ConfigFromEnv } from './dot-memory.js';
 import { CompanionRegistry, companionAllows } from './companion.js';
+import { PrivyAuth } from './privy-auth.js';
+import {
+  XaiAuthorizationError,
+  XaiOAuth,
+  type XaiTokens,
+} from './xai-oauth.js';
 import { DesktopRelay } from './desktop-relay.js';
 import type { PlatformConfig } from './platform-config.js';
 import type { ServerType } from '@hono/node-server';
@@ -69,17 +82,127 @@ export async function startDesktopServer(options: {
   const registry = new CompanionRegistry(
     join(options.dataPath, 'paired-devices.json'),
   );
+  // Privy identity link. The app ID and client ID are public identifiers;
+  // the app secret never ships in the desktop app, so access tokens are
+  // verified against Privy's JWKS only (PrivyAuth.verifyAccessToken). The
+  // linked subject is the same did:privy: identity the web app resolves to
+  // a workspace. Defaults are the production ChatGPTEE app and its
+  // 'solanadots' client; PRIVY_APP_ID / PRIVY_CLIENT_ID settings override.
+  const privyAppId = env.PRIVY_APP_ID?.trim() || 'cm7mmxm7a01bs3i2ltojavlnl';
+  const privyClientId =
+    env.PRIVY_CLIENT_ID?.trim() ||
+    'client-WY5h9nS2qotwc22b7QY2amSocg9UQ2g42v3GPoykYcBbM';
+  const privy = new PrivyAuth({
+    appId: privyAppId,
+    appSecret: '',
+    clientId: privyClientId,
+  });
+  const privyIdentityPath = join(options.dataPath, 'privy-identity.json');
+  let privyIdentity: { subject: string; linkedAt: number } | undefined;
+  try {
+    const saved = JSON.parse(readFileSync(privyIdentityPath, 'utf8'));
+    if (
+      saved &&
+      typeof saved.subject === 'string' &&
+      saved.subject.startsWith('did:privy:') &&
+      typeof saved.linkedAt === 'number'
+    )
+      privyIdentity = { subject: saved.subject, linkedAt: saved.linkedAt };
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+  }
+  const savePrivyIdentity = (
+    next: { subject: string; linkedAt: number } | undefined,
+  ) => {
+    privyIdentity = next;
+    if (!next) {
+      try {
+        unlinkSync(privyIdentityPath);
+      } catch (error) {
+        if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+      }
+      return;
+    }
+    mkdirSync(dirname(privyIdentityPath), { recursive: true, mode: 0o700 });
+    const temporary = privyIdentityPath + '.tmp';
+    writeFileSync(temporary, JSON.stringify(next), { mode: 0o600 });
+    renameSync(temporary, privyIdentityPath);
+  };
+  // xAI model OAuth (device flow). Tokens persist beside the workspace data
+  // with the same 0600 atomic-write pattern as the Privy link. The device
+  // code itself is memory-only and never leaves the server.
+  const xai = new XaiOAuth();
+  const xaiTokensPath = join(options.dataPath, 'xai-oauth.json');
+  let xaiTokens: XaiTokens | undefined;
+  try {
+    const saved = JSON.parse(readFileSync(xaiTokensPath, 'utf8'));
+    if (
+      saved &&
+      typeof saved.accessToken === 'string' &&
+      typeof saved.tokenType === 'string' &&
+      saved.tokenType.toLowerCase() === 'bearer' &&
+      typeof saved.expiresAt === 'number' &&
+      (saved.refreshToken === undefined ||
+        typeof saved.refreshToken === 'string')
+    )
+      xaiTokens = {
+        accessToken: saved.accessToken,
+        tokenType: saved.tokenType,
+        expiresAt: saved.expiresAt,
+        ...(typeof saved.refreshToken === 'string'
+          ? { refreshToken: saved.refreshToken }
+          : {}),
+        ...(typeof saved.scope === 'string' ? { scope: saved.scope } : {}),
+      };
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+  }
+  const saveXaiTokens = (next: XaiTokens | undefined) => {
+    xaiTokens = next;
+    if (!next) {
+      try {
+        unlinkSync(xaiTokensPath);
+      } catch (error) {
+        if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+      }
+      return;
+    }
+    mkdirSync(dirname(xaiTokensPath), { recursive: true, mode: 0o700 });
+    const temporary = xaiTokensPath + '.tmp';
+    writeFileSync(temporary, JSON.stringify(next), { mode: 0o600 });
+    renameSync(temporary, xaiTokensPath);
+  };
+  let xaiPending:
+    | { deviceCode: string; expiresAt: number; intervalMs: number }
+    | undefined;
+  // A connected xAI account stands in for XAI_API_KEY when none is set:
+  // refresh once at startup when the stored token is due, then hand the
+  // access token to the model config. Later expiry is picked up on the
+  // next workspace restart (saving provider settings restarts it).
+  let modelEnv = env;
+  if (xaiTokens && !env.XAI_API_KEY?.trim()) {
+    try {
+      let current = xaiTokens;
+      if (!xai.accessToken(current)) {
+        current = await xai.refresh(current);
+        saveXaiTokens(current);
+      }
+      modelEnv = { ...env, XAI_API_KEY: current.accessToken };
+    } catch {
+      /* Keep the configured providers; /api/model/xai reports the state. */
+    }
+  }
   const config: PlatformConfig = {
     birdeyeMcp: new BirdeyeMcpService({ env }),
     birdeyeMeme: createBirdeyeMemeService({ env }),
     openMarket: createOpenMarketService({ env }),
     birdeye: new BirdeyeService({ env }),
     ...mem0ConfigFromEnv(env),
-    ...modelConfigFromEnv(env),
+    ...modelConfigFromEnv(modelEnv),
     ...browserUseConfigFromEnv(env),
     openrouterApiKey: env.OPENROUTER_API_KEY?.trim(),
     openrouterClaudeModel: env.OPENROUTER_CLAUDE_MODEL?.trim(),
-    xaiApiKey: env.XAI_API_KEY,
+    xaiApiKey: modelEnv.XAI_API_KEY,
     xaiImageModel: env.XAI_IMAGE_MODEL,
     voiceKey: env.VOICE_API_KEY,
     voiceModel: env.VOICE_MODEL,
@@ -206,7 +329,14 @@ export async function startDesktopServer(options: {
         }
       });
     app.get('/api/auth/config', (c) =>
-      c.json({ desktop: !phone, companion: phone, betterAuth: false }),
+      c.json({
+        desktop: !phone,
+        companion: phone,
+        betterAuth: false,
+        privyAppId,
+        privyClientId,
+        privySocialProviders: ['google', 'twitter', 'github'],
+      }),
     );
     app.use('/api/*', async (c, next) => {
       let valid: boolean;
@@ -235,9 +365,116 @@ export async function startDesktopServer(options: {
         return c.json({ error: 'Manage this feature on your Mac.' }, 403);
       await next();
     });
-    app.get('/api/auth/session', (c) =>
-      c.json({ user: null, owner: true, desktop: !phone, companion: phone }),
+    const sessionBody = () => ({
+      user: null,
+      owner: true,
+      desktop: !phone,
+      companion: phone,
+      privy: privyIdentity
+        ? { subject: privyIdentity.subject, linkedAt: privyIdentity.linkedAt }
+        : null,
+    });
+    app.get('/api/auth/session', (c) => c.json(sessionBody()));
+    // Link the owner's Privy identity to this Mac's workspace. Paired phones
+    // never reach these routes: companionAllows excludes them, so the auth
+    // middleware above answers 403 'Manage this feature on your Mac.'
+    app.post('/api/auth/privy', async (c) => {
+      if (!c.req.header('content-type')?.includes('application/json'))
+        return c.json({ error: 'Use application/json.' }, 415);
+      const raw = await c.req.text();
+      if (raw.length > 8192)
+        return c.json({ error: 'Request too large.' }, 413);
+      try {
+        const body = JSON.parse(raw) as { accessToken?: unknown };
+        if (
+          typeof body.accessToken !== 'string' ||
+          body.accessToken.length < 20 ||
+          body.accessToken.length > 7000
+        )
+          throw Error('Invalid Privy sign-in.');
+        const subject = await privy.verifyAccessToken(body.accessToken);
+        savePrivyIdentity({ subject, linkedAt: Date.now() });
+        return c.json(sessionBody());
+      } catch {
+        return c.json(
+          { error: 'Privy could not verify your sign-in. Please try again.' },
+          401,
+        );
+      }
+    });
+    app.post('/api/auth/privy/unlink', (c) => {
+      savePrivyIdentity(undefined);
+      return c.json(sessionBody());
+    });
+    // xAI model connection (device flow). Like the Privy link routes, paired
+    // phones never reach these: companionAllows excludes them.
+    app.get('/api/model/xai', (c) =>
+      c.json({
+        connected: !!xaiTokens,
+        ...(xaiTokens ? { expiresAt: xaiTokens.expiresAt } : {}),
+      }),
     );
+    app.post('/api/model/xai/start', async (c) => {
+      try {
+        const start = await xai.start();
+        xaiPending = {
+          deviceCode: start.deviceCode,
+          expiresAt: start.expiresAt,
+          intervalMs: start.intervalMs,
+        };
+        return c.json({
+          userCode: start.userCode,
+          verificationUri: start.verificationUri,
+          expiresAt: start.expiresAt,
+          intervalMs: start.intervalMs,
+        });
+      } catch (error) {
+        return c.json(
+          {
+            error:
+              error instanceof XaiAuthorizationError
+                ? error.message
+                : 'xAI sign-in could not start. Please retry.',
+          },
+          502,
+        );
+      }
+    });
+    app.post('/api/model/xai/poll', async (c) => {
+      if (!xaiPending || xaiPending.expiresAt <= Date.now()) {
+        xaiPending = undefined;
+        return c.json({ error: 'Start xAI sign-in again.' }, 410);
+      }
+      try {
+        const result = await xai.poll(
+          xaiPending.deviceCode,
+          xaiPending.intervalMs,
+        );
+        if (result.status === 'pending') {
+          xaiPending.intervalMs = result.intervalMs;
+          return c.json({ connected: false, intervalMs: result.intervalMs });
+        }
+        saveXaiTokens(result.tokens);
+        xaiPending = undefined;
+        return c.json({ connected: true, expiresAt: result.tokens.expiresAt });
+      } catch (error) {
+        xaiPending = undefined;
+        return c.json(
+          {
+            error:
+              error instanceof XaiAuthorizationError
+                ? error.message
+                : 'xAI sign-in could not finish. Please retry.',
+          },
+          401,
+        );
+      }
+    });
+    app.post('/api/model/xai/disconnect', (c) => {
+      xaiPending = undefined;
+      saveXaiTokens(undefined);
+      return c.json({ connected: false });
+    });
     if (!phone) app.get('/api/companion/state', (c) => c.json(state()));
     app.all('/api/*', async (c) => {
       // Scope every request to this Mac's workspace. Do not forward a phone token upstream.

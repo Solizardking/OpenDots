@@ -82,7 +82,7 @@ Each Dot can have its own E2B desktop. Its browser profile and workspace files p
 
 Set `E2B_API_KEY` and follow [Dot integrations](docs/DOT-INTEGRATIONS.md#e2b-desktop). The original [OpenBot](https://github.com/CopilotKit/OpenBot) alternative remains available with `COMPUTER_PROVIDER=openbot`; see [Computer setup](docs/COMPUTERS.md) to build its pinned services.
 
-The Computer panel also includes [Browser Use Cloud](docs/BROWSER-USE.md), using server-side `BROWSERUSE_API_KEY`, `CLAWD_PROFILE`, and optional `CDP_URL`. It supports recorded browser sessions, `gpt-6-luna` tasks, follow-ups, and explicit session stopping.
+The Computer panel also includes [Browser Use Cloud](docs/BROWSER-USE.md), using server-side `BROWSERUSE_API_KEY`, `CLAWD_PROFILE`, and optional `CDP_URL`. It supports recorded browser sessions, tasks driven by xAI `grok-4.7` with `XAI_API_KEY` by default (`BROWSER_USE_LLM_PROVIDER=browser-use` switches to the hosted `BROWSER_USE_MODEL`, default `gpt-6-luna`), follow-ups, and explicit session stopping.
 
 <div align="center">
 

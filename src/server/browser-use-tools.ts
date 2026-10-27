@@ -13,7 +13,7 @@ export function browserUseTools(
     defineTool({
       name: 'browser_use_task',
       description:
-        'Carry out an explicitly requested cloud browser task with gpt-6-luna and return provider evidence. Browser Use permission must be enabled by the owner. Set followup=true to continue the last session. Never send messages, make purchases, sign transactions, or transfer funds without explicit user authorization. This tool stops its cloud browser after completion and cancels unfinished work on interruption.',
+        'Carry out an explicitly requested cloud browser task (driven by xAI grok-4.7 by default) and return provider evidence. Browser Use permission must be enabled by the owner. Set followup=true to continue the last session. Never send messages, make purchases, sign transactions, or transfer funds without explicit user authorization. This tool stops its cloud browser after completion and cancels unfinished work on interruption.',
       parameters: cloudTask,
       execute: async (input) => {
         check();

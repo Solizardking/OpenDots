@@ -12,6 +12,8 @@ export interface AuthSession {
   owner: boolean;
   desktop?: boolean;
   companion?: boolean;
+  /** Desktop only: the Privy identity linked to this Mac's workspace. */
+  privy?: { subject: string; linkedAt: number } | null;
 }
 export interface SignInChallenge {
   id: string;

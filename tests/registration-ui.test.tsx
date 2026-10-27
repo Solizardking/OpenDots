@@ -8,6 +8,7 @@ const fixture = vi.hoisted(() => ({
   address: 'fresh-public-wallet',
   connected: false,
   signIn: vi.fn(),
+  clawd: { allowed: true } as Record<string, unknown>,
 }));
 vi.mock('@solana/wallet-adapter-react', () => ({
   useWallet: () => ({
@@ -20,7 +21,14 @@ vi.mock('@solana/wallet-adapter-react-ui', () => ({
   WalletMultiButton: ({ children }: { children: ReactNode }) =>
     createElement('button', {}, children ?? 'Connected wallet'),
 }));
-vi.mock('../src/client/api', () => ({ api: fixture.api, setToken: vi.fn() }));
+vi.mock('../src/client/api', () => ({
+  // CLAWD gate: these registration tests cover a verified holder by default.
+  api: (path: string, ...rest: unknown[]) =>
+    path.startsWith('/clawd/status')
+      ? Promise.resolve(fixture.clawd)
+      : fixture.api(path, ...rest),
+  setToken: vi.fn(),
+}));
 vi.mock('../src/client/better-auth', () => ({ authClient: {} }));
 import { AuthGate } from '../src/client/AuthGate';
 
@@ -39,6 +47,7 @@ const anonymous: AuthSession = { user: null, owner: false };
 beforeEach(() => {
   vi.clearAllMocks();
   fixture.connected = false;
+  fixture.clawd = { allowed: true };
   fixture.address = 'fresh-public-wallet';
   fixture.api.mockImplementation(async (path: string) =>
     path === '/auth/config' ? { betterAuth: true } : anonymous,
@@ -214,4 +223,26 @@ it('keeps the account session when the connected trading wallet disconnects', as
   });
   expect(text()).toContain('Private workspace');
   expect(fixture.api).not.toHaveBeenCalledWith('/auth/logout', 'POST', {});
+});
+
+it('shows the CLAWD gate instead of the workspace for signed-in non-holders', async () => {
+  fixture.clawd = {
+    allowed: false,
+    reason: 'no_wallet',
+    minBalance: '0',
+    wallets: [],
+    buyUrl:
+      'https://pump.fun/coin/8cHzQHUS2s2h8TzCmfqPKYiM4dSt4roa3n7MyRLApump',
+  };
+  fixture.api.mockImplementation(async (path: string) =>
+    path === '/auth/config' ? { betterAuth: true } : session,
+  );
+  await render();
+  expect(text()).toContain('Hold CLAWD to unlock ChatGPTEE');
+  expect(text()).not.toContain('Private workspace');
+  expect(
+    root.root
+      .findAllByType('a')
+      .some((node) => String(node.props.href).includes('pump.fun/coin/')),
+  ).toBe(true);
 });

@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { KeyRound, Check, ShieldCheck } from 'lucide-react';
+import { api } from './api';
 import type { DesktopSettings } from '../shared/desktop-types';
 const providers = [
   [
@@ -14,7 +15,7 @@ const providers = [
     'Token intelligence and wallet-approved swaps',
   ],
   ['OPENROUTER_API_KEY', 'OpenRouter', 'Muse Wonder chat'],
-  ['XAI_API_KEY', 'xAI', 'Chat and avatar generation'],
+  ['XAI_API_KEY', 'xAI', 'Chat, avatars and Browser Use (grok-4.7)'],
   ['OPENAI_API_KEY', 'OpenAI', 'Alternative chat provider'],
   ['E2B_API_KEY', 'E2B', 'Agent desktop computers'],
   ['BROWSER_USE_API_KEY', 'Browser Use', 'Agent browser sessions'],
@@ -51,11 +52,26 @@ export function DesktopSetup() {
   const [changes, setChanges] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [xai, setXai] = useState<{ connected: boolean; expiresAt?: number }>();
+  const [xaiFlow, setXaiFlow] = useState<{
+    userCode: string;
+    verificationUri: string;
+  }>();
+  const [xaiError, setXaiError] = useState('');
+  const xaiTimer = useRef<number | undefined>(undefined);
   useEffect(() => {
     void window.solanaDots
       ?.settings()
       .then(setSettings)
       .catch(() => setError('Could not read provider settings.'));
+  }, []);
+  useEffect(() => {
+    void api<{ connected: boolean; expiresAt?: number }>('/model/xai')
+      .then(setXai)
+      .catch(() => {});
+    return () => {
+      if (xaiTimer.current) window.clearTimeout(xaiTimer.current);
+    };
   }, []);
   if (!window.solanaDots) return null;
   const field = (key: string, fallback = '') =>
@@ -67,6 +83,54 @@ export function DesktopSetup() {
       : modelProvider === 'xai'
         ? 'XAI_MODEL'
         : 'OPENAI_MODEL';
+  const stopXaiPoll = () => {
+    if (xaiTimer.current) window.clearTimeout(xaiTimer.current);
+    xaiTimer.current = undefined;
+  };
+  const pollXai = (intervalMs: number) => {
+    stopXaiPoll();
+    xaiTimer.current = window.setTimeout(async () => {
+      try {
+        const result = await api<{
+          connected: boolean;
+          intervalMs?: number;
+          expiresAt?: number;
+        }>('/model/xai/poll', 'POST', {});
+        if (result.connected) {
+          setXai({ connected: true, expiresAt: result.expiresAt });
+          setXaiFlow(undefined);
+          return;
+        }
+        pollXai(result.intervalMs ?? intervalMs);
+      } catch (error) {
+        setXaiFlow(undefined);
+        setXaiError(
+          error instanceof Error ? error.message : 'xAI sign-in failed.',
+        );
+      }
+    }, intervalMs);
+  };
+  const connectXai = async () => {
+    setXaiError('');
+    try {
+      const start = await api<{
+        userCode: string;
+        verificationUri: string;
+        intervalMs: number;
+      }>('/model/xai/start', 'POST', {});
+      setXaiFlow({
+        userCode: start.userCode,
+        verificationUri: start.verificationUri,
+      });
+      pollXai(start.intervalMs);
+    } catch (error) {
+      setXaiError(
+        error instanceof Error
+          ? error.message
+          : 'xAI sign-in could not start.',
+      );
+    }
+  };
   const defaultModel =
     modelProvider === 'openrouter'
       ? field('OPENROUTER_MODEL').trim() || 'meta/muse-wonder'
@@ -147,6 +211,55 @@ export function DesktopSetup() {
           )}
         </div>
       ))}
+      <div className="provider-setting">
+        <div className="provider-setting-heading">
+          <label>xAI account</label>
+          {xai?.connected && (
+            <span>
+              <Check size={13} /> Connected
+            </span>
+          )}
+        </div>
+        <small className="muted">
+          Connect with your xAI account instead of an API key. The workspace
+          picks the connection up on its next restart (saving settings
+          restarts it).
+        </small>
+        {xaiFlow ? (
+          <p>
+            Enter code <strong>{xaiFlow.userCode}</strong> at{' '}
+            <a href={xaiFlow.verificationUri} target="_blank" rel="noreferrer">
+              {xaiFlow.verificationUri}
+            </a>{' '}
+            — waiting for approval…
+          </p>
+        ) : xai?.connected ? (
+          <button
+            type="button"
+            className="text-button"
+            onClick={async () => {
+              stopXaiPoll();
+              await api('/model/xai/disconnect', 'POST', {}).catch(() => {});
+              setXai({ connected: false });
+            }}
+          >
+            Disconnect xAI account
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="text-button"
+            onClick={() => void connectXai()}
+          >
+            Connect xAI account
+          </button>
+        )}
+        {xaiError && (
+          <p className="chat-error" role="alert">
+            {xaiError}
+          </p>
+        )}
+      </div>
       <label className="field-label" htmlFor="voice-model">
         Voice model
       </label>

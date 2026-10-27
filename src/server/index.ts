@@ -240,6 +240,28 @@ app.get('/healthz', async (c) => {
 // Better Auth validates its callbacks/state and cookie mutations itself. OAuth
 // callbacks arrive as cross-site navigations; private APIs retain the boundary.
 app.route('/api/auth', auth.routes);
+// Public OAuth return point. Privy and the social providers can be configured
+// with this callback URL; forward only the parameters the Privy client needs
+// to the login page, which completes sign-in. The target is fixed: never honor
+// a caller-supplied redirect.
+app.get('/api/oauth/callback', (c) => {
+  const incoming = new URL(c.req.url);
+  const target = new URL('/login', incoming.origin);
+  for (const name of [
+    'privy_oauth_code',
+    'privy_oauth_state',
+    'code',
+    'state',
+    'error',
+    'error_description',
+  ]) {
+    const value = incoming.searchParams.get(name);
+    if (value && value.length <= 2048)
+      target.searchParams.set(name, value.slice(0, 2048));
+  }
+  c.header('Cache-Control', 'no-store');
+  return c.redirect(target.toString(), 302);
+});
 app.route('/api/agent', agentAccessRoutes(privy));
 app.use('/api/*', browserBoundary(origins));
 app.route(

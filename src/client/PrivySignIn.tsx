@@ -8,11 +8,35 @@ import {
   type User,
 } from '@privy-io/react-auth';
 import { toSolanaWalletConnectors } from '@privy-io/react-auth/solana';
+import {
+  createDefaultAuthorizationCache,
+  createDefaultChainSelector,
+  createDefaultWalletNotFoundHandler,
+  registerMwa,
+} from '@solana-mobile/wallet-standard-mobile';
 import { api, setToken } from './api';
 import type { PublicAuthConfig } from './AuthGate';
 import type { AuthSession } from '../shared/auth-types';
 
-const connectors = toSolanaWalletConnectors();
+const connectors = toSolanaWalletConnectors({ shouldAutoConnect: true });
+// Solana Mobile Wallet Adapter: lets Android wallets connect through the
+// wallet standard. Registration finds no MWA wallet on desktop/iOS, where
+// the Privy connectors above remain the path.
+try {
+  registerMwa({
+    appIdentity: {
+      name: 'ChatGPTEE',
+      uri: 'https://chatgptee.ai',
+      icon: 'brand/solana-logomark.svg',
+    },
+    authorizationCache: createDefaultAuthorizationCache(),
+    chains: ['solana:mainnet'],
+    chainSelector: createDefaultChainSelector(),
+    onWalletNotFound: createDefaultWalletNotFoundHandler(),
+  });
+} catch {
+  /* MWA is optional; Privy wallet connectors remain available. */
+}
 const intentKey = 'chatgptee.privy-auth-intent';
 const providers = [
   ['google', 'Google'],
@@ -273,11 +297,16 @@ export default function PrivySignIn({ config, ...props }: Props) {
           landingHeader: 'Sign in to ChatGPTEE',
           loginMessage: 'Your personal workspace.',
           walletChainType: 'solana-only',
-          walletList: ['phantom', 'solflare', 'backpack', 'detected_wallets'],
+          walletList: [
+            'phantom',
+            'solflare',
+            'backpack',
+            'detected_solana_wallets',
+            'wallet_connect_qr_solana',
+          ],
         },
         externalWallets: {
           solana: { connectors },
-          walletConnect: { enabled: false },
         },
         embeddedWallets: {
           solana: { createOnLogin: 'off' },

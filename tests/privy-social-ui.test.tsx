@@ -39,6 +39,12 @@ vi.mock('@privy-io/react-auth', () => ({
 vi.mock('@privy-io/react-auth/solana', () => ({
   toSolanaWalletConnectors: () => [],
 }));
+vi.mock('@solana-mobile/wallet-standard-mobile', () => ({
+  registerMwa: vi.fn(),
+  createDefaultAuthorizationCache: () => ({}),
+  createDefaultChainSelector: () => ({}),
+  createDefaultWalletNotFoundHandler: () => () => {},
+}));
 vi.mock('../src/client/api', () => ({ api: fixture.api, setToken: vi.fn() }));
 import PrivySignIn from '../src/client/PrivySignIn';
 let root: ReactTestRenderer;

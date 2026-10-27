@@ -1,8 +1,10 @@
 import { BrowserUse, type RunCreateBody } from 'browser-use-sdk/v4';
+import { randomUUID } from 'node:crypto';
 import { setTimeout as delay } from 'node:timers/promises';
 import { z } from 'zod';
 import type { BrowserUseConfig } from './browser-use-config.js';
 import type { WorkspaceStore } from './workspace.js';
+import { runXaiBrowserTask } from './browser-use-xai-agent.js';
 import {
   cloudRunFinished,
   type BrowserUseStatus,
@@ -38,7 +40,7 @@ export class BrowserUseError extends Error {
 export function cloudRunError(error: string | null | undefined): string | null {
   if (!error) return null;
   if (/invalid_api_key|incorrect api key|authentication_error/i.test(error))
-    return 'Browser Use’s upstream model credentials were rejected (HTTP 401). Check the OpenAI provider configuration in Browser Use Cloud, then retry.';
+    return 'Browser Use’s upstream model credentials were rejected (HTTP 401). Check the model provider configuration (XAI_API_KEY for xAI-driven runs, or the provider settings in Browser Use Cloud), then retry.';
   if (/insufficient|quota|credit|spend.limit/i.test(error))
     return 'Browser Use could not complete the task because provider credits or quota are unavailable. Check the Browser Use account and model provider.';
   return 'Browser Use could not complete the task. Check the run in Browser Use Cloud for provider details.';
@@ -51,6 +53,9 @@ const publicBrowser = (browser: CloudBrowser): CloudBrowser => ({
   recordingAvailable: browser.recordingAvailable,
   timeoutAt: browser.timeoutAt,
 });
+/** Runs driven locally by xAI carry this id prefix; cloud runs use provider ids. */
+export const isXaiRun = (runId: string) => runId.startsWith('xai-');
+const xaiRuns = new Map<string, AbortController>();
 const workspaceLocks = new WeakMap<WorkspaceStore, Set<string>>();
 const providerWorkspaceCreations = new WeakMap<
   WorkspaceStore,
@@ -80,6 +85,15 @@ export class BrowserUseService {
   }
   get configured() {
     return !!this.client;
+  }
+  /** xAI drives tasks unless BROWSER_USE_LLM_PROVIDER=browser-use is set explicitly. */
+  get xaiDriven() {
+    return this.config.browserUseLlmProvider === 'xai';
+  }
+  private get modelLabel() {
+    return this.xaiDriven
+      ? `${this.config.browserUseXaiModel || 'grok-4.7'} (xAI)`
+      : this.config.browserUseModel || 'gpt-6-luna';
   }
   private requireDot(id: string) {
     if (!this.workspace.dot(id))
@@ -177,7 +191,7 @@ export class BrowserUseService {
     return {
       ...this.workspace.browserUse.get(id),
       configured: this.configured,
-      model: this.config.browserUseModel || 'gpt-6-luna',
+      model: this.modelLabel,
       profileConfigured: !!this.config.clawdProfile,
       suppliedCdpConfigured: !!this.config.cdpUrl,
     };
@@ -195,7 +209,7 @@ export class BrowserUseService {
           );
         if (this.client && state.run) {
           const run = state.run;
-          if (!cloudRunFinished(run.status)) {
+          if (!cloudRunFinished(run.status) && !isXaiRun(run.id)) {
             const next = await this.provider(() =>
               this.client!.runs.status(run.id),
             );
@@ -209,7 +223,7 @@ export class BrowserUseService {
               run.totalCostUsd = done.totalCostUsd;
             }
           }
-          if (!run.browser) {
+          if (!run.browser && !isXaiRun(run.id)) {
             const list = z
               .object({ items: z.array(browserSchema) })
               .parse(
@@ -316,6 +330,7 @@ export class BrowserUseService {
           'Start a task before sending a follow-up.',
           400,
         );
+      if (this.xaiDriven) return this.createXaiRun(id, data, state);
       let workspaceId = this.config.browserUseWorkspaceId;
       if (this.config.browserUseIsolatedWorkspace) {
         if (data.followup) {
@@ -377,6 +392,95 @@ export class BrowserUseService {
       return this.view(id);
     });
   }
+  private async createXaiRun(
+    id: string,
+    data: z.output<typeof cloudTask>,
+    state: ReturnType<WorkspaceStore['browserUse']['get']>,
+  ) {
+    if (!this.config.browserUseXaiApiKey)
+      throw new BrowserUseError(
+        'Set XAI_API_KEY on the server (or BROWSER_USE_LLM_PROVIDER=browser-use), then restart.',
+        503,
+      );
+    if (state.run?.browser?.status === 'active') {
+      const previous = state.run.browser.id;
+      await this.provider(() => this.client!.browsers.stop(previous));
+    }
+    const created = await this.provider(() =>
+      this.client!.browsers.create({
+        profileId: this.config.clawdProfile,
+        proxyCountryCode: 'us',
+        timeout: 15,
+        browserScreenWidth: 1440,
+        browserScreenHeight: 900,
+        allowResizing: false,
+        enableRecording: true,
+      }),
+    );
+    const sessionId =
+      data.followup && state.run ? state.run.sessionId : randomUUID();
+    const runId = `xai-${randomUUID()}`;
+    state.run = {
+      id: runId,
+      sessionId,
+      workspaceId: null,
+      status: 'running',
+      browser: publicBrowser(created),
+    };
+    this.workspace.browserUse.save(id, state);
+    let cdpUrl: string | null | undefined;
+    try {
+      cdpUrl = browserSchema.parse(
+        await this.rest(`/browsers/${created.id}`),
+      ).cdpUrl;
+      if (!cdpUrl)
+        throw new BrowserUseError(
+          'The provider did not return a CDP connection.',
+        );
+    } catch (error) {
+      await this.stopOwned(id, false).catch(() => {});
+      throw error;
+    }
+    const controller = new AbortController();
+    xaiRuns.set(runId, controller);
+    void runXaiBrowserTask({
+      config: {
+        apiKey: this.config.browserUseXaiApiKey,
+        model: this.config.browserUseXaiModel || 'grok-4.7',
+      },
+      cdpUrl,
+      task: data.task,
+      sessionId,
+      followup: !!data.followup,
+      signal: controller.signal,
+    })
+      .then((outcome) =>
+        this.exclusive(
+          id,
+          async () => {
+            const current = this.workspace.browserUse.get(id);
+            if (
+              current.run?.id !== runId ||
+              cloudRunFinished(current.run.status)
+            )
+              return;
+            current.run = { ...current.run, ...outcome };
+            this.workspace.browserUse.save(id, current);
+          },
+          true,
+        ),
+      )
+      .catch(() => {})
+      .finally(() => xaiRuns.delete(runId));
+    if (this.paused()) {
+      await this.stopOwned(id);
+      throw new BrowserUseError(
+        'Run cancelled because ChatGPTEE was paused.',
+        403,
+      );
+    }
+    return this.view(id);
+  }
   private async stopOwned(id: string, standalone = true) {
     const state = this.workspace.browserUse.get(id);
     if (!this.client) return;
@@ -388,6 +492,15 @@ export class BrowserUseService {
         errors.push(error);
       }
     };
+    if (
+      state.run &&
+      isXaiRun(state.run.id) &&
+      !cloudRunFinished(state.run.status)
+    ) {
+      xaiRuns.get(state.run.id)?.abort();
+      state.run = { ...state.run, status: 'cancelled' };
+      this.workspace.browserUse.save(id, state);
+    }
     if (state.run && !cloudRunFinished(state.run.status)) {
       await attempt(async () => {
         const run = await this.provider(() =>

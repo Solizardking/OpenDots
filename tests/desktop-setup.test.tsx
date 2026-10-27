@@ -4,6 +4,13 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { DesktopSetup } from '../src/client/DesktopSetup';
 import type { DesktopSettings } from '../src/shared/desktop-types';
 
+// The real api module reads sessionStorage at load; the desktop xAI status
+// check is incidental here, so answer it disconnected.
+vi.mock('../src/client/api', () => ({
+  api: vi.fn(async () => ({ connected: false })),
+  setToken: vi.fn(),
+}));
+
 let root: ReactTestRenderer | undefined;
 const saveSettings = vi.fn();
 const settings: DesktopSettings = {

@@ -88,7 +88,7 @@ export async function research(
   }
   if (!configured(config))
     throw new Error(
-      'Live mode is not configured. Set OPENAI_API_KEY and OPENAI_MODEL; browser research also needs BROWSER_URL and BROWSER_SECRET. Research must not be disabled.',
+      'Live mode is not configured. Set the chat provider key and model (for example MODEL_PROVIDER=xai with XAI_API_KEY; XAI_MODEL defaults to grok-4.7); browser research also needs BROWSER_URL and BROWSER_SECRET. Research must not be disabled.',
     );
   let pages: WebSource[];
   const limitations: string[] = [];
